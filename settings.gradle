@@ -1,4 +1,4 @@
 rootProject.name = 'magicbox'
 
-include 'user'
-include 'auth'
+include 'services:user'
+include 'services:auth'
