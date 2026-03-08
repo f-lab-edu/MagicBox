@@ -37,28 +37,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR description
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          BODY="${{ github.event.pull_request.body }}"
-
+          # UTF-8 인코딩 설정
+          export LC_ALL=C.UTF-8
+          export LANG=C.UTF-8
+          
+          # 필수 섹션들 (영어로 변경)
           REQUIRED_SECTIONS=(
             "관련 이슈"
-            "변경 사항 요약"
+            "변경 사항 요약"  
             "테스트 체크리스트"
           )
 
           FAILED=0
 
+          # PR 본문이 비어있는지 확인
+          if [[ -z "${PR_BODY// }" ]]; then
+            echo "❌ PR 설명이 비어 있습니다. 템플릿을 작성해주세요."
+            exit 1
+          fi
+
+          # 각 필수 섹션 확인
           for SECTION in "${REQUIRED_SECTIONS[@]}"; do
-            if [[ "$BODY" != *"$SECTION"* ]]; then
+            if [[ "$PR_BODY" != *"$SECTION"* ]]; then
               echo "❌ 누락된 섹션: $SECTION"
               FAILED=1
             fi
           done
-
-          if [[ -z "${BODY// }" ]]; then
-            echo "❌ PR 설명이 비어 있습니다. 템플릿을 작성해주세요."
-            exit 1
-          fi
 
           if [[ $FAILED -eq 1 ]]; then
             echo ""
