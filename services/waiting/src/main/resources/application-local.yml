@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: waiting-local
+  config:
+    import:
+      - file:env/local.env[.properties]
+
+server:
+  port: ${SERVER_PORT}
