@@ -1,9 +1,0 @@
-spring:
-  application:
-    name: gateway-local
-  config:
-    import:
-      - file:services/gateway/env/local.env[.properties]
-
-server:
-  port: ${SERVER_PORT}
