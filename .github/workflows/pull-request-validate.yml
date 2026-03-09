@@ -10,14 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR title convention
+        env:
+          # 사용자 제어 데이터를 환경 변수로 매핑하여 직접 참조 방지
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          TITLE="${{ github.event.pull_request.title }}"
           PATTERN="^(feat|fix|refactor|test)(\/[0-9]+|\(.+\))?(\s*::|:) .{1,}"
 
-          if [[ ! "$TITLE" =~ $PATTERN ]]; then
+          if [[ ! "$PR_TITLE" =~ $PATTERN ]]; then
             echo "❌ PR 제목이 컨벤션에 맞지 않습니다."
             echo ""
-            echo "현재 제목: $TITLE"
+            echo "현재 제목: $PR_TITLE"
             echo ""
             echo "올바른 형식: <type>(<scope>): <subject>"
             echo "예시:"
@@ -30,7 +32,7 @@ jobs:
             exit 1
           fi
 
-          echo "✅ PR 제목 컨벤션 통과: $TITLE"
+          echo "✅ PR 제목 컨벤션 통과: $PR_TITLE"
 
   check-description:
     name: PR 설명 템플릿 검사
