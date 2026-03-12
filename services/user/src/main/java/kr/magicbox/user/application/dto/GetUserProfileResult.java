@@ -1,0 +1,15 @@
+package kr.magicbox.user.application.dto;
+
+import kr.magicbox.user.domain.enums.UserRole;
+import lombok.Builder;
+
+import java.util.List;
+
+@Builder
+public record GetUserProfileResult(
+        String nickname,
+        String profile,
+        List<UserReviewDto> reviews,
+        UserRole role
+) {
+}
