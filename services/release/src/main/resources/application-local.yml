@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: release-local
+  config:
+    import:
+      - file:services/release/env/local.env[.properties]
+
+server:
+  port: ${SERVER_PORT}

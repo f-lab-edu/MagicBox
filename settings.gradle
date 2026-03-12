@@ -1,0 +1,12 @@
+rootProject.name = 'magicbox'
+
+include 'services:user'
+include 'services:auth'
+include 'services:subscribe'
+include 'services:creator'
+include 'services:general-goods'
+include 'services:shopping-cart'
+include 'services:release'
+include 'services:waiting'
+include 'services:order'
+include 'services:search'

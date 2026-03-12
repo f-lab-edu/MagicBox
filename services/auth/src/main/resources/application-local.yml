@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: auth-local
+  config:
+    import:
+      - file:services/auth/env/local.env[.properties]
+
+server:
+  port: ${SERVER_PORT}
