@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class UserNotFoundException extends BusinessException {
     public UserNotFoundException(String nickname) {
-        super("사용자 " + nickname + " 을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        super("사용자 " + nickname + " 을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
     }
 }
