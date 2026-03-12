@@ -42,7 +42,7 @@ public class ReviewGrpcAdapter implements ReviewPort {
 
     @SuppressWarnings("unused") // Resilience4j fallback method signature
     private List<UserReviewDto> getAllReviewsFallback(Long userId, Throwable throwable) {
-        log.warn("리뷰 서비스 연결 실패 - userId={}", userId, throwable);
+        log.warn("리뷰 서비스 연결 실패");
         throw new ReviewServiceUnavailableException(userId, throwable);
     }
     
