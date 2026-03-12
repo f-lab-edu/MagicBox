@@ -1,6 +1,6 @@
 package kr.magicbox.user.domain.constants;
 
 public class UserPolicyConstants {
-    public static final Integer usernameLength = 20;
-    public static final Integer maxActiveDevicesPerUser = 1;
+    public static final int usernameLength = 20;
+    public static final int maxActiveDevicesPerUser = 1;
 }
