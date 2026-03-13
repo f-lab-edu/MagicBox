@@ -1,4 +1,4 @@
-package kr.magicbox.user.application.port.out.repository;
+package kr.magicbox.user.domain.repository;
 
 import kr.magicbox.user.domain.entity.UserEntity;
 

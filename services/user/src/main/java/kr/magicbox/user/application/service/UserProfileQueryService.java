@@ -5,7 +5,7 @@ import kr.magicbox.user.application.dto.GetUserProfileResult;
 import kr.magicbox.user.application.dto.UserReviewDto;
 import kr.magicbox.user.application.port.in.UserProfileQueryUseCase;
 import kr.magicbox.user.application.port.out.port.ReviewPort;
-import kr.magicbox.user.application.port.out.repository.UserRepository;
+import kr.magicbox.user.domain.repository.UserRepository;
 import kr.magicbox.user.domain.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

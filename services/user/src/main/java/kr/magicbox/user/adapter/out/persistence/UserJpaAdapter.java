@@ -1,6 +1,6 @@
 package kr.magicbox.user.adapter.out.persistence;
 
-import kr.magicbox.user.application.port.out.repository.UserRepository;
+import kr.magicbox.user.domain.repository.UserRepository;
 import kr.magicbox.user.domain.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
