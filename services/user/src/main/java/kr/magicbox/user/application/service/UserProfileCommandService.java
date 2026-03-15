@@ -19,14 +19,8 @@ public class UserProfileCommandService implements UserProfileCommandUseCase {
     public void updateUserProfile(UpdateUserProfileCommand command) {
         UserEntity user = userRepository.getUserByNickname(command.beforeNickname())
                 .orElseThrow(() -> new UserNotFoundException(command.beforeNickname()));
-        
-        if (command.nickname() != null) {
-            user.updateNickname(command.nickname());
-        }
-        
-        if (command.profile() != null) {
-            user.updateProfile(command.profile());
-        }
+
+        user.updateProfile(command.nickname(), command.beforeNickname());
         
         userRepository.updateUser(user);
     }

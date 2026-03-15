@@ -21,7 +21,7 @@ import java.time.Instant;
 public class UserEntity extends BaseEntity {
 
     @Getter
-    @Column(unique = true, nullable = false, length = UserPolicyConstants.usernameLength)
+    @Column(unique = true, nullable = false, length = UserPolicyConstants.nicknameMaxLength)
     private String nickname;
 
     @Column(unique = true, nullable = false)
@@ -66,6 +66,7 @@ public class UserEntity extends BaseEntity {
         this.role = role;
         this.type = type;
         this.profile = profile;
+        this.isActive = false;
         this.lastLoginAt = Instant.now();
         this.totalUsageTime = Duration.ZERO;
         this.isReviewVisible = true;
@@ -75,8 +76,8 @@ public class UserEntity extends BaseEntity {
         if(nickname == null || nickname.isEmpty())
             throw new InvalidFieldException("닉네임은 필수 값입니다.");
 
-        if(nickname.length() > UserPolicyConstants.usernameLength)
-            throw new InvalidFieldException("닉네임은 " + UserPolicyConstants.usernameLength + "자 이내여야 합니다.");
+        if(nickname.length() < UserPolicyConstants.nicknameMinLength || nickname.length() > UserPolicyConstants.nicknameMaxLength)
+            throw new InvalidFieldException("닉네임은 " + UserPolicyConstants.nicknameMinLength + "자 이상 " + UserPolicyConstants.nicknameMaxLength + "자 이내여야 합니다.");
         
         if(email == null || email.isEmpty())
             throw new InvalidFieldException("이메일은 필수 값입니다.");
@@ -94,20 +95,28 @@ public class UserEntity extends BaseEntity {
             throw new InvalidFieldException("프로필은 필수 값입니다.");
     }
 
-    public void updateNickname(String nickname) {
-        if(nickname == null || nickname.isEmpty())
-            throw new InvalidFieldException("닉네임은 필수 값입니다.");
-
-        if(nickname.length() > UserPolicyConstants.usernameLength)
-            throw new InvalidFieldException("닉네임은 " + UserPolicyConstants.usernameLength + "자 이내여야 합니다.");
-
+    public void updateProfile(String nickname, String profile) {
+        updateNicknameIfValid(nickname);
+        updateProfileIfValid(profile);
+    }
+    
+    private void updateNicknameIfValid(String nickname) {
+        if(nickname == null || nickname.isEmpty()) {
+            return;
+        }
+        
+        if(nickname.length() < UserPolicyConstants.nicknameMinLength || nickname.length() > UserPolicyConstants.nicknameMaxLength) {
+            throw new InvalidFieldException("닉네임은 " + UserPolicyConstants.nicknameMinLength + "자 이상 " + UserPolicyConstants.nicknameMaxLength + "자 이내여야 합니다.");
+        }
+        
         this.nickname = nickname;
     }
-
-    public void updateProfile(String profile) {
-        if(profile == null || profile.isEmpty())
-            throw new InvalidFieldException("프로필은 필수 값입니다.");
-
+    
+    private void updateProfileIfValid(String profile) {
+        if(profile == null || profile.isEmpty()) {
+            return;
+        }
+        
         this.profile = profile;
     }
 
