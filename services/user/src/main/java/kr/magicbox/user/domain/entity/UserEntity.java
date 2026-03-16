@@ -2,7 +2,6 @@ package kr.magicbox.user.domain.entity;
 
 import jakarta.persistence.*;
 import kr.magicbox.user.domain.constants.UserPolicyConstants;
-import kr.magicbox.user.domain.enums.UserLoginType;
 import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
 import kr.magicbox.user.domain.exception.InvalidFieldException;
@@ -36,10 +35,6 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     private UserRole role;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserLoginType type;
-
     @Getter
     private Instant lastLoginAt;
 
@@ -57,14 +52,13 @@ public class UserEntity extends BaseEntity {
     private Boolean isReviewVisible;
 
     @Builder
-    public UserEntity(String nickname, String email, UserStatus status, UserRole role, UserLoginType type, String profile) {
-        validateFields(nickname, email, status, role, type, profile);
+    public UserEntity(String nickname, String email, UserStatus status, UserRole role, String profile) {
+        validateFields(nickname, email, status, role, profile);
 
         this.nickname = nickname;
         this.email = email;
         this.status = status;
         this.role = role;
-        this.type = type;
         this.profile = profile;
         this.isActive = false;
         this.lastLoginAt = Instant.now();
@@ -72,7 +66,7 @@ public class UserEntity extends BaseEntity {
         this.isReviewVisible = true;
     }
 
-    private void validateFields(String nickname, String email, UserStatus status, UserRole role, UserLoginType type, String profile) {
+    private void validateFields(String nickname, String email, UserStatus status, UserRole role, String profile) {
         if(nickname == null || nickname.isEmpty())
             throw new InvalidFieldException("닉네임은 필수 값입니다.");
 
@@ -87,9 +81,6 @@ public class UserEntity extends BaseEntity {
         
         if(role == null)
             throw new InvalidFieldException("역할은 필수 값입니다.");
-        
-        if(type == null)
-            throw new InvalidFieldException("로그인 타입은 필수 값입니다.");
         
         if(profile == null || profile.isEmpty())
             throw new InvalidFieldException("프로필은 필수 값입니다.");
