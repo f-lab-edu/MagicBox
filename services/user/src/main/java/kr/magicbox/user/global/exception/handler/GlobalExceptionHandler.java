@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException() {
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        log.error("요청 본문을 읽을 수 없습니다: {}", e.getMessage());
         ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, "요청 본문을 읽을 수 없습니다.");
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST.value())
@@ -23,7 +24,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException() {
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+        log.error("유효하지 않은 요청 파라미터: {}", e.getMessage());
         ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, "유효하지 않은 요청 파라미터입니다.");
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST.value())
@@ -34,6 +36,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String errorMessage = e.getBindingResult().getFieldError() != null ?
                 e.getBindingResult().getFieldError().getDefaultMessage() : "인자값이 유효하지 않습니다.";
+        log.error("메서드 인자 유효성 검증 실패: {}", errorMessage);
         ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, errorMessage);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST.value())
@@ -42,18 +45,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        log.error("지원되지 않는 HTTP 메서드: {}", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(ErrorResponse.of(HttpStatus.METHOD_NOT_ALLOWED, e.getMessage()));
+                .body(ErrorResponse.of(HttpStatus.METHOD_NOT_ALLOWED, "지원되지 않는 HTTP 메서드입니다."));
     }
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException e) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        log.error(e.getMessage());
+        log.error("Null Pointer Exception 발생: {}", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .body(ErrorResponse.of(status, e.getMessage()));
+                .body(ErrorResponse.of(status, "내부 서버 오류가 발생했습니다."));
     }
 
     @ExceptionHandler(BaseException.class)
@@ -67,7 +71,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        log.error(e.getMessage());
+        log.error("예상하지 못한 오류 발생: {}", e.getMessage(), e);
         return ResponseEntity
                 .status(status)
                 .body(ErrorResponse.of(status, "알 수 없는 오류가 발생했습니다."));
