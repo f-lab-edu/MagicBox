@@ -1,9 +1,9 @@
 package kr.magicbox.user.application.port.out;
 
-import kr.magicbox.user.application.dto.UserReviewDto;
+import kr.magicbox.user.application.dto.UserReviewResult;
 
 import java.util.List;
 
 public interface ReviewPort {
-    List<UserReviewDto> getAllReviewsByUserId(Long userId);
+    List<UserReviewResult> getAllReviewsByUserId(Long userId);
 }

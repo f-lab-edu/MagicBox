@@ -2,7 +2,7 @@ package kr.magicbox.user.adapter.out.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
-import kr.magicbox.user.application.dto.UserReviewDto;
+import kr.magicbox.user.application.dto.UserReviewResult;
 import kr.magicbox.user.application.port.out.ReviewPort;
 import kr.magicbox.user.global.config.GrpcChannelFactory;
 import kr.magicbox.user.global.enums.ServiceHost;
@@ -26,7 +26,7 @@ public class ReviewGrpcAdapter implements ReviewPort {
 
     @Override
     @CircuitBreaker(name = "reviewService", fallbackMethod = "getAllReviewsFallback")
-    public List<UserReviewDto> getAllReviewsByUserId(Long userId) {
+    public List<UserReviewResult> getAllReviewsByUserId(Long userId) {
         GetAllReviewsByUserIdRequest request = GetAllReviewsByUserIdRequest.newBuilder()
             .setUserId(userId)
             .build();
@@ -41,13 +41,13 @@ public class ReviewGrpcAdapter implements ReviewPort {
     }
 
     @SuppressWarnings("unused") // Resilience4j fallback method signature
-    private List<UserReviewDto> getAllReviewsFallback(Long userId, Throwable throwable) {
+    private List<UserReviewResult> getAllReviewsFallback(Long userId, Throwable throwable) {
         log.warn("리뷰 서비스 연결 실패");
         throw new ReviewServiceUnavailableException(userId, throwable);
     }
     
-    private UserReviewDto convertToUserReviewDto(Review grpcReview) {
-        return UserReviewDto.builder()
+    private UserReviewResult convertToUserReviewDto(Review grpcReview) {
+        return UserReviewResult.builder()
             .reviewId(grpcReview.getReviewId())
             .content(grpcReview.getContent())
             .createdAt(Instant.ofEpochSecond(grpcReview.getCreatedAt().getSeconds()))

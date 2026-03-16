@@ -9,7 +9,7 @@ import java.util.List;
 public record GetUserProfileResult(
         String nickname,
         String profile,
-        List<UserReviewDto> reviews,
+        List<UserReviewResult> reviews,
         UserRole role
 ) {
 }
