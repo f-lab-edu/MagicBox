@@ -3,7 +3,7 @@ package kr.magicbox.user.adapter.out.grpc;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
 import kr.magicbox.user.application.dto.UserReviewDto;
-import kr.magicbox.user.application.port.out.port.ReviewPort;
+import kr.magicbox.user.application.port.out.ReviewPort;
 import kr.magicbox.user.global.config.GrpcChannelFactory;
 import kr.magicbox.user.global.enums.ServiceHost;
 import kr.magicbox.user.global.exception.service.ReviewServiceUnavailableException;

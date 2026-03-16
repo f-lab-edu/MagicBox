@@ -1,4 +1,4 @@
-package kr.magicbox.user.application.port.out.port;
+package kr.magicbox.user.application.port.out;
 
 import kr.magicbox.user.application.dto.UserReviewDto;
 
