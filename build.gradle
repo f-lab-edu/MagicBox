@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '4.0.3' apply false
     id 'io.spring.dependency-management' version '1.1.7' apply false
+    id 'com.google.protobuf' version '0.9.6' apply false
 }
 
 configure(subprojects.findAll { it.name != 'services' }) {
@@ -26,10 +27,14 @@ configure(subprojects.findAll { it.name != 'services' }) {
         implementation 'com.github.lian2945:sonyflake:v0.0.7'
         implementation 'org.springframework.boot:spring-boot-starter-security'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation 'io.grpc:grpc-netty:1.79.0'
+        implementation 'io.grpc:grpc-protobuf:1.79.0'
+        implementation 'io.grpc:grpc-stub:1.79.0'
         annotationProcessor 'org.projectlombok:lombok'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
+
 
     tasks.named('test') {
         useJUnitPlatform()
