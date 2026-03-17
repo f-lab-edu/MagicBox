@@ -1,17 +1,12 @@
 spring:
   application:
-    name: user-local
-  config:
-    import:
-      - file:services/user/env/local.env[.properties]
+    name: user-dev
   grpc:
     client:
       review:
         address: ${REVIEW_SERVICE_URL}
         negotiation-type: plaintext
         keep-alive:
-          time: 30s
-          timeout: 5s
 
   datasource:
     url: ${MYSQL_URL}
@@ -26,7 +21,7 @@ spring:
 resilience4j:
   circuitbreaker:
     instances:
-      review:
+      reviewService:
         register-health-indicator: true
         sliding-window-type: COUNT_BASED
         sliding-window-size: 10
@@ -36,8 +31,5 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 3
   timelimiter:
     instances:
-      review:
+      reviewService:
         timeout-duration: 2s
-
-server:
-  port: ${SERVER_PORT}

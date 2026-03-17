@@ -1,5 +1,26 @@
+plugins {
+    id 'com.google.protobuf' version '0.9.6'
+}
+
 version = '0.0.1'
 description = 'auth'
 
 dependencies {
+}
+
+// protobuf 설정
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.34.0"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.79.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
 }

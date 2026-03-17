@@ -1,17 +1,11 @@
 spring:
   application:
-    name: user-local
-  config:
-    import:
-      - file:services/user/env/local.env[.properties]
+    name: user-prod
   grpc:
     client:
       review:
         address: ${REVIEW_SERVICE_URL}
-        negotiation-type: plaintext
-        keep-alive:
-          time: 30s
-          timeout: 5s
+        negotiation-type: tls
 
   datasource:
     url: ${MYSQL_URL}
@@ -21,23 +15,20 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
 resilience4j:
   circuitbreaker:
     instances:
-      review:
+      reviewService:
         register-health-indicator: true
         sliding-window-type: COUNT_BASED
-        sliding-window-size: 10
-        minimum-number-of-calls: 5
+        sliding-window-size: 20
+        minimum-number-of-calls: 10
         failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-        permitted-number-of-calls-in-half-open-state: 3
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 5
   timelimiter:
     instances:
-      review:
+      reviewService:
         timeout-duration: 2s
-
-server:
-  port: ${SERVER_PORT}
