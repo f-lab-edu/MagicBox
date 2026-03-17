@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.config;
+package kr.magicbox.user.global.configuration;
 
 import io.grpc.ManagedChannel;
 import io.grpc.netty.NettyChannelBuilder;

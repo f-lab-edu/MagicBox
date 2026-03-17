@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.config;
+package kr.magicbox.user.global.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Configuration;

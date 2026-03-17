@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.config;
+package kr.magicbox.user.global.configuration;
 
 import kr.magicbox.user.global.filter.UserInfoExtractFilter;
 import org.springframework.context.annotation.Bean;
