@@ -28,13 +28,13 @@ public class User {
     private final OAuth2Provider oauth2Provider;
 
     @Builder
-    public User(Long id, String nickname, String email, UserStatus status, 
+    public User(UserId id, Nickname nickname, String email, UserStatus status, 
                 UserRole role, String profile, String oauth2Id, 
                 OAuth2Provider oauth2Provider) {
         validateFields(nickname, email, status, role, profile, oauth2Id, oauth2Provider);
         
-        this.id = UserId.of(id);
-        this.nickname = Nickname.of(nickname);
+        this.id = id;
+        this.nickname = nickname;
         this.email = email;
         this.status = status;
         this.role = role;
@@ -55,10 +55,10 @@ public class User {
         return this.nickname.value();
     }
     
-    private void validateFields(String nickname, String email, UserStatus status, 
+    private void validateFields(Nickname nickname, String email, UserStatus status, 
                                UserRole role, String profile, String oauth2Id, 
                                OAuth2Provider oauth2Provider) {
-        if (nickname == null || nickname.trim().isEmpty()) {
+        if (nickname == null) {
             throw new InvalidFieldException("닉네임은 필수 값입니다.");
         }
         
@@ -87,9 +87,9 @@ public class User {
         }
     }
 
-    public void updateProfile(String nickname, String profile) {
-        if (nickname != null && !nickname.trim().isEmpty()) {
-            this.nickname = Nickname.of(nickname);
+    public void updateProfile(Nickname nickname, String profile) {
+        if (nickname != null) {
+            this.nickname = nickname;
         }
         if (profile != null && !profile.trim().isEmpty()) {
             this.profile = profile;

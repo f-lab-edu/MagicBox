@@ -10,16 +10,16 @@ import java.time.Instant;
 @Getter
 public class Device {
     private final DeviceId id;
-    private final String deviceId;
+    private final String deviceIdentifier;
     private final DeviceType deviceType;
     private String version;
     private Instant lastActiveAt;
     private Boolean isActive;
 
     @Builder
-    public Device(Long id, String deviceId, DeviceType deviceType, String version) {
-        this.id = DeviceId.of(id);
-        this.deviceId = deviceId;
+    public Device(DeviceId id, String deviceIdentifier, DeviceType deviceType, String version) {
+        this.id = id;
+        this.deviceIdentifier = deviceIdentifier;
         this.deviceType = deviceType;
         this.version = version;
         this.isActive = true;
