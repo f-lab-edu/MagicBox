@@ -14,10 +14,10 @@ public class UserDevice {
     private Boolean isActive;
 
     @Builder
-    public UserDevice(Long id, Long userId, Long deviceId) {
+    public UserDevice(Long id, UserId userId, DeviceId deviceId) {
         this.id = id;
-        this.userId = UserId.of(userId);
-        this.deviceId = DeviceId.of(deviceId);
+        this.userId = userId;
+        this.deviceId = deviceId;
         this.isActive = true;
     }
 
