@@ -1,12 +1,12 @@
 package kr.magicbox.user.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.constants.UserPolicyConstants;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
 import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
-import kr.magicbox.user.adapter.exception.EntityValidationException;
 import kr.magicbox.user.global.domain.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,45 +22,56 @@ import java.time.Instant;
 @Getter
 public class UserEntity extends BaseEntity {
 
+    @NotBlank(message = "닉네임은 필수입니다")
+    @Size(min = UserPolicyConstants.nicknameMinLength, max = UserPolicyConstants.nicknameMaxLength, 
+          message = "닉네임은 {min}자 이상 {max}자 이내여야 합니다")
     @Column(unique = true, nullable = false, length = UserPolicyConstants.nicknameMaxLength)
     private String nickname;
 
+    @NotBlank(message = "이메일은 필수입니다")
+    @Email(message = "올바른 이메일 형식이 아닙니다")
     @Column(nullable = false)
     private String email;
 
+    @NotNull(message = "사용자 상태는 필수입니다")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status;
 
+    @NotNull(message = "사용자 역할은 필수입니다")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
 
     private Instant lastLoginAt;
 
+    @NotNull(message = "활성 상태는 필수입니다")
     @Column(nullable = false)
     private Boolean isActive;
 
+    @NotBlank(message = "프로필은 필수입니다")
     @Column(columnDefinition = "TEXT", nullable = false)
     private String profile;
 
+    @NotNull(message = "총 사용시간은 필수입니다")
     @Column(nullable = false)
     private Duration totalUsageTime;
 
+    @NotNull(message = "리뷰 표시 여부는 필수입니다")
     @Column(nullable = false)
     private Boolean isReviewVisible;
 
+    @NotBlank(message = "OAuth2 ID는 필수입니다")
     @Column(nullable = false, unique = true, updatable = false)
     private String oauth2Id;
 
+    @NotNull(message = "OAuth2 제공자는 필수입니다")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
     private OAuth2Provider oauth2Provider;
 
     @Builder
     public UserEntity(String nickname, String email, UserStatus status, UserRole role, String profile, String oauth2Id, OAuth2Provider oauth2Provider) {
-        validateFields(nickname, email, status, role, profile, oauth2Id, oauth2Provider);
-
         this.nickname = nickname;
         this.email = email;
         this.status = status;
@@ -72,32 +83,6 @@ public class UserEntity extends BaseEntity {
         this.lastLoginAt = Instant.now();
         this.totalUsageTime = Duration.ZERO;
         this.isReviewVisible = true;
-    }
-
-    private void validateFields(String nickname, String email, UserStatus status, UserRole role, String profile, String oauth2Id, OAuth2Provider oauth2Provider) {
-        if(nickname == null || nickname.isEmpty())
-            throw new EntityValidationException("닉네임은 필수 값입니다.");
-
-        if(nickname.length() < UserPolicyConstants.nicknameMinLength || nickname.length() > UserPolicyConstants.nicknameMaxLength)
-            throw new EntityValidationException("닉네임은 " + UserPolicyConstants.nicknameMinLength + "자 이상 " + UserPolicyConstants.nicknameMaxLength + "자 이내여야 합니다.");
-        
-        if(email == null || email.isEmpty())
-            throw new EntityValidationException("이메일은 필수 값입니다.");
-
-        if(status == null)
-            throw new EntityValidationException("상태는 필수 값입니다.");
-        
-        if(role == null)
-            throw new EntityValidationException("역할은 필수 값입니다.");
-        
-        if(profile == null || profile.isEmpty())
-            throw new EntityValidationException("프로필은 필수 값입니다.");
-        
-        if(oauth2Id == null || oauth2Id.isEmpty())
-            throw new EntityValidationException("OAuth2 ID는 필수 값입니다.");
-        
-        if(oauth2Provider == null)
-            throw new EntityValidationException("OAuth2 제공자는 필수 값입니다.");
     }
 
     public void updateFromDomain(User user) {

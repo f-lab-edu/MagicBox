@@ -1,7 +1,7 @@
 package kr.magicbox.user.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
-import kr.magicbox.user.adapter.exception.EntityValidationException;
+import jakarta.validation.constraints.NotNull;
 import kr.magicbox.user.domain.aggregate.UserDevice;
 import kr.magicbox.user.global.domain.entity.BaseEntity;
 import lombok.AccessLevel;
@@ -20,34 +20,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDeviceEntity extends BaseEntity {
 
+    @NotNull(message = "사용자는 필수입니다")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @NotNull(message = "디바이스는 필수입니다")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id", nullable = false)
     private DeviceEntity device;
 
+    @NotNull(message = "활성 상태는 필수입니다")
     @Column(nullable = false)
     private Boolean isActive;
 
     @Builder
     public UserDeviceEntity(UserEntity user, DeviceEntity device) {
-        validateFields(user, device);
-        
         this.user = user;
         this.device = device;
         this.isActive = true;
-    }
-
-    private void validateFields(UserEntity user, DeviceEntity device) {
-        if (user == null) {
-            throw new EntityValidationException("사용자는 필수 값입니다.");
-        }
-        
-        if (device == null) {
-            throw new EntityValidationException("디바이스는 필수 값입니다.");
-        }
     }
 
     public void updateFromDomain(UserDevice userDevice) {
