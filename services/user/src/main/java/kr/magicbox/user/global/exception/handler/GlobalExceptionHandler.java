@@ -1,5 +1,6 @@
 package kr.magicbox.user.global.exception.handler;
 
+import jakarta.validation.ConstraintViolationException;
 import kr.magicbox.user.global.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String errorMessage = e.getBindingResult().getFieldError() != null ?
                 e.getBindingResult().getFieldError().getDefaultMessage() : "인자값이 유효하지 않습니다.";
-        log.error("메서드 인자 유효성 검증 실패: {}", errorMessage);
+        log.error("요청 데이터 유효성 검증 실패: {}", errorMessage);
+        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, errorMessage);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST.value())
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
+        String errorMessage = e.getConstraintViolations().isEmpty() ? 
+                "유효성 검증에 실패했습니다." :
+                e.getConstraintViolations().iterator().next().getMessage();
+        log.error("유효성 검증 실패: {}", errorMessage);
         ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, errorMessage);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST.value())

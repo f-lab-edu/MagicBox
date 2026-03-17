@@ -1,8 +1,9 @@
 package kr.magicbox.user.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import kr.magicbox.user.domain.enums.DeviceType;
-import kr.magicbox.user.adapter.exception.EntityValidationException;
 import kr.magicbox.user.domain.aggregate.Device;
 import kr.magicbox.user.global.domain.entity.BaseEntity;
 import lombok.AccessLevel;
@@ -18,47 +19,33 @@ import java.time.Instant;
 @Getter
 public class DeviceEntity extends BaseEntity {
 
+    @NotBlank(message = "디바이스 식별번호는 필수입니다")
     @Column(unique = true, nullable = false, updatable = false)
-    private String deviceId;
+    private String deviceIdentifier;
 
+    @NotNull(message = "디바이스 타입은 필수입니다")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
     private DeviceType deviceType;
 
+    @NotBlank(message = "앱 버전은 필수입니다")
     @Column(nullable = false)
     private String version;
 
     @Column
     private Instant lastActiveAt;
 
+    @NotNull(message = "활성 상태는 필수입니다")
     @Column(nullable = false)
     private Boolean isActive;
 
     @Builder
-    public DeviceEntity(String deviceId, DeviceType deviceType, String version) {
-        validateFields(deviceId, deviceType, version);
-
-        this.deviceId = deviceId;
+    public DeviceEntity(String deviceIdentifier, DeviceType deviceType, String version) {
+        this.deviceIdentifier = deviceIdentifier;
         this.deviceType = deviceType;
         this.version = version;
         this.isActive = true;
         this.lastActiveAt = Instant.now();
-    }
-
-    private void validateFields(String deviceId, DeviceType deviceType, String appVersion) {
-        // 필수 필드 검증
-        
-        if (deviceId == null || deviceId.isEmpty()) {
-            throw new EntityValidationException("디바이스 ID는 필수 값입니다.");
-        }
-        
-        if (deviceType == null) {
-            throw new EntityValidationException("디바이스 타입은 필수 값입니다.");
-        }
-
-        if (appVersion == null || appVersion.isEmpty()) {
-            throw new EntityValidationException("앱 버전은 필수 값입니다.");
-        }
     }
 
     public void updateFromDomain(Device device) {
