@@ -1,7 +1,8 @@
 package kr.magicbox.user.adapter.out.persistence;
 
+import kr.magicbox.user.adapter.out.persistence.entity.UserEntity;
+import kr.magicbox.user.adapter.out.persistence.repository.UserJpaRepository;
 import kr.magicbox.user.domain.repository.UserRepository;
-import kr.magicbox.user.domain.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

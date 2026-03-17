@@ -1,7 +1,8 @@
-package kr.magicbox.user.domain.entity;
+package kr.magicbox.user.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
-import kr.magicbox.user.domain.exception.InvalidFieldException;
+import kr.magicbox.user.adapter.exception.EntityValidationException;
+import kr.magicbox.user.domain.aggregate.UserDevice;
 import kr.magicbox.user.global.domain.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,19 +42,15 @@ public class UserDeviceEntity extends BaseEntity {
 
     private void validateFields(UserEntity user, DeviceEntity device) {
         if (user == null) {
-            throw new InvalidFieldException("사용자는 필수 값입니다.");
+            throw new EntityValidationException("사용자는 필수 값입니다.");
         }
         
         if (device == null) {
-            throw new InvalidFieldException("디바이스는 필수 값입니다.");
+            throw new EntityValidationException("디바이스는 필수 값입니다.");
         }
     }
 
-    public void activate() {
-        this.isActive = true;
-    }
-
-    public void deactivate() {
-        this.isActive = false;
+    public void updateFromDomain(UserDevice userDevice) {
+        this.isActive = userDevice.isConnected();
     }
 }

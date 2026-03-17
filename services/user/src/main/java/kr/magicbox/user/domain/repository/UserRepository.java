@@ -1,6 +1,6 @@
 package kr.magicbox.user.domain.repository;
 
-import kr.magicbox.user.domain.entity.UserEntity;
+import kr.magicbox.user.adapter.out.persistence.entity.UserEntity;
 
 import java.util.Optional;
 
