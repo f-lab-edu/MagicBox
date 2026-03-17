@@ -1,8 +1,6 @@
 package kr.magicbox.user.application.service;
 
 import kr.magicbox.user.adapter.exception.UserNotFoundException;
-import kr.magicbox.user.adapter.out.persistence.entity.UserEntity;
-import kr.magicbox.user.adapter.out.persistence.mapper.UserMapper;
 import kr.magicbox.user.application.dto.GetUserProfileResult;
 import kr.magicbox.user.application.dto.UserReviewResult;
 import kr.magicbox.user.application.port.in.UserProfileQueryUseCase;
@@ -21,15 +19,12 @@ import java.util.List;
 public class UserProfileQueryService implements UserProfileQueryUseCase {
     private final UserRepository userRepository;
     private final ReviewQueryPort reviewQueryPort;
-    private final UserMapper userMapper;
 
     @Override
     @Transactional(readOnly = true)
     public GetUserProfileResult getUserProfile(String nickname) {
-        UserEntity userEntity = userRepository.getUserByNickname(nickname)
+        User user = userRepository.getUserByNickname(nickname)
                 .orElseThrow(() -> new UserNotFoundException(nickname));
-
-        User user = userMapper.toDomain(userEntity);
 
         List<UserReviewResult> reviews = user.canShowReview() ?
                 reviewQueryPort.getAllReviewsByUserId(user.getId()) : Collections.emptyList();

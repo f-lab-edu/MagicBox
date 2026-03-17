@@ -1,10 +1,10 @@
 package kr.magicbox.user.domain.repository;
 
-import kr.magicbox.user.adapter.out.persistence.entity.UserEntity;
+import kr.magicbox.user.domain.aggregate.User;
 
 import java.util.Optional;
 
 public interface UserRepository {
-    Optional<UserEntity> getUserByNickname(String nickname);
-    void updateUser(UserEntity user);
+    Optional<User> getUserByNickname(String nickname);
+    void updateUser(User user);
 }

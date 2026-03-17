@@ -1,6 +1,8 @@
 package kr.magicbox.user.adapter.out.persistence.mapper;
 
 import kr.magicbox.user.domain.aggregate.User;
+import kr.magicbox.user.domain.vo.UserId;
+import kr.magicbox.user.domain.vo.Nickname;
 import kr.magicbox.user.adapter.out.persistence.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +23,8 @@ public class UserMapper {
 
     public User toDomain(UserEntity entity) {
         return User.builder()
-                .id(entity.getId())
-                .nickname(entity.getNickname())
+                .id(UserId.of(entity.getId()))
+                .nickname(Nickname.of(entity.getNickname()))
                 .email(entity.getEmail())
                 .status(entity.getStatus())
                 .role(entity.getRole())
