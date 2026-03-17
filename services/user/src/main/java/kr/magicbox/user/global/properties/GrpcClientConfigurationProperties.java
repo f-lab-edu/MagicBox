@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Getter
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "spring.grpc")
+@ConfigurationProperties(prefix = "grpc")
 public class GrpcClientConfigurationProperties {
 
     private final Map<String, ServiceConfig> client;
