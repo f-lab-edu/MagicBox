@@ -1,6 +1,6 @@
 package kr.magicbox.user.application.service;
 
-import kr.magicbox.user.adapter.exception.UserNotFoundException;
+import kr.magicbox.user.adapter.out.persistence.exception.UserNotFoundException;
 import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
 import kr.magicbox.user.application.port.in.UserProfileCommandUseCase;
 import kr.magicbox.user.domain.aggregate.User;
