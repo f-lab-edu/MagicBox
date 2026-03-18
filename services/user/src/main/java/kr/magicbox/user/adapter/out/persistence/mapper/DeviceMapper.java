@@ -22,6 +22,8 @@ public class DeviceMapper {
                 .deviceIdentifier(entity.getDeviceIdentifier())
                 .deviceType(entity.getDeviceType())
                 .version(entity.getVersion())
+                .isActive(entity.getIsActive())
+                .lastActiveAt(entity.getLastActiveAt())
                 .build();
     }
 

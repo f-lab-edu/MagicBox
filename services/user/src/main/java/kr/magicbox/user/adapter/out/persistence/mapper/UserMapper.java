@@ -31,6 +31,10 @@ public class UserMapper {
                 .profile(entity.getProfile())
                 .oauth2Id(entity.getOauth2Id())
                 .oauth2Provider(entity.getOauth2Provider())
+                .isReviewVisible(entity.getIsReviewVisible())
+                .isActive(entity.getIsActive())
+                .lastLoginAt(entity.getLastLoginAt())
+                .totalUsageTime(entity.getTotalUsageTime())
                 .build();
     }
 

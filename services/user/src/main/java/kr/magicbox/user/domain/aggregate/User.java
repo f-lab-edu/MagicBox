@@ -28,11 +28,12 @@ public class User {
     private final OAuth2Provider oauth2Provider;
 
     @Builder
-    public User(UserId id, Nickname nickname, String email, UserStatus status, 
-                UserRole role, String profile, String oauth2Id, 
-                OAuth2Provider oauth2Provider) {
+    public User(UserId id, Nickname nickname, String email, UserStatus status,
+                UserRole role, String profile, String oauth2Id,
+                OAuth2Provider oauth2Provider, Boolean isReviewVisible, Boolean isActive,
+                Instant lastLoginAt, Duration totalUsageTime) {
         validateFields(nickname, email, status, role, profile, oauth2Id, oauth2Provider);
-        
+
         this.id = id;
         this.nickname = nickname;
         this.email = email;
@@ -41,10 +42,10 @@ public class User {
         this.profile = profile;
         this.oauth2Id = oauth2Id;
         this.oauth2Provider = oauth2Provider;
-        this.isActive = false;
-        this.lastLoginAt = Instant.now();
-        this.totalUsageTime = Duration.ZERO;
-        this.isReviewVisible = true;
+        this.isActive = isActive != null ? isActive : false;
+        this.lastLoginAt = lastLoginAt != null ? lastLoginAt : Instant.now();
+        this.totalUsageTime = totalUsageTime != null ? totalUsageTime : Duration.ZERO;
+        this.isReviewVisible = isReviewVisible != null ? isReviewVisible : true;
     }
 
     public Long getId() {

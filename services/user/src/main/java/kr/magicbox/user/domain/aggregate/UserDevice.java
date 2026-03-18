@@ -14,11 +14,11 @@ public class UserDevice {
     private Boolean isActive;
 
     @Builder
-    public UserDevice(Long id, UserId userId, DeviceId deviceId) {
+    public UserDevice(Long id, UserId userId, DeviceId deviceId, Boolean isActive) {
         this.id = id;
         this.userId = userId;
         this.deviceId = deviceId;
-        this.isActive = true;
+        this.isActive = isActive != null ? isActive : true;
     }
 
     public void connect() {

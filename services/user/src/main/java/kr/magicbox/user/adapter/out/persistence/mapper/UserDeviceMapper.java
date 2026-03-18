@@ -25,17 +25,12 @@ public class UserDeviceMapper {
     }
 
     public UserDevice toDomain(UserDeviceEntity entity) {
-        UserDevice userDevice = UserDevice.builder()
+        return UserDevice.builder()
                 .id(entity.getId())
                 .userId(UserId.of(entity.getUser().getId()))
                 .deviceId(DeviceId.of(entity.getDevice().getId()))
+                .isActive(entity.getIsActive())
                 .build();
-        
-        if (!entity.getIsActive()) {
-            userDevice.disconnect();
-        }
-        
-        return userDevice;
     }
 
     public void updateEntity(UserDevice userDevice, UserDeviceEntity entity) {

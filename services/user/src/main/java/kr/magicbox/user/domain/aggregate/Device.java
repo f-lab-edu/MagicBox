@@ -17,13 +17,14 @@ public class Device {
     private Boolean isActive;
 
     @Builder
-    public Device(DeviceId id, String deviceIdentifier, DeviceType deviceType, String version) {
+    public Device(DeviceId id, String deviceIdentifier, DeviceType deviceType, String version,
+                  Boolean isActive, Instant lastActiveAt) {
         this.id = id;
         this.deviceIdentifier = deviceIdentifier;
         this.deviceType = deviceType;
         this.version = version;
-        this.isActive = true;
-        this.lastActiveAt = Instant.now();
+        this.isActive = isActive != null ? isActive : true;
+        this.lastActiveAt = lastActiveAt != null ? lastActiveAt : Instant.now();
     }
 
     public void updateVersion(String newVersion) {
