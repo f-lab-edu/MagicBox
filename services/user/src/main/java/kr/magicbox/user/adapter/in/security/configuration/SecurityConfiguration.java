@@ -1,6 +1,6 @@
-package kr.magicbox.user.global.configuration;
+package kr.magicbox.user.adapter.in.security.configuration;
 
-import kr.magicbox.user.global.filter.UserInfoExtractFilter;
+import kr.magicbox.user.adapter.in.security.filter.UserInfoExtractFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

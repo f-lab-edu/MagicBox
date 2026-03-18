@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.filter;
+package kr.magicbox.user.adapter.in.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
