@@ -26,6 +26,7 @@ public class AtLeastOneNotNullValidator implements ConstraintValidator<AtLeastOn
         BeanWrapper beanWrapper = new BeanWrapperImpl(value);
 
         return Arrays.stream(fields)
+                .filter(beanWrapper::isReadableProperty)
                 .map(beanWrapper::getPropertyValue)
                 .anyMatch(Objects::nonNull);
     }
