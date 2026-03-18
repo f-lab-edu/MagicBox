@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.properties;
+package kr.magicbox.user.adapter.out.communication.grpc;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,10 +1,9 @@
-package kr.magicbox.user.global.configuration;
+package kr.magicbox.user.adapter.out.communication.grpc;
 
 import io.grpc.ManagedChannel;
 import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.netty.NegotiationType;
-import kr.magicbox.user.global.exception.service.GrpcServiceConfigurationNotFoundException;
-import kr.magicbox.user.global.properties.GrpcClientConfigurationProperties;
+import kr.magicbox.user.adapter.out.communication.grpc.exception.GrpcServiceConfigurationNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

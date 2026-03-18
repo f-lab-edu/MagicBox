@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.enums;
+package kr.magicbox.user.adapter.out.communication;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

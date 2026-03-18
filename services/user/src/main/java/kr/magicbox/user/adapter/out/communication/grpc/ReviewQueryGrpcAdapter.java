@@ -1,12 +1,11 @@
-package kr.magicbox.user.adapter.out.grpc;
+package kr.magicbox.user.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
+import kr.magicbox.user.adapter.out.communication.ServiceHost;
+import kr.magicbox.user.adapter.out.communication.grpc.exception.ReviewServiceUnavailableException;
 import kr.magicbox.user.application.dto.UserReviewResult;
 import kr.magicbox.user.application.port.out.ReviewQueryPort;
-import kr.magicbox.user.global.configuration.GrpcChannelFactory;
-import kr.magicbox.user.global.enums.ServiceHost;
-import kr.magicbox.user.global.exception.service.ReviewServiceUnavailableException;
 import kr.magicbox.user.grpc.review.GetAllReviewsByUserIdRequest;
 import kr.magicbox.user.grpc.review.GetAllReviewsByUserIdResponse;
 import kr.magicbox.user.grpc.review.Review;
@@ -34,7 +33,7 @@ public class ReviewQueryGrpcAdapter implements ReviewQueryPort {
         ManagedChannel channel = grpcChannelFactory.getChannel(ServiceHost.REVIEW.getHostName());
         ReviewServiceGrpc.ReviewServiceBlockingStub reviewStub = ReviewServiceGrpc.newBlockingStub(channel);
         GetAllReviewsByUserIdResponse response = reviewStub.getAllReviewsByUserId(request);
-        
+
         return response.getReviewsList().stream()
             .map(this::convertToUserReviewDto)
             .toList();
@@ -45,7 +44,7 @@ public class ReviewQueryGrpcAdapter implements ReviewQueryPort {
         log.warn("리뷰 서비스 연결 실패");
         throw new ReviewServiceUnavailableException(userId, throwable);
     }
-    
+
     private UserReviewResult convertToUserReviewDto(Review grpcReview) {
         return UserReviewResult.builder()
             .reviewId(grpcReview.getReviewId())

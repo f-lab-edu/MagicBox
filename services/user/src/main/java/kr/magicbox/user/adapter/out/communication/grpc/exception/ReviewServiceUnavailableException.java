@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.exception.service;
+package kr.magicbox.user.adapter.out.communication.grpc.exception;
 
 import kr.magicbox.user.global.exception.SystemError;
 import org.springframework.http.HttpStatus;
