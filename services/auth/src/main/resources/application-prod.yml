@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: auth-prod
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-wait: -1ms
+          max-idle: 10
+          min-idle: 5
+
+logging:
+  level:
+    reactor.netty: WARN
+    org.springframework.web: WARN
+    org.springframework.data.redis: WARN
+    root: INFO

@@ -1,9 +1,6 @@
 spring:
   application:
-    name: auth-local
-  config:
-    import:
-      - file:services/auth/env/local.env[.properties]
+    name: auth-dev
   data:
     redis:
       host: ${REDIS_HOST}
@@ -17,5 +14,8 @@ spring:
           max-idle: 8
           min-idle: 0
 
-server:
-  port: ${SERVER_PORT}
+logging:
+  level:
+    reactor.netty: INFO
+    org.springframework.web: INFO
+    org.springframework.data.redis: INFO
