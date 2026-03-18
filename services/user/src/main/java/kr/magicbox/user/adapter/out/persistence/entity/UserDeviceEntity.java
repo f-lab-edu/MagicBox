@@ -2,8 +2,8 @@ package kr.magicbox.user.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import kr.magicbox.user.adapter.out.persistence.entity.BaseEntity;
 import kr.magicbox.user.domain.aggregate.UserDevice;
-import kr.magicbox.user.global.domain.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

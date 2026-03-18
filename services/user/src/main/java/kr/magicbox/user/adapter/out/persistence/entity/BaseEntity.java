@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.domain.entity;
+package kr.magicbox.user.adapter.out.persistence.entity;
 
 import com.github.lian2945.sonyflake.annotation.SonyflakeId;
 import jakarta.persistence.Column;
