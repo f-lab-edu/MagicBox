@@ -1,10 +1,10 @@
-package kr.magicbox.user.domain.repository;
+package kr.magicbox.user.application.port.out;
 
 import kr.magicbox.user.domain.aggregate.User;
 
 import java.util.Optional;
 
-public interface UserRepository {
+public interface UserRepositoryOutPort {
     Optional<User> getUserByNickname(String nickname);
     void updateUser(User user);
 }
