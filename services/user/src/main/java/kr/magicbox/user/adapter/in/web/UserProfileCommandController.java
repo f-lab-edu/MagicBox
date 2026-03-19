@@ -1,4 +1,4 @@
-package kr.magicbox.user.adapter.in;
+package kr.magicbox.user.adapter.in.web;
 
 import jakarta.validation.Valid;
 import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/user/profile")
+@RequestMapping("/api/users/profile")
 @RequiredArgsConstructor
 public class UserProfileCommandController {
     private final UserProfileCommandUseCase userProfileCommandUseCase;
