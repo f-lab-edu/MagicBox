@@ -5,7 +5,7 @@ import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.in.ReissueTokenUseCase;
 import kr.magicbox.auth.domain.aggregate.RefreshToken;
 import kr.magicbox.auth.domain.enums.UserRole;
-import kr.magicbox.auth.domain.repository.RefreshTokenRepository;
+import kr.magicbox.auth.application.port.out.RefreshTokenRepositoryPort;
 import kr.magicbox.auth.domain.service.TokenManager;
 import kr.magicbox.auth.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ReissueTokenService implements ReissueTokenUseCase {
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepositoryPort refreshTokenRepositoryPortPort;
     private final TokenManager tokenManager;
 
     @Override
     @Transactional
     public TokenResult reissueToken(String refreshToken) {
         // 1. RefreshToken 검증 및 조회
-        RefreshToken token = refreshTokenRepository.getRefreshToken(refreshToken)
+        RefreshToken token = refreshTokenRepositoryPort.getRefreshToken(refreshToken)
                 .orElseThrow(RefreshTokenNotFoundException::new);
 
         token.validate();
@@ -36,7 +36,7 @@ public class ReissueTokenService implements ReissueTokenUseCase {
         String newRefreshTokenValue = tokenManager.generateRefreshToken(userId, userRole);
 
         // 4. 기존 RefreshToken 삭제
-        refreshTokenRepository.deleteRefreshToken(refreshToken);
+        refreshTokenRepositoryPort.deleteRefreshToken(refreshToken);
 
         // 5. 새로운 RefreshToken 저장
         RefreshToken newRefreshToken = RefreshToken.builder()
@@ -44,7 +44,7 @@ public class ReissueTokenService implements ReissueTokenUseCase {
                 .userId(userId)
                 .build();
 
-        refreshTokenRepository.saveRefreshToken(newRefreshToken);
+        refreshTokenRepositoryPort.saveRefreshToken(newRefreshToken);
 
         // 6. 결과 반환
         return TokenResult.builder()

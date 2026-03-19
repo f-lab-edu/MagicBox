@@ -4,7 +4,7 @@ import kr.magicbox.auth.adapter.out.persistence.entity.RefreshTokenEntity;
 import kr.magicbox.auth.adapter.out.persistence.mapper.RefreshTokenMapper;
 import kr.magicbox.auth.adapter.out.persistence.repository.RefreshTokenRedisRepository;
 import kr.magicbox.auth.domain.aggregate.RefreshToken;
-import kr.magicbox.auth.domain.repository.RefreshTokenRepository;
+import kr.magicbox.auth.application.port.out.RefreshTokenRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class RefreshTokenRedisAdapter implements RefreshTokenRepository {
+public class RefreshTokenRedisAdapter implements RefreshTokenRepositoryPort {
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final RefreshTokenMapper refreshTokenMapper;
 

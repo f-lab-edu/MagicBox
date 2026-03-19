@@ -3,7 +3,7 @@ package kr.magicbox.auth.adapter.out.persistence;
 import kr.magicbox.auth.adapter.out.persistence.mapper.CodeMapper;
 import kr.magicbox.auth.adapter.out.persistence.repository.CodeRedisRepository;
 import kr.magicbox.auth.domain.aggregate.Code;
-import kr.magicbox.auth.domain.repository.CodeRepository;
+import kr.magicbox.auth.application.port.out.CodeRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class CodeRedisAdapter implements CodeRepository {
+public class CodeRedisAdapter implements CodeRepositoryPort {
     private final CodeRedisRepository codeRedisRepository;
     private final CodeMapper codeMapper;
 
