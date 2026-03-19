@@ -1,6 +1,8 @@
 package kr.magicbox.auth.domain.aggregate;
 
+import kr.magicbox.auth.domain.exception.ExpiredRefreshTokenException;
 import kr.magicbox.auth.domain.exception.InvalidFieldException;
+import kr.magicbox.auth.domain.exception.RevokedRefreshTokenException;
 import kr.magicbox.auth.domain.vo.UserId;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,14 +18,14 @@ public class RefreshToken {
     private boolean isRevoked;
 
     @Builder
-    public RefreshToken(String token, UserId userId, Instant expiresAt) {
+    public RefreshToken(String token, UserId userId, Instant expiresAt, Boolean isRevoked) {
         validateFields(token, userId, expiresAt);
-        
+
         this.token = token;
         this.userId = userId;
         this.expiresAt = expiresAt;
         this.createdAt = Instant.now();
-        this.isRevoked = false;
+        this.isRevoked = isRevoked != null ? isRevoked : false;
     }
 
     public boolean isExpired() {
@@ -34,6 +36,15 @@ public class RefreshToken {
         return !isRevoked && !isExpired();
     }
 
+    public void validate() {
+        if (isRevoked) {
+            throw new RevokedRefreshTokenException();
+        }
+        if (isExpired()) {
+            throw new ExpiredRefreshTokenException();
+        }
+    }
+
     public void revoke() {
         this.isRevoked = true;
     }
@@ -42,15 +53,15 @@ public class RefreshToken {
         if (token == null || token.trim().isEmpty()) {
             throw new InvalidFieldException("토큰은 필수 값입니다.");
         }
-        
+
         if (userId == null) {
             throw new InvalidFieldException("사용자 ID는 필수 값입니다.");
         }
-        
+
         if (expiresAt == null) {
             throw new InvalidFieldException("만료 시간은 필수 값입니다.");
         }
-        
+
         if (expiresAt.isBefore(Instant.now())) {
             throw new InvalidFieldException("만료 시간은 현재 시간 이후여야 합니다.");
         }
