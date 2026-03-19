@@ -5,7 +5,7 @@ import kr.magicbox.user.application.dto.GetUserProfileResult;
 import kr.magicbox.user.application.dto.UserReviewResult;
 import kr.magicbox.user.application.port.in.UserProfileQueryUseCase;
 import kr.magicbox.user.application.port.out.ReviewQueryPort;
-import kr.magicbox.user.application.port.out.UserRepositoryOutPort;
+import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserProfileQueryService implements UserProfileQueryUseCase {
-    private final UserRepositoryOutPort userRepositoryOutPort;
+    private final UserRepositoryPort userRepositoryPort;
     private final ReviewQueryPort reviewQueryPort;
 
     @Override
     @Transactional(readOnly = true)
     public GetUserProfileResult getUserProfile(String nickname) {
-        User user = userRepositoryOutPort.getUserByNickname(nickname)
+        User user = userRepositoryPort.getUserByNickname(nickname)
                 .orElseThrow(() -> new UserNotFoundException(nickname));
 
         List<UserReviewResult> reviews = user.canShowReview() ?

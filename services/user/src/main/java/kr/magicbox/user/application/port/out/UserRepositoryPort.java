@@ -4,7 +4,7 @@ import kr.magicbox.user.domain.aggregate.User;
 
 import java.util.Optional;
 
-public interface UserRepositoryOutPort {
+public interface UserRepositoryPort {
     Optional<User> getUserByNickname(String nickname);
     void updateUser(User user);
 }
