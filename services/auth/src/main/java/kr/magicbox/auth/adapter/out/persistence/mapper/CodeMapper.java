@@ -1,0 +1,27 @@
+package kr.magicbox.auth.adapter.out.persistence.mapper;
+
+import kr.magicbox.auth.adapter.out.persistence.entity.CodeEntity;
+import kr.magicbox.auth.domain.aggregate.Code;
+import kr.magicbox.auth.domain.vo.UserId;
+import org.springframework.stereotype.Component;
+
+@Component
+public class CodeMapper {
+
+    public CodeEntity toEntity(Code code) {
+        return CodeEntity.builder()
+                .code(code.getCode())
+                .userId(code.getUserId().value())
+                .expiresAt(code.getExpiresAt())
+                .createdAt(code.getCreatedAt())
+                .build();
+    }
+
+    public Code toDomain(CodeEntity entity) {
+        return Code.builder()
+                .code(entity.getCode())
+                .userId(UserId.of(entity.getUserId()))
+                .expiresAt(entity.getExpiresAt())
+                .build();
+    }
+}
