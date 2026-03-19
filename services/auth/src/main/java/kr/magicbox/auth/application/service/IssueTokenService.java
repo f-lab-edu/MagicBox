@@ -1,6 +1,6 @@
 package kr.magicbox.auth.application.service;
 
-import kr.magicbox.auth.adapter.exception.CodeNotFoundException;
+import kr.magicbox.auth.adapter.out.persistence.exception.CodeNotFoundException;
 import kr.magicbox.auth.application.dto.IssueTokenCommand;
 import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.in.IssueTokenUseCase;
