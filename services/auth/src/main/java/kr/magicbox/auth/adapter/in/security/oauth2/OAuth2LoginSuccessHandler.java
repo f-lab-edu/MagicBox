@@ -8,7 +8,6 @@ import kr.magicbox.auth.application.port.out.UserCredentialPort;
 import kr.magicbox.auth.domain.aggregate.Code;
 import kr.magicbox.auth.domain.enums.UserRole;
 import kr.magicbox.auth.domain.vo.UserId;
-import kr.magicbox.auth.global.properties.FrontendProperties;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.Authentication;

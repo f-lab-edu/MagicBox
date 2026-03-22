@@ -1,4 +1,4 @@
-package kr.magicbox.auth.global.properties;
+package kr.magicbox.auth.adapter.in.security.oauth2;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
