@@ -30,4 +30,9 @@ public class CodeRedisAdapter implements CodeRepositoryPort {
     public void deleteById(String code) {
         codeRedisRepository.deleteById(code);
     }
+
+    @Override
+    public void saveCode(Code code) {
+        codeRedisRepository.save(codeMapper.toEntity(code));
+    }
 }
