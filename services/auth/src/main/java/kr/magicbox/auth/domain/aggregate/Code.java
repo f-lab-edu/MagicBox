@@ -14,18 +14,16 @@ public class Code {
     private final String code;
     private final UserId userId;
     private final UserRole role;
-    private final boolean isNewUser;
     private final Instant expiresAt;
     private final Instant createdAt;
 
     @Builder
-    public Code(String code, UserId userId, UserRole role, boolean isNewUser, Instant expiresAt) {
+    public Code(String code, UserId userId, UserRole role, Instant expiresAt) {
         validateFields(code, userId, role, expiresAt);
 
         this.code = code;
         this.userId = userId;
         this.role = role;
-        this.isNewUser = isNewUser;
         this.expiresAt = expiresAt;
         this.createdAt = Instant.now();
     }
