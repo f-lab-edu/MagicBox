@@ -14,7 +14,6 @@ public class CodeMapper {
                 .code(code.getCode())
                 .userId(code.getUserId().value())
                 .role(code.getRole().name())
-                .isNewUser(code.isNewUser())
                 .expiresAt(code.getExpiresAt())
                 .createdAt(code.getCreatedAt())
                 .build();
@@ -25,7 +24,6 @@ public class CodeMapper {
                 .code(entity.getCode())
                 .userId(UserId.of(entity.getUserId()))
                 .role(UserRole.of(entity.getRole()))
-                .isNewUser(Boolean.TRUE.equals(entity.getIsNewUser()))
                 .expiresAt(entity.getExpiresAt())
                 .build();
     }
