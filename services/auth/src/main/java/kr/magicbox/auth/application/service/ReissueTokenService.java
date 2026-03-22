@@ -16,7 +16,7 @@ import java.time.Instant;
 @Service
 @RequiredArgsConstructor
 public class ReissueTokenService implements ReissueTokenUseCase {
-    private final RefreshTokenRepositoryPort refreshTokenRepositoryPortPort;
+    private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
     private final TokenManager tokenManager;
 
     @Override

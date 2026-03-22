@@ -5,23 +5,25 @@ import kr.magicbox.auth.application.dto.IssueTokenCommand;
 import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.in.IssueTokenUseCase;
 import kr.magicbox.auth.domain.aggregate.Code;
-import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.domain.aggregate.RefreshToken;
 import kr.magicbox.auth.domain.enums.UserRole;
 import kr.magicbox.auth.application.port.out.CodeRepositoryPort;
 import kr.magicbox.auth.application.port.out.RefreshTokenRepositoryPort;
 import kr.magicbox.auth.application.port.out.TokenManager;
+import kr.magicbox.auth.domain.vo.AccessTokenValue;
+import kr.magicbox.auth.domain.vo.RefreshTokenValue;
 import kr.magicbox.auth.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
 public class IssueTokenService implements IssueTokenUseCase {
-    private final CodeRepositoryPort codeRepositoryPortPort;
-    private final RefreshTokenRepositoryPort refreshTokenRepositoryPortPort;
+    private final CodeRepositoryPort codeRepositoryPort;
+    private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
     private final TokenManager tokenManager;
 
     @Override
@@ -38,25 +40,27 @@ public class IssueTokenService implements IssueTokenUseCase {
         UserRole userRole = code.getRole();
 
         // 3. 토큰 생성
-        TokenResult tokenResult = tokenManager.generateTokenPair(userId, userRole);
+        AccessTokenValue accessToken = tokenManager.generateAccessToken(userId, userRole);
+        RefreshTokenValue refreshTokenValue = tokenManager.generateRefreshToken(userId, userRole);
 
         // 4. RefreshToken 저장
         Instant expiresAt = Instant.now().plusMillis(tokenManager.getRefreshTokenExpiration());
         RefreshToken refreshToken = RefreshToken.builder()
-                .token(tokenResult.refreshToken())
+                .refreshTokenValue(refreshTokenValue)
                 .userId(userId)
                 .expiresAt(expiresAt)
                 .build();
 
-        refreshTokenRepositoryPort.saveRefreshToken(refreshToken);
+        refreshTokenRepositoryPort.save(refreshToken);
 
         // 5. Code 삭제 (일회용)
-        codeRepositoryPort.deleteById(code.getCode());
+        codeRepositoryPort.deleteCode(code.getCode());
 
         // 6. 결과 반환
         return TokenResult.builder()
-                .accessToken(tokenResult.accessToken())
-                .refreshToken(tokenResult.refreshToken())
+                .accessToken(accessToken)
+                .refreshToken(refreshTokenValue)
+                .isNewUser(code.isNewUser())
                 .build();
     }
 }

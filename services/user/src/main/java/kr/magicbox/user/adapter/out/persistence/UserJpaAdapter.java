@@ -1,5 +1,6 @@
 package kr.magicbox.user.adapter.out.persistence;
 
+import kr.magicbox.user.adapter.out.persistence.entity.UserEntity;
 import kr.magicbox.user.adapter.out.persistence.mapper.UserMapper;
 import kr.magicbox.user.adapter.out.persistence.repository.UserJpaRepository;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
@@ -36,8 +37,8 @@ public class UserJpaAdapter implements UserRepositoryPort {
 
     @Override
     public User saveUser(User user) {
-        var entity = userMapper.toEntity(user);
-        var saved = userJpaRepository.save(entity);
+        UserEntity entity = userMapper.toEntity(user);
+        UserEntity saved = userJpaRepository.save(entity);
         return userMapper.toDomain(saved);
     }
 
