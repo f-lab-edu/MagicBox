@@ -2,6 +2,7 @@ package kr.magicbox.auth.application.service;
 
 import kr.magicbox.auth.adapter.out.persistence.exception.CodeNotFoundException;
 import kr.magicbox.auth.application.dto.IssueTokenCommand;
+import kr.magicbox.auth.application.dto.IssueTokenResult;
 import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.in.IssueTokenUseCase;
 import kr.magicbox.auth.domain.aggregate.Code;
@@ -28,7 +29,7 @@ public class IssueTokenService implements IssueTokenUseCase {
 
     @Override
     @Transactional
-    public TokenResult issueToken(IssueTokenCommand command) {
+    public IssueTokenResult issueToken(IssueTokenCommand command) {
         // 1. Code 검증 및 조회
         Code code = codeRepositoryPort.getCodeByValue(command.code())
                 .orElseThrow(CodeNotFoundException::new);
@@ -57,10 +58,9 @@ public class IssueTokenService implements IssueTokenUseCase {
         codeRepositoryPort.deleteCode(code.getCode());
 
         // 6. 결과 반환
-        return TokenResult.builder()
+        return IssueTokenResult.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshTokenValue)
-                .isNewUser(code.isNewUser())
                 .build();
     }
 }

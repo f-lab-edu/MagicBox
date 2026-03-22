@@ -7,7 +7,6 @@ import lombok.Builder;
 @Builder
 public record TokenResult(
     AccessTokenValue accessToken,
-    RefreshTokenValue refreshToken,
-    boolean isNewUser
+    RefreshTokenValue refreshToken
 ) {
 }
