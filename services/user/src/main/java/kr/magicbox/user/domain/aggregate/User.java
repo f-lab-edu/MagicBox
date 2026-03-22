@@ -32,7 +32,7 @@ public class User {
                 UserRole role, String profile, String oauth2Id,
                 OAuth2Provider oauth2Provider, Boolean isReviewVisible, Boolean isActive,
                 Instant lastLoginAt, Duration totalUsageTime) {
-        validateFields(nickname, email, status, role, profile, oauth2Id, oauth2Provider);
+        validateFields(email, status, oauth2Id, oauth2Provider);
 
         this.id = id;
         this.nickname = nickname;
@@ -53,47 +53,34 @@ public class User {
     }
 
     public String getNickname() {
-        return this.nickname.value();
+        return this.nickname != null ? this.nickname.value() : null;
     }
-    
-    private void validateFields(Nickname nickname, String email, UserStatus status, 
-                               UserRole role, String profile, String oauth2Id, 
-                               OAuth2Provider oauth2Provider) {
-        if (nickname == null) {
-            throw new InvalidFieldException("닉네임은 필수 값입니다.");
-        }
-        
+
+    private void validateFields(String email, UserStatus status,
+                                String oauth2Id, OAuth2Provider oauth2Provider) {
         if (email == null || email.trim().isEmpty()) {
             throw new InvalidFieldException("이메일은 필수 값입니다.");
         }
-
         if (status == null) {
             throw new InvalidFieldException("상태는 필수 값입니다.");
         }
-        
-        if (role == null) {
-            throw new InvalidFieldException("역할은 필수 값입니다.");
-        }
-        
-        if (profile == null || profile.trim().isEmpty()) {
-            throw new InvalidFieldException("프로필은 필수 값입니다.");
-        }
-        
         if (oauth2Id == null || oauth2Id.trim().isEmpty()) {
             throw new InvalidFieldException("OAuth2 ID는 필수 값입니다.");
         }
-        
         if (oauth2Provider == null) {
             throw new InvalidFieldException("OAuth2 제공자는 필수 값입니다.");
         }
     }
 
-    public void updateProfile(Nickname nickname, String profile) {
+    public void updateProfile(Nickname nickname, String profile, Boolean isReviewVisible) {
         if (nickname != null) {
             this.nickname = nickname;
         }
         if (profile != null && !profile.trim().isEmpty()) {
             this.profile = profile;
+        }
+        if (isReviewVisible != null) {
+            this.isReviewVisible = isReviewVisible;
         }
     }
 

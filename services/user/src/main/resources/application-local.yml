@@ -1,10 +1,14 @@
 spring:
   application:
     name: user-local
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   config:
     import:
       - file:services/user/env/local.env[.properties]
   grpc:
+    server:
+      port: 9090
     client:
       review:
         address: ${REVIEW_SERVICE_URL}

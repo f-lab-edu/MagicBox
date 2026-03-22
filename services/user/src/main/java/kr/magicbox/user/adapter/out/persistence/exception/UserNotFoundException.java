@@ -4,7 +4,7 @@ import kr.magicbox.user.global.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 
 public class UserNotFoundException extends BusinessException {
-    public UserNotFoundException(String nickname) {
-        super("사용자 " + nickname + " 을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    public UserNotFoundException() {
+        super("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
     }
 }

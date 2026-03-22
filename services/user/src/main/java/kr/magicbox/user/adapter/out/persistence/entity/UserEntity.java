@@ -22,10 +22,9 @@ import java.time.Instant;
 @Getter
 public class UserEntity extends BaseEntity {
 
-    @NotBlank(message = "닉네임은 필수입니다")
-    @Size(min = UserPolicyConstants.nicknameMinLength, max = UserPolicyConstants.nicknameMaxLength, 
+    @Size(min = UserPolicyConstants.nicknameMinLength, max = UserPolicyConstants.nicknameMaxLength,
           message = "닉네임은 {min}자 이상 {max}자 이내여야 합니다")
-    @Column(unique = true, nullable = false, length = UserPolicyConstants.nicknameMaxLength)
+    @Column(unique = true, nullable = true, length = UserPolicyConstants.nicknameMaxLength)
     private String nickname;
 
     @NotBlank(message = "이메일은 필수입니다")

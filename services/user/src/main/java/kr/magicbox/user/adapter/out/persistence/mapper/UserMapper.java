@@ -24,7 +24,7 @@ public class UserMapper {
     public User toDomain(UserEntity entity) {
         return User.builder()
                 .id(UserId.of(entity.getId()))
-                .nickname(Nickname.of(entity.getNickname()))
+                .nickname(entity.getNickname() != null ? Nickname.of(entity.getNickname()) : null)
                 .email(entity.getEmail())
                 .status(entity.getStatus())
                 .role(entity.getRole())

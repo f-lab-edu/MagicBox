@@ -1,6 +1,6 @@
 package kr.magicbox.user.application.service;
 
-import kr.magicbox.user.adapter.exception.UserNotFoundException;
+import kr.magicbox.user.adapter.out.persistence.exception.UserNotFoundException;
 import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
 import kr.magicbox.user.application.port.in.UserProfileCommandUseCase;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
@@ -17,11 +17,15 @@ public class UserProfileCommandService implements UserProfileCommandUseCase {
 
     @Override
     @Transactional
-    public void updateUserProfile(UpdateUserProfileCommand command) {
-        User user = userRepositoryPort.getUserByNickname(command.beforeNickname())
-                .orElseThrow(() -> new UserNotFoundException(command.beforeNickname()));
+    public void updateUserProfile(Long userId, UpdateUserProfileCommand command) {
+        User user = userRepositoryPort.getUserById(userId)
+                .orElseThrow(UserNotFoundException::new);
 
-        user.updateProfile(Nickname.of(command.nickname()), command.profile());
+        user.updateProfile(
+                command.nickname() != null ? Nickname.of(command.nickname()) : null,
+                command.profile(),
+                command.isReviewVisible()
+        );
 
         userRepositoryPort.updateUser(user);
     }

@@ -1,7 +1,7 @@
 package kr.magicbox.user.adapter.in.web;
 
 import jakarta.validation.constraints.NotNull;
-import kr.magicbox.user.application.dto.GetUserProfileResult;
+import kr.magicbox.user.adapter.in.web.dto.GetUserProfileResponse;
 import kr.magicbox.user.application.port.in.UserProfileQueryUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,14 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
-@RequestMapping("/api/users/profile")
+@RequestMapping("/api/user/profile")
 @RequiredArgsConstructor
 public class UserProfileQueryController {
     private final UserProfileQueryUseCase userProfileQueryUseCase;
 
     @GetMapping("/{nickname}")
-    public ResponseEntity<GetUserProfileResult> getUserProfile(@PathVariable @NotNull String nickname) {
-        GetUserProfileResult getUserProfileResult = userProfileQueryUseCase.getUserProfile(nickname);
-        return ResponseEntity.ok(getUserProfileResult);
+    public ResponseEntity<GetUserProfileResponse> getUserProfile(@PathVariable @NotNull String nickname) {
+        return ResponseEntity.ok(GetUserProfileResponse.from(userProfileQueryUseCase.getUserProfile(nickname)));
     }
 }

@@ -1,6 +1,8 @@
 spring:
   application:
     name: user-prod
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   grpc:
     client:
       review:

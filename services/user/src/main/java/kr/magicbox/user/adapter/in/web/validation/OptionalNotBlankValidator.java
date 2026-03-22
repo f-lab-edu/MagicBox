@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.validation;
+package kr.magicbox.user.adapter.in.web.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
