@@ -28,7 +28,6 @@ public class UserProfileCommandService implements UserProfileCommandUseCase {
                     .ifPresent(found -> { throw new DuplicateNicknameException(command.nickname()); });
         }
 
-
         user.updateProfile(
                 command.nickname() != null ? Nickname.of(command.nickname()) : null,
                 command.profile(),
