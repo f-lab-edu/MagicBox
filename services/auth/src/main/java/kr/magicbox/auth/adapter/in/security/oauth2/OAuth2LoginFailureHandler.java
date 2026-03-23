@@ -2,6 +2,7 @@ package kr.magicbox.auth.adapter.in.security.oauth2;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.magicbox.auth.adapter.in.security.oauth2.properties.FrontendProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
