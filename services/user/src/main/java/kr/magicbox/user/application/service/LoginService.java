@@ -29,7 +29,6 @@ public class LoginService implements LoadUserCredentialUseCase {
     }
 
     private LoadUserCredentialResult handleExistingUser(User user) {
-        user.startSession();
         userRepository.updateUser(user);
         return LoadUserCredentialResult.builder()
                 .userId(user.getId())

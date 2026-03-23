@@ -5,6 +5,7 @@ import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
 import kr.magicbox.user.application.port.in.UserProfileCommandUseCase;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
+import kr.magicbox.user.domain.exception.DuplicateNicknameException;
 import kr.magicbox.user.domain.vo.Nickname;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,12 @@ public class UserProfileCommandService implements UserProfileCommandUseCase {
     public void updateUserProfile(Long userId, UpdateUserProfileCommand command) {
         User user = userRepositoryPort.getUserById(userId)
                 .orElseThrow(UserNotFoundException::new);
+
+        if (command.nickname() != null) {
+            userRepositoryPort.getUserByNickname(command.nickname())
+                    .filter(found -> !found.getId().equals(userId))
+                    .ifPresent(found -> { throw new DuplicateNicknameException(command.nickname()); });
+        }
 
         user.updateProfile(
                 command.nickname() != null ? Nickname.of(command.nickname()) : null,

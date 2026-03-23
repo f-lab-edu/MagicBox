@@ -18,7 +18,7 @@ public class UserDevice {
         this.id = id;
         this.userId = userId;
         this.deviceId = deviceId;
-        this.isActive = isActive != null ? isActive : true;
+        this.isActive = isActive != null ? isActive : false;
     }
 
     public void connect() {

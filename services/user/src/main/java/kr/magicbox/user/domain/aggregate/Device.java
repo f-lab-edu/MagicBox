@@ -23,7 +23,7 @@ public class Device {
         this.deviceIdentifier = deviceIdentifier;
         this.deviceType = deviceType;
         this.version = version;
-        this.isActive = isActive != null ? isActive : true;
+        this.isActive = isActive != null ? isActive : false;
         this.lastActiveAt = lastActiveAt != null ? lastActiveAt : Instant.now();
     }
 

@@ -3,7 +3,6 @@ package kr.magicbox.user.adapter.out.persistence.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import kr.magicbox.user.adapter.out.persistence.entity.BaseEntity;
 import kr.magicbox.user.domain.enums.DeviceType;
 import kr.magicbox.user.domain.aggregate.Device;
 import lombok.AccessLevel;
@@ -44,7 +43,7 @@ public class DeviceEntity extends BaseEntity {
         this.deviceIdentifier = deviceIdentifier;
         this.deviceType = deviceType;
         this.version = version;
-        this.isActive = true;
+        this.isActive = false;
         this.lastActiveAt = Instant.now();
     }
 
