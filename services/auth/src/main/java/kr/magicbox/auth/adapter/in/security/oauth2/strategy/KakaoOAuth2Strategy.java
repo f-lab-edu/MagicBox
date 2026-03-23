@@ -21,17 +21,20 @@ public class KakaoOAuth2Strategy implements OAuth2Strategy {
     public OAuth2UserInfo extractUserInfo(OAuth2User oAuth2User) {
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        if (!(attributes.get("id") instanceof String oauth2Id)) {
+        if (!(attributes.get("id") instanceof Long kakaoId)) {
             throw new InvalidOAuth2UserInfoException("oauth2Id");
         }
+        String oauth2Id = String.valueOf(kakaoId);
         if (!(attributes.get("kakao_account") instanceof Map<?, ?> kakaoAccount)) {
             throw new InvalidOAuth2UserInfoException("kakao_account");
         }
         if (!(kakaoAccount.get("email") instanceof String email)) {
             throw new InvalidOAuth2UserInfoException("email");
         }
-        String profileImage = kakaoAccount.get("profile") instanceof Map<?, ?> profile
-                && profile.get("thumbnail_image_url") instanceof String url ? url : null;
+        if (!(kakaoAccount.get("profile") instanceof Map<?, ?> profile)
+                || !(profile.get("thumbnail_image_url") instanceof String profileImage)) {
+            throw new InvalidOAuth2UserInfoException("profileImage");
+        }
 
         return new OAuth2UserInfo(oauth2Id, email, profileImage, OAuth2ProviderType.KAKAO, attributes);
     }

@@ -27,7 +27,9 @@ public class GoogleOAuth2Strategy implements OAuth2Strategy {
         if (!(attributes.get("email") instanceof String email)) {
             throw new InvalidOAuth2UserInfoException("email");
         }
-        String profileImage = attributes.get("picture") instanceof String p ? p : null;
+        if (!(attributes.get("picture") instanceof String profileImage)) {
+            throw new InvalidOAuth2UserInfoException("profileImage");
+        }
 
         return new OAuth2UserInfo(oauth2Id, email, profileImage, OAuth2ProviderType.GOOGLE, attributes);
     }

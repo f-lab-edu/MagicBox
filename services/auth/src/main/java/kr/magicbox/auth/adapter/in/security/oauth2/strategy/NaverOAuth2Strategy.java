@@ -30,7 +30,9 @@ public class NaverOAuth2Strategy implements OAuth2Strategy {
         if (!(response.get("email") instanceof String email)) {
             throw new InvalidOAuth2UserInfoException("email");
         }
-        String profileImage = response.get("profile_image") instanceof String p ? p : null;
+        if (!(response.get("profile_image") instanceof String profileImage)) {
+            throw new InvalidOAuth2UserInfoException("profileImage");
+        }
 
         return new OAuth2UserInfo(oauth2Id, email, profileImage, OAuth2ProviderType.NAVER, attributes);
     }
