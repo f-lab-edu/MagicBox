@@ -5,8 +5,9 @@ import io.jsonwebtoken.Jwts;
 import kr.magicbox.auth.adapter.out.jwt.constants.JwtConstants;
 import kr.magicbox.auth.adapter.out.jwt.properties.JwtProperties;
 import kr.magicbox.auth.domain.enums.UserRole;
-import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.out.TokenManager;
+import kr.magicbox.auth.domain.vo.AccessTokenValue;
+import kr.magicbox.auth.domain.vo.RefreshTokenValue;
 import kr.magicbox.auth.domain.vo.UserId;
 import org.springframework.stereotype.Component;
 
@@ -29,40 +30,36 @@ public class JwtTokenManager implements TokenManager {
         );
     }
 
-    private String generateAccessToken(UserId userId, UserRole role) {
+    @Override
+    public AccessTokenValue generateAccessToken(UserId userId, UserRole role) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtProperties.getAccessTokenExpiration());
 
-        return Jwts.builder()
+        String accessTokenValueString = Jwts.builder()
                 .subject(userId.value().toString())
                 .claim(JwtConstants.CLAIM_ROLE, role.name())
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(secretKey)
                 .compact();
-    }
 
-    private String generateRefreshToken(UserId userId, UserRole role) {
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + jwtProperties.getRefreshTokenExpiration());
-
-        return Jwts.builder()
-                .subject(userId.value().toString())
-                .claim(JwtConstants.CLAIM_ROLE, role.name())
-                .issuedAt(now)
-                .expiration(expiration)
-                .signWith(secretKey)
-                .compact();
+        return AccessTokenValue.of(accessTokenValueString);
     }
 
     @Override
-    public TokenResult generateTokenPair(UserId userId, UserRole role) {
-        String accessToken = generateAccessToken(userId, role);
-        String refreshToken = generateRefreshToken(userId, role);
-        return TokenResult.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+    public RefreshTokenValue generateRefreshToken(UserId userId, UserRole role) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + jwtProperties.getRefreshTokenExpiration());
+
+        String refreshTokenValueString = Jwts.builder()
+                .subject(userId.value().toString())
+                .claim(JwtConstants.CLAIM_ROLE, role.name())
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(secretKey)
+                .compact();
+
+        return RefreshTokenValue.of(refreshTokenValueString);
     }
 
     @Override

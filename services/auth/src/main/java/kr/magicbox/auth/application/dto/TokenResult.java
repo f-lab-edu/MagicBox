@@ -1,10 +1,12 @@
 package kr.magicbox.auth.application.dto;
 
+import kr.magicbox.auth.domain.vo.AccessTokenValue;
+import kr.magicbox.auth.domain.vo.RefreshTokenValue;
 import lombok.Builder;
 
 @Builder
 public record TokenResult(
-    String accessToken,
-    String refreshToken
+    AccessTokenValue accessToken,
+    RefreshTokenValue refreshToken
 ) {
 }
