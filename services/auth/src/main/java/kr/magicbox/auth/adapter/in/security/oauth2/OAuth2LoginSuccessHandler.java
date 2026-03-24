@@ -52,7 +52,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .role(UserRole.of(userResult.userRole()))
                 .expiresAt(Instant.now().plusSeconds(codeProperties.getTtlSeconds()))
                 .build();
-        codeRepositoryPort.saveCode(code);
+        codeRepositoryPort.save(code);
 
         // 3. 프론트엔드로 리다이렉트
         response.sendRedirect(frontendProperties.getUri() + "/oauth2/callback#code=" + codeValue);
