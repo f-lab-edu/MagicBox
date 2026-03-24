@@ -3,7 +3,6 @@ package kr.magicbox.auth.application.service;
 import kr.magicbox.auth.adapter.out.persistence.exception.CodeNotFoundException;
 import kr.magicbox.auth.application.dto.IssueTokenCommand;
 import kr.magicbox.auth.application.dto.IssueTokenResult;
-import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.in.IssueTokenUseCase;
 import kr.magicbox.auth.domain.aggregate.Code;
 import kr.magicbox.auth.domain.aggregate.RefreshToken;
@@ -16,7 +15,6 @@ import kr.magicbox.auth.domain.vo.RefreshTokenValue;
 import kr.magicbox.auth.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -28,7 +26,6 @@ public class IssueTokenService implements IssueTokenUseCase {
     private final TokenManager tokenManager;
 
     @Override
-    @Transactional
     public IssueTokenResult issueToken(IssueTokenCommand command) {
         // 1. Code 검증 및 조회
         Code code = codeRepositoryPort.getCodeByValue(command.code())
@@ -55,12 +52,12 @@ public class IssueTokenService implements IssueTokenUseCase {
         refreshTokenRepositoryPort.save(refreshToken);
 
         // 5. Code 삭제 (일회용)
-        codeRepositoryPort.deleteCode(code.getCode());
+        codeRepositoryPort.deleteById(code.getCode());
 
         // 6. 결과 반환
         return IssueTokenResult.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshTokenValue)
+                .accessToken(accessToken.accessTokenValue())
+                .refreshToken(refreshTokenValue.refreshTokenValue())
                 .build();
     }
 }
