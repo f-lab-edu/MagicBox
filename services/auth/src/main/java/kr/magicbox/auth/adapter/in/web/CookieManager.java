@@ -21,4 +21,14 @@ public class CookieManager {
                 .sameSite(Cookie.SameSite.STRICT.attributeValue())
                 .build();
     }
+
+    public ResponseCookie deleteRefreshTokenCookie() {
+        return ResponseCookie.from(CookieConstants.REFRESH_TOKEN_COOKIE_NAME, "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite(Cookie.SameSite.STRICT.attributeValue())
+                .build();
+    }
 }
