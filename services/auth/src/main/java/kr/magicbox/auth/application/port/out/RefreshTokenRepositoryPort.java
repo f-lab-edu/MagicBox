@@ -6,7 +6,8 @@ import kr.magicbox.auth.domain.vo.UserId;
 import java.util.Optional;
 
 public interface RefreshTokenRepositoryPort {
-    void saveRefreshToken(RefreshToken refreshToken);
+    void save(RefreshToken refreshToken);
+    void rotateRefreshToken(RefreshToken refreshToken);
     Optional<RefreshToken> getRefreshToken(UserId userId);
     void deleteRefreshToken(UserId userId);
 }

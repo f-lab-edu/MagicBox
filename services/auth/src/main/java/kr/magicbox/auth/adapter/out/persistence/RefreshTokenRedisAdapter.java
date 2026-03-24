@@ -18,7 +18,13 @@ public class RefreshTokenRedisAdapter implements RefreshTokenRepositoryPort {
     private final RefreshTokenMapper refreshTokenMapper;
 
     @Override
-    public void saveRefreshToken(RefreshToken refreshToken) {
+    public void save(RefreshToken refreshToken) {
+        RefreshTokenEntity entity = refreshTokenMapper.toEntity(refreshToken);
+        refreshTokenRedisRepository.save(entity);
+    }
+
+    @Override
+    public void rotateRefreshToken(RefreshToken refreshToken) {
         RefreshTokenEntity entity = refreshTokenMapper.toEntity(refreshToken);
         refreshTokenRedisRepository.save(entity);
     }
