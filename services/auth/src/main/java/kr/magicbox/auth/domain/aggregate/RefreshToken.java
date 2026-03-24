@@ -11,8 +11,8 @@ import java.time.Instant;
 
 @Getter
 public class RefreshToken {
-    private final String token;
     private final UserId userId;
+    private String token;
     private final Instant expiresAt;
     private final Instant createdAt;
     private boolean isRevoked;
@@ -43,6 +43,14 @@ public class RefreshToken {
         if (isExpired()) {
             throw new ExpiredRefreshTokenException();
         }
+    }
+
+    public void updateToken(String token) {
+        if(token == null || token.trim().isEmpty()) {
+            throw new InvalidFieldException("토큰은 필수 값입니다.");
+        }
+
+        this.token = token;
     }
 
     public void revoke() {

@@ -1,11 +1,11 @@
-package kr.magicbox.auth.domain.service;
+package kr.magicbox.auth.application.port.out;
 
+import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.domain.enums.UserRole;
 import kr.magicbox.auth.domain.vo.UserId;
 
 public interface TokenManager {
-    String generateAccessToken(UserId userId, UserRole role);
-    String generateRefreshToken(UserId userId, UserRole role);
+    TokenResult generateTokenPair(UserId userId, UserRole role);
     UserId extractUserId(String token);
     UserRole extractRole(String token);
     long getRefreshTokenExpiration();

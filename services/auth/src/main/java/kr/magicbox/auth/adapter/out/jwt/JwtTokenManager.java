@@ -5,7 +5,8 @@ import io.jsonwebtoken.Jwts;
 import kr.magicbox.auth.adapter.out.jwt.constants.JwtConstants;
 import kr.magicbox.auth.adapter.out.jwt.properties.JwtProperties;
 import kr.magicbox.auth.domain.enums.UserRole;
-import kr.magicbox.auth.domain.service.TokenManager;
+import kr.magicbox.auth.application.dto.TokenResult;
+import kr.magicbox.auth.application.port.out.TokenManager;
 import kr.magicbox.auth.domain.vo.UserId;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +29,7 @@ public class JwtTokenManager implements TokenManager {
         );
     }
 
-    @Override
-    public String generateAccessToken(UserId userId, UserRole role) {
+    private String generateAccessToken(UserId userId, UserRole role) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtProperties.getAccessTokenExpiration());
 
@@ -42,8 +42,7 @@ public class JwtTokenManager implements TokenManager {
                 .compact();
     }
 
-    @Override
-    public String generateRefreshToken(UserId userId, UserRole role) {
+    private String generateRefreshToken(UserId userId, UserRole role) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtProperties.getRefreshTokenExpiration());
 
@@ -54,6 +53,16 @@ public class JwtTokenManager implements TokenManager {
                 .expiration(expiration)
                 .signWith(secretKey)
                 .compact();
+    }
+
+    @Override
+    public TokenResult generateTokenPair(UserId userId, UserRole role) {
+        String accessToken = generateAccessToken(userId, role);
+        String refreshToken = generateRefreshToken(userId, role);
+        return TokenResult.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     @Override

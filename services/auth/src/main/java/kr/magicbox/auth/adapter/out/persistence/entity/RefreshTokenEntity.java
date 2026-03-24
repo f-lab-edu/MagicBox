@@ -14,9 +14,9 @@ import java.time.Instant;
 public class RefreshTokenEntity {
 
     @Id
-    private String token;
-
     private Long userId;
+
+    private String token;
 
     private Instant expiresAt;
 
@@ -26,8 +26,8 @@ public class RefreshTokenEntity {
 
     @Builder
     public RefreshTokenEntity(String token, Long userId, Instant expiresAt, Instant createdAt, boolean isRevoked) {
-        this.token = token;
         this.userId = userId;
+        this.token = token;
         this.expiresAt = expiresAt;
         this.createdAt = createdAt;
         this.isRevoked = isRevoked;

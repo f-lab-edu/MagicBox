@@ -5,15 +5,15 @@ import kr.magicbox.auth.application.dto.IssueTokenCommand;
 import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.in.IssueTokenUseCase;
 import kr.magicbox.auth.domain.aggregate.Code;
+import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.domain.aggregate.RefreshToken;
 import kr.magicbox.auth.domain.enums.UserRole;
 import kr.magicbox.auth.application.port.out.CodeRepositoryPort;
 import kr.magicbox.auth.application.port.out.RefreshTokenRepositoryPort;
-import kr.magicbox.auth.domain.service.TokenManager;
+import kr.magicbox.auth.application.port.out.TokenManager;
 import kr.magicbox.auth.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -38,13 +38,12 @@ public class IssueTokenService implements IssueTokenUseCase {
         UserRole userRole = code.getRole();
 
         // 3. 토큰 생성
-        String accessToken = tokenManager.generateAccessToken(userId, userRole);
-        String refreshTokenValue = tokenManager.generateRefreshToken(userId, userRole);
+        TokenResult tokenResult = tokenManager.generateTokenPair(userId, userRole);
 
         // 4. RefreshToken 저장
         Instant expiresAt = Instant.now().plusMillis(tokenManager.getRefreshTokenExpiration());
         RefreshToken refreshToken = RefreshToken.builder()
-                .token(refreshTokenValue)
+                .token(tokenResult.refreshToken())
                 .userId(userId)
                 .expiresAt(expiresAt)
                 .build();
@@ -52,12 +51,12 @@ public class IssueTokenService implements IssueTokenUseCase {
         refreshTokenRepositoryPort.saveRefreshToken(refreshToken);
 
         // 5. Code 삭제 (일회용)
-        codeRepositoryPort.deleteCode(command.code());
+        codeRepositoryPort.deleteById(code.getCode());
 
         // 6. 결과 반환
         return TokenResult.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshTokenValue)
+                .accessToken(tokenResult.accessToken())
+                .refreshToken(tokenResult.refreshToken())
                 .build();
     }
 }

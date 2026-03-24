@@ -22,7 +22,12 @@ public class CodeRedisAdapter implements CodeRepositoryPort {
     }
 
     @Override
-    public void deleteCode(String code) {
+    public void save(Code code) {
+        codeRedisRepository.save(codeMapper.toEntity(code));
+    }
+
+    @Override
+    public void deleteById(String code) {
         codeRedisRepository.deleteById(code);
     }
 }

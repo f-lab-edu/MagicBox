@@ -5,6 +5,7 @@ import kr.magicbox.auth.adapter.out.persistence.mapper.RefreshTokenMapper;
 import kr.magicbox.auth.adapter.out.persistence.repository.RefreshTokenRedisRepository;
 import kr.magicbox.auth.domain.aggregate.RefreshToken;
 import kr.magicbox.auth.application.port.out.RefreshTokenRepositoryPort;
+import kr.magicbox.auth.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -23,13 +24,13 @@ public class RefreshTokenRedisAdapter implements RefreshTokenRepositoryPort {
     }
 
     @Override
-    public Optional<RefreshToken> getRefreshToken(String token) {
-        return refreshTokenRedisRepository.findById(token)
+    public Optional<RefreshToken> getRefreshToken(UserId userId) {
+        return refreshTokenRedisRepository.findById(userId.value())
                 .map(refreshTokenMapper::toDomain);
     }
 
     @Override
-    public void deleteRefreshToken(String token) {
-        refreshTokenRedisRepository.deleteById(token);
+    public void deleteRefreshToken(UserId userId) {
+        refreshTokenRedisRepository.deleteById(userId.value());
     }
 }

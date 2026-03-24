@@ -22,6 +22,7 @@ public class RefreshTokenMapper {
         return RefreshToken.builder()
                 .token(entity.getToken())
                 .userId(UserId.of(entity.getUserId()))
+                .expiresAt(entity.getExpiresAt())
                 .isRevoked(entity.isRevoked())
                 .build();
     }
