@@ -3,7 +3,6 @@ package kr.magicbox.user.adapter.out.persistence.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import kr.magicbox.user.domain.aggregate.UserDevice;
-import kr.magicbox.user.global.domain.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,7 +37,7 @@ public class UserDeviceEntity extends BaseEntity {
     public UserDeviceEntity(UserEntity user, DeviceEntity device) {
         this.user = user;
         this.device = device;
-        this.isActive = true;
+        this.isActive = false;
     }
 
     public void updateFromDomain(UserDevice userDevice) {

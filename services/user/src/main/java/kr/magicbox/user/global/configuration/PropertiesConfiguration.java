@@ -4,6 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationPropertiesScan(basePackages = "kr.magicbox.user.global.properties")
+@ConfigurationPropertiesScan(basePackages = "kr.magicbox.user")
 public class PropertiesConfiguration {
 }
