@@ -10,4 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class KafkaTopicProperties {
 
     private final String authLoggedOut;
+    private final String authLoggedOutDlq;
 }
