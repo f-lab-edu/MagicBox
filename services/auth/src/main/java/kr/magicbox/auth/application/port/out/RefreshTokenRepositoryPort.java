@@ -9,5 +9,4 @@ public interface RefreshTokenRepositoryPort {
     void save(RefreshToken refreshToken);
     void rotateRefreshToken(RefreshToken refreshToken);
     Optional<RefreshToken> getRefreshToken(UserId userId);
-    void deleteRefreshToken(UserId userId);
 }
