@@ -22,6 +22,11 @@ spring:
     hibernate:
       ddl-auto: update
 
+security:
+  trusted:
+    ips:
+      - ${TRUSTED_IP_GATEWAY}
+
 resilience4j:
   circuitbreaker:
     instances:

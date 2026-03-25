@@ -45,3 +45,9 @@ resilience4j:
 
 server:
   port: ${SERVER_PORT}
+
+security:
+  trusted:
+    ips:
+      - 127.0.0.1
+      - 0:0:0:0:0:0:0:1

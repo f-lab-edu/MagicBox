@@ -2,6 +2,10 @@ plugins {
     id 'com.google.protobuf' version '0.9.6'
 }
 
+ext {
+    springGrpcVersion = "1.0.2"
+    springCloudVersion = "2025.1.0"
+}
 version = '0.0.1'
 description = 'auth'
 

@@ -1,10 +1,10 @@
-package kr.magicbox.user.adapter.in.security.filter;
+package kr.magicbox.auth.adapter.in.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.magicbox.user.adapter.in.security.properties.TrustedIpProperties;
+import kr.magicbox.auth.adapter.in.security.properties.TrustedIpProperties;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

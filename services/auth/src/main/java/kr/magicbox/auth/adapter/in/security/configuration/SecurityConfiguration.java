@@ -1,7 +1,7 @@
-package kr.magicbox.user.adapter.in.security.configuration;
+package kr.magicbox.auth.adapter.in.security.configuration;
 
-import kr.magicbox.user.adapter.in.security.filter.UserInfoExtractFilter;
-import kr.magicbox.user.adapter.in.security.properties.TrustedIpProperties;
+import kr.magicbox.auth.adapter.in.security.filter.UserInfoExtractFilter;
+import kr.magicbox.auth.adapter.in.security.properties.TrustedIpProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ public class SecurityConfiguration {
     private final TrustedIpProperties trustedIpProperties;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
