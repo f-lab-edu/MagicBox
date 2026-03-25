@@ -1,4 +1,4 @@
-package kr.magicbox.auth.global.exception.handler;
+package kr.magicbox.auth.adapter.in.web.exception.handler;
 
 import org.springframework.http.HttpStatus;
 
