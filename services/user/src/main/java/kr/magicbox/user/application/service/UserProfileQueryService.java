@@ -22,7 +22,7 @@ public class UserProfileQueryService implements UserProfileQueryUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public GetUserProfileResult getUserProfile(String nickname) {
+    public GetUserProfileResult getUserProfile(String nickname, Long requestUserId) {
         User user = userRepository.getUserByNickname(nickname)
                 .orElseThrow(() -> new UserNotFoundException(nickname));
 
@@ -33,6 +33,7 @@ public class UserProfileQueryService implements UserProfileQueryUseCase {
                 .nickname(user.getNickname())
                 .reviews(reviews)
                 .role(user.getRole())
+                .isMe(user.getId().equals(requestUserId))
                 .build();
     }
 }

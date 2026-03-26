@@ -10,6 +10,7 @@ public record GetUserProfileResult(
         String nickname,
         String profile,
         List<UserReviewResult> reviews,
-        UserRole role
+        UserRole role,
+        boolean isMe
 ) {
 }
