@@ -18,14 +18,17 @@ public class CodeEntity {
 
     private Long userId;
 
+    private String role;
+
     private Instant expiresAt;
 
     private Instant createdAt;
 
     @Builder
-    public CodeEntity(String code, Long userId, Instant expiresAt, Instant createdAt) {
+    public CodeEntity(String code, Long userId, String role, Instant expiresAt, Instant createdAt) {
         this.code = code;
         this.userId = userId;
+        this.role = role;
         this.expiresAt = expiresAt;
         this.createdAt = createdAt;
     }

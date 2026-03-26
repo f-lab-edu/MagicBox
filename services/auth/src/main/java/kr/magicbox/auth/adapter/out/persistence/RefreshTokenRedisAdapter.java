@@ -34,9 +34,4 @@ public class RefreshTokenRedisAdapter implements RefreshTokenRepositoryPort {
         return refreshTokenRedisRepository.findById(userId.value())
                 .map(refreshTokenMapper::toDomain);
     }
-
-    @Override
-    public void deleteRefreshToken(UserId userId) {
-        refreshTokenRedisRepository.deleteById(userId.value());
-    }
 }
