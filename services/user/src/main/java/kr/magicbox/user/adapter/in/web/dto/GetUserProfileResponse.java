@@ -12,7 +12,8 @@ public record GetUserProfileResponse(
         String nickname,
         String profile,
         List<UserReviewResult> reviews,
-        UserRole role
+        UserRole role,
+        boolean isMe
 ) {
     public static GetUserProfileResponse from(GetUserProfileResult result) {
         return GetUserProfileResponse.builder()
@@ -20,6 +21,7 @@ public record GetUserProfileResponse(
                 .profile(result.profile())
                 .reviews(result.reviews())
                 .role(result.role())
+                .isMe(result.isMe())
                 .build();
     }
 }
