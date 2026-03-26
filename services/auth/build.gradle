@@ -2,10 +2,21 @@ plugins {
     id 'com.google.protobuf' version '0.9.6'
 }
 
+ext {
+    springGrpcVersion = "1.0.2"
+    springCloudVersion = "2025.1.0"
+}
 version = '0.0.1'
 description = 'auth'
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 }
 
 // protobuf 설정

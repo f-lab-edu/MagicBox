@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.constants.UserPolicyConstants;
+import kr.magicbox.user.adapter.out.persistence.entity.BaseEntity;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
 import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
-import kr.magicbox.user.global.domain.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,10 +22,9 @@ import java.time.Instant;
 @Getter
 public class UserEntity extends BaseEntity {
 
-    @NotBlank(message = "닉네임은 필수입니다")
-    @Size(min = UserPolicyConstants.nicknameMinLength, max = UserPolicyConstants.nicknameMaxLength, 
+    @Size(min = UserPolicyConstants.nicknameMinLength, max = UserPolicyConstants.nicknameMaxLength,
           message = "닉네임은 {min}자 이상 {max}자 이내여야 합니다")
-    @Column(unique = true, nullable = false, length = UserPolicyConstants.nicknameMaxLength)
+    @Column(unique = true, nullable = true, length = UserPolicyConstants.nicknameMaxLength)
     private String nickname;
 
     @NotBlank(message = "이메일은 필수입니다")

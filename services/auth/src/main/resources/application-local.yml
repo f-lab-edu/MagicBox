@@ -1,9 +1,124 @@
 spring:
   application:
     name: auth-local
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   config:
     import:
       - file:services/auth/env/local.env[.properties]
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            authorization-grant-type: authorization_code
+            scope: ${GOOGLE_SCOPE}
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: ${KAKAO_REDIRECT_URI}
+            scope: ${KAKAO_SCOPE}
+          naver:
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: ${NAVER_REDIRECT_URI}
+            scope: ${NAVER_SCOPE}
+        provider:
+          google:
+            authorization-uri: ${GOOGLE_AUTHORIZATION_URI}
+            token-uri: ${GOOGLE_TOKEN_URI}
+            user-info-uri: ${GOOGLE_USER_INFO_URI}
+            user-name-attribute: sub
+          kakao:
+            authorization-uri: ${KAKAO_AUTHORIZATION_URI}
+            token-uri: ${KAKAO_TOKEN_URI}
+            user-info-uri: ${KAKAO_USER_INFO_URI}
+            user-name-attribute: id
+          naver:
+            authorization-uri: ${NAVER_AUTHORIZATION_URI}
+            token-uri: ${NAVER_TOKEN_URI}
+            user-info-uri: ${NAVER_USER_INFO_URI}
+            user-name-attribute: response
+  grpc:
+    client:
+      channels:
+        user:
+          address: ${USER_SERVICE_URL}
+          negotiation-type: plaintext
+          enable-keep-alive: true
+          keep-alive-time: 30s
+          keep-alive-timeout: 5s
+
 
 server:
   port: ${SERVER_PORT}
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
+  refresh-token-expiration: ${REFRESH_TOKEN_EXPIRATION}
+
+cookie:
+  refresh-token:
+    name: ${REFRESH_TOKEN_COOKIE_NAME}
+    max-age: ${REFRESH_TOKEN_EXPIRATION}
+    secure: false
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userService:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+  timelimiter:
+    instances:
+      userService:
+        timeout-duration: 2s
+
+code:
+  ttl-seconds: ${OAUTH2_CODE_TTL_SECONDS}
+
+frontend:
+  uri: ${FRONTEND_URI}
+
+security:
+  trusted:
+    ips:
+      - 127.0.0.1
+      - 0:0:0:0:0:0:0:1
+
+kafka:
+  topic:
+    auth-logged-out: auth-logged-out
+    auth-logged-out-dlq: auth-logged-out-dlq
+

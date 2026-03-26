@@ -1,17 +1,21 @@
 spring:
   application:
     name: user-local
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   config:
     import:
       - file:services/user/env/local.env[.properties]
   grpc:
+    server:
+      port: 9090
     client:
-      review:
-        address: ${REVIEW_SERVICE_URL}
-        negotiation-type: plaintext
-        keep-alive:
-          time: 30s
-          timeout: 5s
+      channels:
+        review:
+          address: ${REVIEW_SERVICE_URL}
+          negotiation-type: plaintext
+          keep-alive-time: 30s
+          keep-alive-timeout: 5s
 
   datasource:
     url: ${MYSQL_URL}
@@ -41,3 +45,9 @@ resilience4j:
 
 server:
   port: ${SERVER_PORT}
+
+security:
+  trusted:
+    ips:
+      - 127.0.0.1
+      - 0:0:0:0:0:0:0:1

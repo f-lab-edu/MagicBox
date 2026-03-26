@@ -4,6 +4,8 @@ import kr.magicbox.user.domain.aggregate.UserDevice;
 import kr.magicbox.user.adapter.out.persistence.entity.UserDeviceEntity;
 import kr.magicbox.user.adapter.out.persistence.entity.UserEntity;
 import kr.magicbox.user.adapter.out.persistence.entity.DeviceEntity;
+import kr.magicbox.user.domain.vo.DeviceId;
+import kr.magicbox.user.domain.vo.UserId;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,17 +25,11 @@ public class UserDeviceMapper {
     }
 
     public UserDevice toDomain(UserDeviceEntity entity) {
-        UserDevice userDevice = UserDevice.builder()
+        return UserDevice.builder()
                 .id(entity.getId())
-                .userId(entity.getUser().getId())
-                .deviceId(entity.getDevice().getId())
+                .userId(UserId.of(entity.getUser().getId()))
+                .deviceId(DeviceId.of(entity.getDevice().getId()))
                 .build();
-        
-        if (!entity.getIsActive()) {
-            userDevice.disconnect();
-        }
-        
-        return userDevice;
     }
 
     public void updateEntity(UserDevice userDevice, UserDeviceEntity entity) {

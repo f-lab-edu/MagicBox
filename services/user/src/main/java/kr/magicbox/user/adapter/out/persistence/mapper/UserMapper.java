@@ -24,13 +24,17 @@ public class UserMapper {
     public User toDomain(UserEntity entity) {
         return User.builder()
                 .id(UserId.of(entity.getId()))
-                .nickname(Nickname.of(entity.getNickname()))
+                .nickname(entity.getNickname() != null ? Nickname.of(entity.getNickname()) : null)
                 .email(entity.getEmail())
                 .status(entity.getStatus())
                 .role(entity.getRole())
                 .profile(entity.getProfile())
                 .oauth2Id(entity.getOauth2Id())
                 .oauth2Provider(entity.getOauth2Provider())
+                .isReviewVisible(entity.getIsReviewVisible())
+                .isActive(entity.getIsActive())
+                .lastLoginAt(entity.getLastLoginAt())
+                .totalUsageTime(entity.getTotalUsageTime())
                 .build();
     }
 

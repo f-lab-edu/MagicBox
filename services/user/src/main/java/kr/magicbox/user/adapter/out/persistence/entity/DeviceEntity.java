@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import kr.magicbox.user.domain.enums.DeviceType;
 import kr.magicbox.user.domain.aggregate.Device;
-import kr.magicbox.user.global.domain.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,7 +43,7 @@ public class DeviceEntity extends BaseEntity {
         this.deviceIdentifier = deviceIdentifier;
         this.deviceType = deviceType;
         this.version = version;
-        this.isActive = true;
+        this.isActive = false;
         this.lastActiveAt = Instant.now();
     }
 
