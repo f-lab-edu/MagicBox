@@ -84,14 +84,14 @@ public class User {
         }
     }
 
-    public void startSession() {
+    public void startSession(Instant loginAt) {
         this.isActive = true;
-        this.lastLoginAt = Instant.now();
+        this.lastLoginAt = loginAt;
     }
 
-    public void endSession() {
+    public void endSession(Instant logoutAt) {
         if (Boolean.TRUE.equals(this.isActive) && this.lastLoginAt != null) {
-            Duration sessionTime = Duration.between(this.lastLoginAt, Instant.now());
+            Duration sessionTime = Duration.between(this.lastLoginAt, logoutAt);
             this.totalUsageTime = this.totalUsageTime.plus(sessionTime);
         }
         this.isActive = false;
