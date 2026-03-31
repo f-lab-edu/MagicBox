@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.magicbox.auth.adapter.in.security.properties.TrustedIpProperties;
+import kr.magicbox.auth.domain.vo.UserId;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +35,8 @@ public class UserInfoExtractFilter extends OncePerRequestFilter {
             return;
         }
 
-        Long userId = Long.valueOf(userIdRequestHeader);
+        Long userIdLong = Long.valueOf(userIdRequestHeader);
+        UserId userId = UserId.of(userIdLong);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
