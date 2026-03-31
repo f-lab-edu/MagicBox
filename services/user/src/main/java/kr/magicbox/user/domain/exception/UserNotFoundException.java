@@ -1,4 +1,4 @@
-package kr.magicbox.user.adapter.out.persistence.exception;
+package kr.magicbox.user.domain.exception;
 
 import kr.magicbox.user.global.exception.BusinessException;
 import org.springframework.http.HttpStatus;
