@@ -8,8 +8,6 @@ import kr.magicbox.auth.application.dto.UserResult;
 import kr.magicbox.auth.application.port.out.CodeRepositoryPort;
 import kr.magicbox.auth.application.port.out.UserCredentialPort;
 import kr.magicbox.auth.domain.aggregate.Code;
-import kr.magicbox.auth.domain.enums.UserRole;
-import kr.magicbox.auth.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.Authentication;
@@ -48,8 +46,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String codeValue = UUID.randomUUID().toString();
         Code code = Code.builder()
                 .code(codeValue)
-                .userId(UserId.of(userResult.userId()))
-                .role(UserRole.of(userResult.userRole()))
+                .userId(userResult.userId())
+                .role(userResult.userRole())
                 .expiresAt(Instant.now().plusSeconds(codeProperties.getTtlSeconds()))
                 .build();
         codeRepositoryPort.save(code);
