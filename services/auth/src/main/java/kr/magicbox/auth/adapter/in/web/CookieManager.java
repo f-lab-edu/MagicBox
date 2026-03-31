@@ -23,9 +23,9 @@ public class CookieManager {
     }
 
     public ResponseCookie deleteRefreshTokenCookie() {
-        return ResponseCookie.from(CookieConstants.REFRESH_TOKEN_COOKIE_NAME, "")
+        return ResponseCookie.from(cookieProperties.getName(), "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(cookieProperties.isSecure())
                 .path("/")
                 .maxAge(0)
                 .sameSite(Cookie.SameSite.STRICT.attributeValue())
