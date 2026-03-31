@@ -113,15 +113,15 @@ public class User {
         return Boolean.TRUE.equals(this.isActive);
     }
 
-    public void activate() {
+    public void accountActivate() {
         this.status = UserStatus.ACTIVE;
     }
 
-    public void deactivate() {
+    public void accountDeactivate() {
         this.status = UserStatus.INACTIVE;
     }
 
-    public void delete() {
+    public void accountDelete() {
         this.status = UserStatus.DELETED;
     }
 }
