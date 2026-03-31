@@ -1,14 +1,14 @@
 package kr.magicbox.auth.adapter.in.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import kr.magicbox.auth.application.dto.ExchangeTokenCommand;
+import kr.magicbox.auth.application.dto.LoginCommand;
 
-public record ExchangeTokenRequest(
+public record LoginRequest(
         @NotBlank(message = "코드는 필수 값입니다.")
         String code
 ) {
-    public ExchangeTokenCommand toCommand() {
-        return ExchangeTokenCommand.builder()
+    public LoginCommand toCommand() {
+        return LoginCommand.builder()
                 .code(code)
                 .build();
     }
