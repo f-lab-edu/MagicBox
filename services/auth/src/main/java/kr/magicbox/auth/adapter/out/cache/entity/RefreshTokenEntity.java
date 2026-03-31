@@ -1,4 +1,4 @@
-package kr.magicbox.auth.adapter.out.persistence.entity;
+package kr.magicbox.auth.adapter.out.cache.entity;
 
 import lombok.Builder;
 import lombok.Getter;

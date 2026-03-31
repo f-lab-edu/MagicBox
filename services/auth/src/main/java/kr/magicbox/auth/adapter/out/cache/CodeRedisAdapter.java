@@ -1,7 +1,7 @@
-package kr.magicbox.auth.adapter.out.persistence;
+package kr.magicbox.auth.adapter.out.cache;
 
-import kr.magicbox.auth.adapter.out.persistence.mapper.CodeMapper;
-import kr.magicbox.auth.adapter.out.persistence.repository.CodeRedisRepository;
+import kr.magicbox.auth.adapter.out.cache.mapper.CodeMapper;
+import kr.magicbox.auth.adapter.out.cache.repository.CodeRedisRepository;
 import kr.magicbox.auth.domain.aggregate.Code;
 import kr.magicbox.auth.application.port.out.CodeRepositoryPort;
 import lombok.RequiredArgsConstructor;

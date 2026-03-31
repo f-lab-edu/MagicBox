@@ -1,6 +1,6 @@
-package kr.magicbox.auth.adapter.out.persistence.mapper;
+package kr.magicbox.auth.adapter.out.cache.mapper;
 
-import kr.magicbox.auth.adapter.out.persistence.entity.RefreshTokenEntity;
+import kr.magicbox.auth.adapter.out.cache.entity.RefreshTokenEntity;
 import kr.magicbox.auth.domain.aggregate.RefreshToken;
 import kr.magicbox.auth.domain.vo.RefreshTokenValue;
 import kr.magicbox.auth.domain.vo.UserId;

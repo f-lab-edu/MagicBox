@@ -1,6 +1,6 @@
-package kr.magicbox.auth.adapter.out.persistence.mapper;
+package kr.magicbox.auth.adapter.out.cache.mapper;
 
-import kr.magicbox.auth.adapter.out.persistence.entity.CodeEntity;
+import kr.magicbox.auth.adapter.out.cache.entity.CodeEntity;
 import kr.magicbox.auth.domain.aggregate.Code;
 import kr.magicbox.auth.domain.enums.UserRole;
 import kr.magicbox.auth.domain.vo.UserId;
