@@ -12,4 +12,5 @@ public class CookieProperties {
     private final String name;
     private final Long maxAge;
     private final boolean secure;
+    private final String sameSite;
 }

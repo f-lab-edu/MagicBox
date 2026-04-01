@@ -2,7 +2,6 @@ package kr.magicbox.auth.adapter.in.web;
 
 import kr.magicbox.auth.adapter.in.web.properties.CookieProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.server.Cookie;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ public class CookieManager {
                 .secure(cookieProperties.isSecure())
                 .path("/")
                 .maxAge(cookieProperties.getMaxAge())
-                .sameSite(Cookie.SameSite.STRICT.attributeValue())
+                .sameSite(cookieProperties.getSameSite())
                 .build();
     }
 
@@ -28,7 +27,7 @@ public class CookieManager {
                 .secure(cookieProperties.isSecure())
                 .path("/")
                 .maxAge(0)
-                .sameSite(Cookie.SameSite.STRICT.attributeValue())
+                .sameSite(cookieProperties.getSameSite())
                 .build();
     }
 }
