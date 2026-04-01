@@ -32,7 +32,7 @@ public class LoginService implements LoadUserCredentialUseCase {
         userRepository.updateUser(user);
         return LoadUserCredentialResult.builder()
                 .userId(user.getId())
-                .userRole(user.getRole().name())
+                .userRole(user.getRole())
                 .build();
     }
 
@@ -50,7 +50,7 @@ public class LoginService implements LoadUserCredentialUseCase {
         User saved = userRepository.saveUser(user);
         return LoadUserCredentialResult.builder()
                 .userId(saved.getId())
-                .userRole(saved.getRole().name())
+                .userRole(saved.getRole())
                 .build();
     }
 }

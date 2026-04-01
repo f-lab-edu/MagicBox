@@ -1,12 +1,13 @@
 package kr.magicbox.user.application.service;
 
-import kr.magicbox.user.adapter.out.persistence.exception.UserNotFoundException;
 import kr.magicbox.user.application.dto.GetUserProfileResult;
 import kr.magicbox.user.application.dto.UserReviewResult;
 import kr.magicbox.user.application.port.in.UserProfileQueryUseCase;
 import kr.magicbox.user.application.port.out.ReviewQueryPort;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
+import kr.magicbox.user.domain.exception.UserNotFoundException;
+import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ public class UserProfileQueryService implements UserProfileQueryUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public GetUserProfileResult getUserProfile(String nickname, Long requestUserId) {
+    public GetUserProfileResult getUserProfile(String nickname, UserId requestUserId) {
         User user = userRepositoryPort.getUserByNickname(nickname)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -33,7 +34,7 @@ public class UserProfileQueryService implements UserProfileQueryUseCase {
                 .nickname(user.getNickname())
                 .reviews(reviews)
                 .role(user.getRole())
-                .isMe(user.getId().equals(requestUserId))
+                .isMe(user.getId().equals(requestUserId.value()))
                 .build();
     }
 }
