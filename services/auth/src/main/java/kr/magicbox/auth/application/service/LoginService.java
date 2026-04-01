@@ -2,14 +2,15 @@ package kr.magicbox.auth.application.service;
 
 import kr.magicbox.auth.adapter.out.cache.exception.CodeNotFoundException;
 import kr.magicbox.auth.application.dto.LoginCommand;
+import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.in.LoginUseCase;
 import kr.magicbox.auth.application.port.out.*;
 import kr.magicbox.auth.domain.aggregate.Code;
-import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.domain.aggregate.RefreshToken;
 import kr.magicbox.auth.domain.enums.UserRole;
 import kr.magicbox.auth.domain.event.AuthDomainEvent;
-import kr.magicbox.auth.domain.event.AuthDomainEventType;
+import kr.magicbox.auth.domain.event.DuplicateLoginEvent;
+import kr.magicbox.auth.domain.event.LoginEvent;
 import kr.magicbox.auth.domain.vo.AccessTokenValue;
 import kr.magicbox.auth.domain.vo.RefreshTokenValue;
 import kr.magicbox.auth.domain.vo.UserId;
@@ -22,6 +23,7 @@ import java.time.Instant;
 @Service
 @RequiredArgsConstructor
 public class LoginService implements LoginUseCase {
+
     private final CodeRepositoryPort codeRepositoryPort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
     private final AuthDomainEventRepositoryPort authDomainEventRepositoryPort;
@@ -41,8 +43,7 @@ public class LoginService implements LoginUseCase {
 
         saveRefreshToken(userId, refreshTokenValue);
         deleteCode(code);
-
-        validateDuplicateLogin(userId);
+        saveLoginEvent(userId);
 
         return TokenResult.builder()
                 .accessToken(accessTokenValue)
@@ -50,23 +51,21 @@ public class LoginService implements LoginUseCase {
                 .build();
     }
 
-    private void validateDuplicateLogin(UserId userId) {
-        AuthDomainEventType authDomainEventType = userStatusPort.isActive(userId.value()) ? AuthDomainEventType.USER_DUPLICATE_LOGGED_IN : AuthDomainEventType.USER_LOGGED_IN;
-
-        // OutBox Pattern Applies
-        AuthDomainEvent loggedInEvent = AuthDomainEvent.builder()
-                .key(userId.value().toString())
-                .eventType(authDomainEventType)
-                .payload(userId)
-                .build();
-        authDomainEventRepositoryPort.save(loggedInEvent);
-    }
-
     private Code validateAndGetCode(String codeValue) {
         Code code = codeRepositoryPort.getCodeByValue(codeValue)
                 .orElseThrow(CodeNotFoundException::new);
         code.validate();
         return code;
+    }
+
+    private void saveLoginEvent(UserId userId) {
+        Instant now = Instant.now();
+        boolean isDuplicate = userStatusPort.isActive(userId.value());
+
+        AuthDomainEvent event = isDuplicate
+                ? DuplicateLoginEvent.builder().userId(userId).createdAt(now).build()
+                : LoginEvent.builder().userId(userId).createdAt(now).build();
+        authDomainEventRepositoryPort.save(event);
     }
 
     private void saveRefreshToken(UserId userId, RefreshTokenValue refreshTokenValue) {

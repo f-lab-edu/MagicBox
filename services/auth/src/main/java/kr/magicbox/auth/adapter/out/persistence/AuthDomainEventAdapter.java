@@ -17,7 +17,7 @@ public class AuthDomainEventAdapter implements AuthDomainEventRepositoryPort {
 
     @Override
     public void save(AuthDomainEvent event) {
-        String payload = objectMapper.writeValueAsString(event.payload());
+        String payload = objectMapper.writeValueAsString(event);
         authDomainEventRepository.save(AuthDomainEventEntity.builder()
                 .eventType(event.eventType().getValue())
                 .key(event.key())
