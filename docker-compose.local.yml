@@ -4,6 +4,12 @@ services:
     container_name: mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command:
+      - --log-bin=mysql-bin
+      - --binlog-format=ROW
+      - --binlog-row-image=FULL
+      - --server-id=1
+      - --expire-logs-days=30
     ports:
       - "3306:3306"
     volumes:
@@ -40,11 +46,30 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
       CLUSTER_ID: ${KAFKA_CLUSTER_ID}
     ports:
       - "9092:9092"
     volumes:
       - kafka_data:/var/lib/kafka/data
+    networks:
+      - backend_network
+    restart: unless-stopped
+
+  debezium:
+    image: quay.io/debezium/connect:3.1
+    container_name: debezium-container
+    environment:
+      BOOTSTRAP_SERVERS: kafka-container:29092
+      GROUP_ID: debezium-connect-group
+      CONFIG_STORAGE_TOPIC: debezium-configs-local
+      OFFSET_STORAGE_TOPIC: debezium-offsets-local
+      STATUS_STORAGE_TOPIC: debezium-status-local
+    ports:
+      - "8083:8083"
+    depends_on:
+      - kafka
+      - mysql
     networks:
       - backend_network
     restart: unless-stopped

@@ -8,6 +8,7 @@ option java_multiple_files = true;
 
 service UserService {
   rpc LoadUserCredential(LoadUserCredentialRequest) returns (LoadUserCredentialResponse);
+  rpc CheckUserActive(CheckUserActiveRequest) returns (CheckUserActiveResponse);
 }
 
 message LoadUserCredentialRequest {
@@ -19,7 +20,22 @@ message LoadUserCredentialRequest {
 
 message LoadUserCredentialResponse {
   int64 user_id = 1;
-  string user_role = 2;
+  GrpcUserRole user_role = 2;
+}
+
+message CheckUserActiveRequest {
+  int64 user_id = 1;
+}
+
+message CheckUserActiveResponse {
+  bool active = 1;
+}
+
+enum GrpcUserRole {
+  GRPC_USER_ROLE_UNSPECIFIED = 0;
+  USER = 1;
+  CREATOR = 2;
+  ADMIN = 3;
 }
 
 enum GrpcOAuth2Provider {

@@ -29,7 +29,7 @@ public class User {
 
     @Builder
     public User(UserId id, Nickname nickname, String email, UserStatus status,
-                UserRole role, String profile, String oauth2Id,
+                String profile, String oauth2Id,
                 OAuth2Provider oauth2Provider, Boolean isReviewVisible, Boolean isActive,
                 Instant lastLoginAt, Duration totalUsageTime) {
         validateFields(email, status, oauth2Id, oauth2Provider);
@@ -38,7 +38,7 @@ public class User {
         this.nickname = nickname;
         this.email = email;
         this.status = status;
-        this.role = role;
+        this.role = UserRole.USER;
         this.profile = profile;
         this.oauth2Id = oauth2Id;
         this.oauth2Provider = oauth2Provider;
@@ -46,10 +46,6 @@ public class User {
         this.lastLoginAt = lastLoginAt != null ? lastLoginAt : Instant.now();
         this.totalUsageTime = totalUsageTime != null ? totalUsageTime : Duration.ZERO;
         this.isReviewVisible = isReviewVisible != null ? isReviewVisible : true;
-    }
-
-    public Long getId() {
-        return this.id.value();
     }
 
     public String getNickname() {
@@ -84,14 +80,14 @@ public class User {
         }
     }
 
-    public void startSession() {
+    public void startSession(Instant loginAt) {
         this.isActive = true;
-        this.lastLoginAt = Instant.now();
+        this.lastLoginAt = loginAt;
     }
 
-    public void endSession() {
+    public void endSession(Instant logoutAt) {
         if (Boolean.TRUE.equals(this.isActive) && this.lastLoginAt != null) {
-            Duration sessionTime = Duration.between(this.lastLoginAt, Instant.now());
+            Duration sessionTime = Duration.between(this.lastLoginAt, logoutAt);
             this.totalUsageTime = this.totalUsageTime.plus(sessionTime);
         }
         this.isActive = false;
@@ -113,15 +109,15 @@ public class User {
         return Boolean.TRUE.equals(this.isActive);
     }
 
-    public void activate() {
+    public void accountActivate() {
         this.status = UserStatus.ACTIVE;
     }
 
-    public void deactivate() {
+    public void accountDeactivate() {
         this.status = UserStatus.INACTIVE;
     }
 
-    public void delete() {
+    public void accountDelete() {
         this.status = UserStatus.DELETED;
     }
 }

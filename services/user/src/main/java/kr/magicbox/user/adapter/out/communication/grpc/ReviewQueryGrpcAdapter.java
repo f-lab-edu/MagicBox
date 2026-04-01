@@ -12,6 +12,7 @@ import kr.magicbox.user.grpc.review.Review;
 import kr.magicbox.user.grpc.review.ReviewServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -30,7 +31,7 @@ public class ReviewQueryGrpcAdapter implements ReviewQueryPort {
             .setUserId(userId)
             .build();
 
-        ManagedChannel channel = grpcChannelFactory.getChannel(ServiceHost.REVIEW.getHostName());
+        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.REVIEW.getHostName());
         ReviewServiceGrpc.ReviewServiceBlockingStub reviewStub = ReviewServiceGrpc.newBlockingStub(channel);
         GetAllReviewsByUserIdResponse response = reviewStub.getAllReviewsByUserId(request);
 

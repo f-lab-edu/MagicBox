@@ -1,6 +1,6 @@
 package kr.magicbox.auth.application.service;
 
-import kr.magicbox.auth.adapter.out.persistence.exception.RefreshTokenNotFoundException;
+import kr.magicbox.auth.adapter.out.cache.exception.RefreshTokenNotFoundException;
 import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.in.RefreshTokenUseCase;
 import kr.magicbox.auth.domain.aggregate.RefreshToken;

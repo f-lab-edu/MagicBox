@@ -1,12 +1,13 @@
 package kr.magicbox.user.application.service;
 
-import kr.magicbox.user.adapter.out.persistence.exception.UserNotFoundException;
 import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
 import kr.magicbox.user.application.port.in.UserProfileCommandUseCase;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.exception.DuplicateNicknameException;
+import kr.magicbox.user.domain.exception.UserNotFoundException;
 import kr.magicbox.user.domain.vo.Nickname;
+import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ public class UserProfileCommandService implements UserProfileCommandUseCase {
 
     @Override
     @Transactional
-    public void updateUserProfile(Long userId, UpdateUserProfileCommand command) {
+    public void updateUserProfile(UserId userId, UpdateUserProfileCommand command) {
         User user = userRepositoryPort.getUserById(userId)
                 .orElseThrow(UserNotFoundException::new);
 

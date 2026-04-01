@@ -1,12 +1,16 @@
 package kr.magicbox.auth.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import kr.magicbox.auth.adapter.out.communication.grpc.exception.UnsupportedUserRoleException;
 import kr.magicbox.auth.adapter.out.communication.grpc.exception.UserServiceUnavailableException;
 import kr.magicbox.auth.application.dto.UserResult;
 import kr.magicbox.auth.application.port.out.UserCredentialPort;
+import kr.magicbox.auth.domain.enums.UserRole;
+import kr.magicbox.auth.domain.vo.UserId;
+import kr.magicbox.auth.grpc.user.GrpcOAuth2Provider;
+import kr.magicbox.auth.grpc.user.GrpcUserRole;
 import kr.magicbox.auth.grpc.user.LoadUserCredentialRequest;
 import kr.magicbox.auth.grpc.user.LoadUserCredentialResponse;
-import kr.magicbox.auth.grpc.user.GrpcOAuth2Provider;
 import kr.magicbox.auth.grpc.user.UserServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +37,16 @@ public class UserGrpcAdapter implements UserCredentialPort {
                 grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()));
         LoadUserCredentialResponse response = stub.loadUserCredential(request);
 
-        return new UserResult(response.getUserId(), response.getUserRole());
+        return new UserResult(UserId.of(response.getUserId()), toUserRole(response.getUserRole()));
+    }
+
+    private UserRole toUserRole(GrpcUserRole grpcUserRole) {
+        return switch (grpcUserRole) {
+            case USER -> UserRole.USER;
+            case CREATOR -> UserRole.CREATOR;
+            case ADMIN -> UserRole.ADMIN;
+            default -> throw new UnsupportedUserRoleException(grpcUserRole.name());
+        };
     }
 
     @SuppressWarnings("unused")

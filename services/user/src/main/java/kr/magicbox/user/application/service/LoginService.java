@@ -4,10 +4,10 @@ import kr.magicbox.user.application.dto.LoadUserCredentialCommand;
 import kr.magicbox.user.application.dto.LoadUserCredentialResult;
 import kr.magicbox.user.application.port.in.LoadUserCredentialUseCase;
 import kr.magicbox.user.domain.aggregate.User;
-import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.vo.Nickname;
+import kr.magicbox.user.global.properties.UserProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +19,7 @@ import java.util.UUID;
 public class LoginService implements LoadUserCredentialUseCase {
 
     private final UserRepositoryPort userRepository;
+    private final UserProperties userProperties;
 
     @Override
     @Transactional
@@ -32,7 +33,7 @@ public class LoginService implements LoadUserCredentialUseCase {
         userRepository.updateUser(user);
         return LoadUserCredentialResult.builder()
                 .userId(user.getId())
-                .userRole(user.getRole().name())
+                .userRole(user.getRole())
                 .build();
     }
 
@@ -42,15 +43,14 @@ public class LoginService implements LoadUserCredentialUseCase {
                 .nickname(Nickname.of(nickname))
                 .email(command.email())
                 .status(UserStatus.ACTIVE)
-                .role(UserRole.USER)
-                .profile(command.profileImage() != null ? command.profileImage() : "")
+                .profile(command.profileImage() != null ? command.profileImage() : userProperties.getDefaultProfileImageUrl())
                 .oauth2Id(command.oauth2Id())
                 .oauth2Provider(command.provider())
                 .build();
         User saved = userRepository.saveUser(user);
         return LoadUserCredentialResult.builder()
                 .userId(saved.getId())
-                .userRole(saved.getRole().name())
+                .userRole(saved.getRole())
                 .build();
     }
 }
