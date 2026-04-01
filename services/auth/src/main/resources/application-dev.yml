@@ -75,6 +75,7 @@ cookie:
     name: ${REFRESH_TOKEN_COOKIE_NAME}
     max-age: ${REFRESH_TOKEN_EXPIRATION}
     secure: true
+    same-site: Strict
 
 resilience4j:
   circuitbreaker:
