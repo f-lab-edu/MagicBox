@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "user")
-public class UserDefaultProperties {
+public class UserProperties {
 
     private final String defaultProfileImageUrl;
 }

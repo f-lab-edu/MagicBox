@@ -7,7 +7,7 @@ import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.enums.UserStatus;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.vo.Nickname;
-import kr.magicbox.user.global.properties.UserDefaultProperties;
+import kr.magicbox.user.global.properties.UserProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class LoginService implements LoadUserCredentialUseCase {
 
     private final UserRepositoryPort userRepository;
-    private final UserDefaultProperties userDefaultProperties;
+    private final UserProperties userProperties;
 
     @Override
     @Transactional
@@ -43,7 +43,7 @@ public class LoginService implements LoadUserCredentialUseCase {
                 .nickname(Nickname.of(nickname))
                 .email(command.email())
                 .status(UserStatus.ACTIVE)
-                .profile(command.profileImage() != null ? command.profileImage() : userDefaultProperties.getDefaultProfileImageUrl())
+                .profile(command.profileImage() != null ? command.profileImage() : userProperties.getDefaultProfileImageUrl())
                 .oauth2Id(command.oauth2Id())
                 .oauth2Provider(command.provider())
                 .build();
