@@ -6,6 +6,7 @@ import kr.magicbox.user.adapter.out.persistence.repository.UserJpaRepository;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
+import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -24,8 +25,8 @@ public class UserJpaAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public Optional<User> getUserById(Long userId) {
-        return userJpaRepository.findById(userId)
+    public Optional<User> getUserById(UserId userId) {
+        return userJpaRepository.findById(userId.value())
                 .map(userMapper::toDomain);
     }
 
