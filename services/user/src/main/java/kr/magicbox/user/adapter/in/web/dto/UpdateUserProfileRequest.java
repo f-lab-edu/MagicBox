@@ -1,6 +1,5 @@
 package kr.magicbox.user.adapter.in.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
 import kr.magicbox.user.domain.constants.UserPolicyConstants;
 import kr.magicbox.user.adapter.in.web.validation.OptionalNotBlank;
