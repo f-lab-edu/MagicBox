@@ -4,10 +4,10 @@ import kr.magicbox.user.application.dto.LoadUserCredentialCommand;
 import kr.magicbox.user.application.dto.LoadUserCredentialResult;
 import kr.magicbox.user.application.port.in.LoadUserCredentialUseCase;
 import kr.magicbox.user.domain.aggregate.User;
-import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.vo.Nickname;
+import kr.magicbox.user.global.properties.UserDefaultProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +19,7 @@ import java.util.UUID;
 public class LoginService implements LoadUserCredentialUseCase {
 
     private final UserRepositoryPort userRepository;
+    private final UserDefaultProperties userDefaultProperties;
 
     @Override
     @Transactional
@@ -42,8 +43,7 @@ public class LoginService implements LoadUserCredentialUseCase {
                 .nickname(Nickname.of(nickname))
                 .email(command.email())
                 .status(UserStatus.ACTIVE)
-                .role(UserRole.USER)
-                .profile(command.profileImage() != null ? command.profileImage() : "")
+                .profile(command.profileImage() != null ? command.profileImage() : userDefaultProperties.getDefaultProfileImageUrl())
                 .oauth2Id(command.oauth2Id())
                 .oauth2Provider(command.provider())
                 .build();
