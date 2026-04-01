@@ -17,6 +17,16 @@ import org.springframework.stereotype.Component;
 @GlobalServerInterceptor
 public class GrpcExceptionInterceptor implements ServerInterceptor {
 
+    private Status toGrpcStatus(BusinessException e) {
+        return switch (e.getStatus()) {
+            case NOT_FOUND -> Status.NOT_FOUND;
+            case CONFLICT -> Status.ALREADY_EXISTS;
+            case FORBIDDEN -> Status.PERMISSION_DENIED;
+            case UNAUTHORIZED -> Status.UNAUTHENTICATED;
+            default -> Status.INVALID_ARGUMENT;
+        };
+    }
+
     @Override
     public <Q, R> ServerCall.Listener<Q> interceptCall(ServerCall<Q, R> call,
                                                         Metadata headers,
@@ -30,7 +40,7 @@ public class GrpcExceptionInterceptor implements ServerInterceptor {
                 }
                 catch (BusinessException e) {
                     log.warn("gRPC 비즈니스 예외: {}", e.getMessage());
-                    call.close(Status.INVALID_ARGUMENT.withDescription(e.getMessage()), new Metadata());
+                    call.close(toGrpcStatus(e).withDescription(e.getMessage()), new Metadata());
                 }
                 catch (SystemError e) {
                     log.error("gRPC 시스템 오류: {}", e.getMessage(), e);
