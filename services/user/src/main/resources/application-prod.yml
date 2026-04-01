@@ -8,7 +8,7 @@ spring:
       channels:
         review:
           address: ${REVIEW_SERVICE_URL}
-          negotiation-type: plaintext
+          negotiation-type: tls
           keep-alive-time: 30s
           keep-alive-timeout: 5s
 
@@ -62,3 +62,6 @@ resilience4j:
     instances:
       reviewService:
         timeout-duration: 2s
+
+user:
+  default-profile-image-url: ${USER_PROFILE_DEFAULT_IMAGE_URL}
