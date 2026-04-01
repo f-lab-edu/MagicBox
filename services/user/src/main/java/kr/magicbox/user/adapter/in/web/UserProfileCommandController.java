@@ -3,6 +3,7 @@ package kr.magicbox.user.adapter.in.web;
 import jakarta.validation.Valid;
 import kr.magicbox.user.adapter.in.web.dto.UpdateUserProfileRequest;
 import kr.magicbox.user.application.port.in.UserProfileCommandUseCase;
+import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +19,7 @@ public class UserProfileCommandController {
     private final UserProfileCommandUseCase userProfileCommandUseCase;
 
     @PatchMapping
-    public ResponseEntity<Void> updateUserProfile(@AuthenticationPrincipal Long userId,
+    public ResponseEntity<Void> updateUserProfile(@AuthenticationPrincipal UserId userId,
                                                    @RequestBody @Valid UpdateUserProfileRequest request) {
         userProfileCommandUseCase.updateUserProfile(userId, request.toCommand());
         return ResponseEntity.noContent().build();
