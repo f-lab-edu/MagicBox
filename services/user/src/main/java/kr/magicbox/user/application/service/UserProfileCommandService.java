@@ -25,7 +25,7 @@ public class UserProfileCommandService implements UserProfileCommandUseCase {
 
         if (command.nickname() != null) {
             userRepositoryPort.getUserByNickname(command.nickname())
-                    .filter(found -> !found.getId().equals(userId.value()))
+                    .filter(found -> !found.getId().equals(userId))
                     .ifPresent(found -> { throw new DuplicateNicknameException(command.nickname()); });
         }
 

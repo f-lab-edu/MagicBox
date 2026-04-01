@@ -48,10 +48,6 @@ public class User {
         this.isReviewVisible = isReviewVisible != null ? isReviewVisible : true;
     }
 
-    public Long getId() {
-        return this.id.value();
-    }
-
     public String getNickname() {
         return this.nickname != null ? this.nickname.value() : null;
     }

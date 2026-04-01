@@ -28,13 +28,13 @@ public class UserProfileQueryService implements UserProfileQueryUseCase {
                 .orElseThrow(UserNotFoundException::new);
 
         List<UserReviewResult> reviews = user.canShowReview() ?
-                reviewQueryPort.getAllReviewsByUserId(user.getId()) : Collections.emptyList();
+                reviewQueryPort.getAllReviewsByUserId(user.getId().value()) : Collections.emptyList();
         return GetUserProfileResult.builder()
                 .profile(user.getProfile())
                 .nickname(user.getNickname())
                 .reviews(reviews)
                 .role(user.getRole())
-                .isMe(user.getId().equals(requestUserId.value()))
+                .isMe(user.getId().equals(requestUserId))
                 .build();
     }
 }

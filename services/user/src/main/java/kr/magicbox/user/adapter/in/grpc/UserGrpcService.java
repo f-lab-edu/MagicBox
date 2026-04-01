@@ -7,6 +7,7 @@ import kr.magicbox.user.application.port.in.CheckUserActiveUseCase;
 import kr.magicbox.user.application.port.in.LoadUserCredentialUseCase;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
 import kr.magicbox.user.domain.enums.UserRole;
+import kr.magicbox.user.domain.vo.UserId;
 import kr.magicbox.user.grpc.user.*;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
         LoadUserCredentialResult result = loadUserCredentialUseCase.loadUserCredential(command);
 
         responseObserver.onNext(LoadUserCredentialResponse.newBuilder()
-                .setUserId(result.userId())
+                .setUserId(result.userId().value())
                 .setUserRole(toGrpcUserRole(result.userRole()))
                 .build());
         responseObserver.onCompleted();
@@ -41,7 +42,7 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
     @Override
     public void checkUserActive(CheckUserActiveRequest request,
                                 StreamObserver<CheckUserActiveResponse> responseObserver) {
-        boolean active = checkUserActiveUseCase.isActive(request.getUserId());
+        boolean active = checkUserActiveUseCase.isActive(UserId.of(request.getUserId()));
 
         responseObserver.onNext(CheckUserActiveResponse.newBuilder()
                 .setActive(active)

@@ -45,7 +45,7 @@ public class UserJpaAdapter implements UserRepositoryPort {
 
     @Override
     public void updateUser(User user) {
-        userJpaRepository.findById(user.getId())
+        userJpaRepository.findById(user.getId().value())
                 .ifPresent(entity -> {
                     userMapper.updateEntity(user, entity);
                     userJpaRepository.save(entity);
