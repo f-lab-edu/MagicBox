@@ -2,7 +2,7 @@ package kr.magicbox.user.adapter.in.web;
 
 import jakarta.validation.constraints.NotNull;
 import kr.magicbox.user.adapter.in.web.dto.GetUserProfileResponse;
-import kr.magicbox.user.application.port.in.UserProfileQueryUseCase;
+import kr.magicbox.user.application.port.in.UserQueryUseCase;
 import kr.magicbox.user.domain.vo.Nickname;
 import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user/profile")
 @RequiredArgsConstructor
 public class UserQueryController {
-    private final UserProfileQueryUseCase userProfileQueryUseCase;
+    private final UserQueryUseCase userQueryUseCase;
 
     @GetMapping("/{nickname}")
     public ResponseEntity<GetUserProfileResponse> getUserProfile(
             @PathVariable @NotNull(message = "닉네임은 필수 값입니다.") String nickname,
             @AuthenticationPrincipal UserId requestUserId) {
-        return ResponseEntity.ok(GetUserProfileResponse.from(userProfileQueryUseCase.getUserProfile(Nickname.of(nickname), requestUserId)));
+        return ResponseEntity.ok(GetUserProfileResponse.from(userQueryUseCase.getUserProfile(Nickname.of(nickname), requestUserId)));
     }
 }
