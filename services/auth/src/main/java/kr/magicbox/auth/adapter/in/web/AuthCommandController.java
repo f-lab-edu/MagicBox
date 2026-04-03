@@ -3,7 +3,6 @@ package kr.magicbox.auth.adapter.in.web;
 import jakarta.validation.Valid;
 import kr.magicbox.auth.adapter.in.web.dto.AccessTokenResponse;
 import kr.magicbox.auth.adapter.in.web.dto.LoginRequest;
-import kr.magicbox.auth.application.dto.LogoutCommand;
 import kr.magicbox.auth.application.dto.TokenResult;
 import kr.magicbox.auth.application.port.in.LoginUseCase;
 import kr.magicbox.auth.application.port.in.LogoutUseCase;
@@ -47,7 +46,7 @@ public class AuthCommandController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal UserId userId) {
-        logoutUseCase.logout(LogoutCommand.builder().userId(userId).build());
+        logoutUseCase.logout(userId);
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cookieManager.deleteRefreshTokenCookie().toString())
                 .build();
