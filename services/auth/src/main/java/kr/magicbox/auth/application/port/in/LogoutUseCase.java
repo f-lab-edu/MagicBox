@@ -1,7 +1,7 @@
 package kr.magicbox.auth.application.port.in;
 
-import kr.magicbox.auth.application.dto.LogoutCommand;
+import kr.magicbox.auth.domain.vo.UserId;
 
 public interface LogoutUseCase {
-    void logout(LogoutCommand command);
+    void logout(UserId userId);
 }

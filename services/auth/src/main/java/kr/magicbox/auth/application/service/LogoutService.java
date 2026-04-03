@@ -1,6 +1,5 @@
 package kr.magicbox.auth.application.service;
 
-import kr.magicbox.auth.application.dto.LogoutCommand;
 import kr.magicbox.auth.application.port.in.LogoutUseCase;
 import kr.magicbox.auth.application.port.out.*;
 import kr.magicbox.auth.domain.event.LogoutEvent;
@@ -21,8 +20,7 @@ public class LogoutService implements LogoutUseCase {
 
     @Override
     @Transactional
-    public void logout(LogoutCommand command) {
-        UserId userId = command.userId();
+    public void logout(UserId userId) {
 
         if (!userStatusPort.isActive(userId.value())) {
             throw new InActiveUserException();
