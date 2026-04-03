@@ -3,6 +3,7 @@ package kr.magicbox.user.adapter.in.web.dto;
 import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
 import kr.magicbox.user.domain.constants.UserPolicyConstants;
 import kr.magicbox.user.adapter.in.web.validation.OptionalNotBlank;
+import kr.magicbox.user.domain.vo.Nickname;
 import org.hibernate.validator.constraints.Length;
 
 public record UpdateUserProfileRequest(
@@ -17,7 +18,7 @@ public record UpdateUserProfileRequest(
 ) {
     public UpdateUserProfileCommand toCommand() {
         return UpdateUserProfileCommand.builder()
-                .nickname(nickname)
+                .nickname(Nickname.of(nickname))
                 .profile(profile)
                 .isReviewVisible(isReviewVisible)
                 .build();
