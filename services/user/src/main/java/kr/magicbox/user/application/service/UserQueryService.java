@@ -2,11 +2,12 @@ package kr.magicbox.user.application.service;
 
 import kr.magicbox.user.application.dto.GetUserProfileResult;
 import kr.magicbox.user.application.dto.UserReviewResult;
-import kr.magicbox.user.application.port.in.UserProfileQueryUseCase;
+import kr.magicbox.user.application.port.in.UserQueryUseCase;
 import kr.magicbox.user.application.port.out.ReviewQueryPort;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.exception.UserNotFoundException;
+import kr.magicbox.user.domain.vo.Nickname;
 import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserProfileQueryService implements UserProfileQueryUseCase {
+public class UserQueryService implements UserQueryUseCase {
     private final UserRepositoryPort userRepositoryPort;
     private final ReviewQueryPort reviewQueryPort;
 
     @Override
     @Transactional(readOnly = true)
-    public GetUserProfileResult getUserProfile(String nickname, UserId requestUserId) {
+    public GetUserProfileResult getUserProfile(Nickname nickname, UserId requestUserId) {
         User user = userRepositoryPort.getUserByNickname(nickname)
                 .orElseThrow(UserNotFoundException::new);
 
