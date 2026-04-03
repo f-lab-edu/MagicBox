@@ -29,7 +29,7 @@ public class User {
 
     @Builder
     public User(UserId id, Nickname nickname, String email, UserStatus status,
-                String profile, String oauth2Id,
+                UserRole role, String profile, String oauth2Id,
                 OAuth2Provider oauth2Provider, Boolean isReviewVisible, Boolean isActive,
                 Instant lastLoginAt, Duration totalUsageTime) {
         validateFields(email, status, oauth2Id, oauth2Provider);
@@ -38,7 +38,7 @@ public class User {
         this.nickname = nickname;
         this.email = email;
         this.status = status;
-        this.role = UserRole.USER;
+        this.role = role;
         this.profile = profile;
         this.oauth2Id = oauth2Id;
         this.oauth2Provider = oauth2Provider;
