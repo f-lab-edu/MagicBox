@@ -110,14 +110,17 @@ public class User {
     }
 
     public void activate() {
+        this.isActive = true;
         this.status = UserStatus.ACTIVE;
     }
 
     public void ban() {
+        this.isActive = false;
         this.status = UserStatus.INACTIVE;
     }
 
     public void delete() {
+        this.isActive = false;
         this.status = UserStatus.DELETED;
     }
 }
