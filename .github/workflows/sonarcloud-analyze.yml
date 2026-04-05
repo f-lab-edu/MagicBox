@@ -17,12 +17,23 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Compile Java classes
+        run: ./services/auth/gradlew --no-daemon classes
+
       - name: Set SonarCloud Project Key
         run: |
           REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d '/' -f 2)
           ORG_NAME=$(echo $GITHUB_REPOSITORY | cut -d '/' -f 1)
           SONAR_PROJECT_KEY="${ORG_NAME}_${REPO_NAME}"
-          echo "SONAR_PROJECT_KEY=$SONAR_PROJECT_KEY" >> $GITHUB_ENV 
+          SONAR_JAVA_BINARIES=$(find . -type d -path "*/build/classes/java/main" | sed 's|^\./||' | paste -sd "," -)
+          echo "SONAR_PROJECT_KEY=$SONAR_PROJECT_KEY" >> $GITHUB_ENV
+          echo "SONAR_JAVA_BINARIES=$SONAR_JAVA_BINARIES" >> $GITHUB_ENV
 
       - name: Analyze with SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
@@ -35,5 +46,6 @@ jobs:
           args:
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=f-lab-edu-1
+            -Dsonar.java.binaries=${{ env.SONAR_JAVA_BINARIES }}
 
           
