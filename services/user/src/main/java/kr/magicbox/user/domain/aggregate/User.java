@@ -114,7 +114,7 @@ public class User {
         this.status = UserStatus.ACTIVE;
     }
 
-    public void accountDeactivate() {
+    public void ban() {
         this.status = UserStatus.BANNED;
         this.isActive = false;
     }
@@ -124,7 +124,7 @@ public class User {
         this.status = UserStatus.ACTIVE;
     }
 
-    public void accountDelete() {
+    public void delete() {
         this.status = UserStatus.DELETED;
     }
 }
