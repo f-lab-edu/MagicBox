@@ -26,7 +26,7 @@ public class WithdrawUserService implements WithdrawUserUseCase {
         User user = userRepositoryPort.getUserByIdWithLock(command.userId())
                 .orElseThrow(UserNotFoundException::new);
 
-        user.delete();
+        user.accountDelete();
         userRepositoryPort.update(user);
 
         eventRepositoryPort.save(

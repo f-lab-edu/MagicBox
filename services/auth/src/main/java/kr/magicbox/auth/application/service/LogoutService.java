@@ -4,7 +4,7 @@ import kr.magicbox.auth.application.dto.command.LogoutCommand;
 import kr.magicbox.auth.application.port.in.LogoutUseCase;
 import kr.magicbox.auth.application.port.out.*;
 import kr.magicbox.auth.domain.event.LogoutEvent;
-import kr.magicbox.auth.domain.exception.UserBannedException;
+import kr.magicbox.auth.domain.exception.UserInactiveException;
 import kr.magicbox.auth.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class LogoutService implements LogoutUseCase {
         UserId userId = command.userId();
 
         if (!userStatusPort.isActive(userId.value())) {
-            throw new UserBannedException();
+            throw new UserInactiveException();
         }
         refreshTokenRepositoryPort.deleteRefreshToken(userId);
 

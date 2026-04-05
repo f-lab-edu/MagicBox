@@ -27,7 +27,7 @@ public class BanUserService implements BanUserUseCase {
                 .orElseThrow(UserNotFoundException::new);
 
         user.accountDeactivate();
-        userRepositoryPort.updateUser(user);
+        userRepositoryPort.update(user);
 
         UserBannedEvent event = UserBannedEvent.builder()
                 .userId(user.getId())
