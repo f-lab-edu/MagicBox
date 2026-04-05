@@ -1,17 +1,16 @@
 package kr.magicbox.user.application.service;
 
+import kr.magicbox.user.application.dto.command.EndSessionCommand;
+import kr.magicbox.user.application.dto.command.StartSessionCommand;
 import kr.magicbox.user.application.port.in.ManageUserSessionUseCase;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.exception.UserAlreadyActiveException;
-import kr.magicbox.user.domain.exception.UserAlreadyInactiveException;
+import kr.magicbox.user.domain.exception.UserSessionNotActiveException;
 import kr.magicbox.user.domain.exception.UserNotFoundException;
-import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -20,19 +19,19 @@ public class ManageUserSessionService implements ManageUserSessionUseCase {
 
     @Override
     @Transactional
-    public void startSession(UserId userId, Instant loginAt) {
-        User user = userRepositoryPort.getUserById(userId).orElseThrow(UserNotFoundException::new);
+    public void startSession(StartSessionCommand command) {
+        User user = userRepositoryPort.getUserById(command.userId()).orElseThrow(UserNotFoundException::new);
         if (user.isActive()) throw new UserAlreadyActiveException();
-        user.startSession(loginAt);
-        userRepositoryPort.updateUser(user);
+        user.startSession(command.loginAt());
+        userRepositoryPort.update(user);
     }
 
     @Override
     @Transactional
-    public void endSession(UserId userId, Instant logoutAt) {
-        User user = userRepositoryPort.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        if (!user.isActive()) throw new UserAlreadyInactiveException();
-        user.endSession(logoutAt);
-        userRepositoryPort.updateUser(user);
+    public void endSession(EndSessionCommand command) {
+        User user = userRepositoryPort.getUserById(command.userId()).orElseThrow(UserNotFoundException::new);
+        if (!user.isActive()) throw new UserSessionNotActiveException();
+        user.endSession(command.logoutAt());
+        userRepositoryPort.update(user);
     }
 }
