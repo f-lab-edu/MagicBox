@@ -6,6 +6,7 @@ import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
 import kr.magicbox.user.domain.exception.InvalidFieldException;
+import kr.magicbox.user.domain.exception.UserNotBannedException;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -115,8 +116,13 @@ public class User {
     }
 
     public void ban() {
+        this.status = UserStatus.BANNED;
         this.isActive = false;
-        this.status = UserStatus.INACTIVE;
+    }
+
+    public void unban() {
+        if (this.status != UserStatus.BANNED) throw new UserNotBannedException();
+        this.status = UserStatus.ACTIVE;
     }
 
     public void delete() {
