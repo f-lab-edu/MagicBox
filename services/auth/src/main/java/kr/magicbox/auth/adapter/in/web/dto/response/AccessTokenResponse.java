@@ -1,6 +1,6 @@
-package kr.magicbox.auth.adapter.in.web.dto;
+package kr.magicbox.auth.adapter.in.web.dto.response;
 
-import kr.magicbox.auth.application.dto.TokenResult;
+import kr.magicbox.auth.application.dto.result.TokenResult;
 import lombok.Builder;
 
 @Builder

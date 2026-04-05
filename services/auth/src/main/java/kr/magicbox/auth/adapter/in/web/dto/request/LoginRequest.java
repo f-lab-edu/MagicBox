@@ -1,7 +1,7 @@
-package kr.magicbox.auth.adapter.in.web.dto;
+package kr.magicbox.auth.adapter.in.web.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import kr.magicbox.auth.application.dto.LoginCommand;
+import kr.magicbox.auth.application.dto.command.LoginCommand;
 
 public record LoginRequest(
         @NotBlank(message = "코드는 필수 값입니다.")
