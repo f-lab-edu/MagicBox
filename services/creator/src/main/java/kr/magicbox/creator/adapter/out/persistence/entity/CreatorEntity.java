@@ -23,16 +23,16 @@ public class CreatorEntity extends BaseEntity {
     @Column(nullable = false, unique = true, updatable = false)
     private Long userId;
 
-    @Column(nullable = false, length = CreatorPolicyConstants.nicknameMaxLength)
+    @Column(nullable = false, length = CreatorPolicyConstants.NICKNAME_MAX_LENGTH)
     private String nickname;
 
-    @Column(length = CreatorPolicyConstants.taglineMaxLength)
+    @Column(length = CreatorPolicyConstants.TAGLINE_MAX_LENGTH)
     private String tagline;
 
     @Column(columnDefinition = "TEXT")
     private String profileImageUrl;
 
-    @Column(length = CreatorPolicyConstants.introductionMaxLength)
+    @Column(length = CreatorPolicyConstants.INTRODUCTION_MAX_LENGTH)
     private String introduction;
 
     @Enumerated(EnumType.STRING)

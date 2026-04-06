@@ -54,8 +54,8 @@ public class Creator {
             this.nickname = nickname;
         }
         if (tagline != null && !tagline.trim().isEmpty()) {
-            if (tagline.length() > CreatorPolicyConstants.taglineMaxLength) {
-                throw new InvalidFieldException("한줄 소개는 " + CreatorPolicyConstants.taglineMaxLength + "자 이내여야 합니다.");
+            if (tagline.length() > CreatorPolicyConstants.TAGLINE_MAX_LENGTH) {
+                throw new InvalidFieldException("한줄 소개는 " + CreatorPolicyConstants.TAGLINE_MAX_LENGTH + "자 이내여야 합니다.");
             }
             this.tagline = tagline;
         }
@@ -63,8 +63,8 @@ public class Creator {
             this.profileImageUrl = profileImageUrl;
         }
         if (introduction != null && !introduction.trim().isEmpty()) {
-            if (introduction.length() > CreatorPolicyConstants.introductionMaxLength) {
-                throw new InvalidFieldException("자기소개는 " + CreatorPolicyConstants.introductionMaxLength + "자 이내여야 합니다.");
+            if (introduction.length() > CreatorPolicyConstants.INTRODUCTION_MAX_LENGTH) {
+                throw new InvalidFieldException("자기소개는 " + CreatorPolicyConstants.INTRODUCTION_MAX_LENGTH + "자 이내여야 합니다.");
             }
             this.introduction = introduction;
         }
