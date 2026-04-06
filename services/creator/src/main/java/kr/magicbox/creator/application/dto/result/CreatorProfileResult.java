@@ -14,7 +14,7 @@ public record CreatorProfileResult(
 ) {
     public static CreatorProfileResult from(Creator creator) {
         return new CreatorProfileResult(
-                creator.getNickname(),
+                creator.getNicknameValue(),
                 creator.getTagline(),
                 creator.getProfileImageUrl(),
                 creator.getIntroduction(),

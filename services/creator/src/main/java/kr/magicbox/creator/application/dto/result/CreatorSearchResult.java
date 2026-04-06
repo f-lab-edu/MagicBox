@@ -13,7 +13,7 @@ public record CreatorSearchResult(
     public static CreatorSearchResult from(Creator creator) {
         return new CreatorSearchResult(
                 creator.getId(),
-                creator.getNickname(),
+                creator.getNicknameValue(),
                 creator.getProfileImageUrl(),
                 creator.getTagline()
         );

@@ -12,8 +12,8 @@ public class CreatorMapper {
 
     public CreatorEntity toEntity(Creator domain) {
         return CreatorEntity.builder()
-                .userId(domain.getUserId())
-                .nickname(domain.getNickname())
+                .userId(domain.getUserIdValue())
+                .nickname(domain.getNicknameValue())
                 .tagline(domain.getTagline())
                 .profileImageUrl(domain.getProfileImageUrl())
                 .introduction(domain.getIntroduction())
