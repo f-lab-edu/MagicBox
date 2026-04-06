@@ -28,10 +28,10 @@ public class GetCreatorProfileService implements GetCreatorProfileUseCase {
         Creator creator = creatorRepositoryPort.findByNickname(query.nickname())
                 .orElseThrow(CreatorNotFoundException::new);
 
-        Long creatorId = creator.getUserId();
+        Long creatorId = creator.getId().value();
 
         return new CreatorPublicProfileResult(
-                creator.getNickname(),
+                creator.getNicknameValue(),
                 creator.getTagline(),
                 subscribeQueryPort.getSubscriberCount(creatorId),
                 releaseQueryPort.getReleaseCount(creatorId),
