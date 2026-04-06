@@ -21,12 +21,12 @@ public record Nickname(String value) {
 
         String trimmed = nickname.trim();
 
-        if (trimmed.length() < CreatorPolicyConstants.nicknameMinLength) {
-            throw new InvalidFieldException("닉네임은 " + CreatorPolicyConstants.nicknameMinLength + "자 이상이어야 합니다.");
+        if (trimmed.length() < CreatorPolicyConstants.NICKNAME_MIN_LENGTH) {
+            throw new InvalidFieldException("닉네임은 " + CreatorPolicyConstants.NICKNAME_MIN_LENGTH + "자 이상이어야 합니다.");
         }
 
-        if (trimmed.length() > CreatorPolicyConstants.nicknameMaxLength) {
-            throw new InvalidFieldException("닉네임은 " + CreatorPolicyConstants.nicknameMaxLength + "자 이내여야 합니다.");
+        if (trimmed.length() > CreatorPolicyConstants.NICKNAME_MAX_LENGTH) {
+            throw new InvalidFieldException("닉네임은 " + CreatorPolicyConstants.NICKNAME_MAX_LENGTH + "자 이내여야 합니다.");
         }
     }
 }

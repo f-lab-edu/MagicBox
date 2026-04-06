@@ -1,7 +1,5 @@
 package kr.magicbox.creator.application.dto.result;
 
-import kr.magicbox.creator.application.dto.result.ReviewRating;
-
 import java.util.List;
 
 public record CreatorMyProfileResult(

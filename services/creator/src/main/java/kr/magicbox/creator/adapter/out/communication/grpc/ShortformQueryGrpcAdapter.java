@@ -33,7 +33,7 @@ public class ShortformQueryGrpcAdapter implements ShortformQueryPort {
         GetShortformsByCreatorIdResponse response = stub.getShortformsByCreatorId(request);
 
         return response.getShortformsList().stream()
-                .map(shortform -> (Object) shortform)
+                .map(Object.class::cast)
                 .toList();
     }
 

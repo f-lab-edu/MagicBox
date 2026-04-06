@@ -49,19 +49,23 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
         GetReleasesByCreatorIdResponse response = stub.getReleasesByCreatorId(request);
 
         return response.getReleasesList().stream()
-                .map(release -> (Object) release)
+                .map(Object.class::cast)
                 .toList();
     }
 
     @SuppressWarnings("unused")
     private long getReleaseCountFallback(Long creatorId, Throwable throwable) {
-        log.warn("릴리즈 서비스 연결 실패");
+        log.warn("릴리즈 개수 조회 서비스 연결 실패");
         throw new ReleaseServiceUnavailableException(throwable);
     }
 
     @SuppressWarnings("unused")
     private List<Object> getReleasesFallback(Long creatorId, Throwable throwable) {
-        log.warn("릴리즈 서비스 연결 실패");
-        throw new ReleaseServiceUnavailableException(throwable);
+        throw buildReleaseServiceUnavailableException(throwable);
+    }
+
+    private ReleaseServiceUnavailableException buildReleaseServiceUnavailableException(Throwable throwable) {
+        log.warn("릴리즈 목록 조회 서비스 연결 실패");
+        return new ReleaseServiceUnavailableException(throwable);
     }
 }

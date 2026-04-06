@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Builder
 public record UpdateCreatorProfileRequest(
-        @Size(min = CreatorPolicyConstants.nicknameMinLength, max = CreatorPolicyConstants.nicknameMaxLength) String nickname,
+        @Size(min = CreatorPolicyConstants.NICKNAME_MIN_LENGTH, max = CreatorPolicyConstants.NICKNAME_MAX_LENGTH) String nickname,
         @Size(max = 50) String tagline,
         String profileImageUrl,
         @Size(max = 500) String introduction,
