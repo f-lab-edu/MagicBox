@@ -30,7 +30,7 @@ public class ReviewCertificationService implements ReviewCreatorCertificationUse
 
     @Transactional
     @Override
-    public void reviewCreatorCertification(ReviewCertificationCommand command) {
+    public void reviewCertification(ReviewCertificationCommand command) {
         CreatorCertification certification = certificationRepositoryPort.findById(command.certificationId())
                 .orElseThrow(CertificationNotFoundException::new);
 

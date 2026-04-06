@@ -23,7 +23,7 @@ public class AdminCreatorCertificationCommandController {
             @PathVariable Long creatorCertificationId,
             @Valid @RequestBody ReviewCertificationRequest request
     ) {
-        reviewCreatorCertificationUseCase.reviewCreatorCertification(request.toCommand(creatorCertificationId));
+        reviewCreatorCertificationUseCase.reviewCertification(request.toCommand(creatorCertificationId));
         return ResponseEntity.noContent().build();
     }
 }
