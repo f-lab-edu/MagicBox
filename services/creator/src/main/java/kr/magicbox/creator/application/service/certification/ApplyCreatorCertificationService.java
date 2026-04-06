@@ -6,13 +6,11 @@ import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPo
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
 import kr.magicbox.creator.domain.vo.CreatorCertificationRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ApplyCreatorCertificationService implements ApplyCreatorCertificationUseCase {
@@ -22,10 +20,8 @@ public class ApplyCreatorCertificationService implements ApplyCreatorCertificati
     @Transactional
     @Override
     public void applyCreatorCertification(ApplyCertificationCommand command) {
-        log.info("서비스 통과");
         List<CreatorCertification> existingCertifications =
                 certificationRepositoryPort.findAllByUserId(command.userId());
-        log.info("서비스 통과1, {}", existingCertifications.size());
 
         CreatorCertificationRequest request = CreatorCertificationRequest.builder()
                 .genres(command.genres())
