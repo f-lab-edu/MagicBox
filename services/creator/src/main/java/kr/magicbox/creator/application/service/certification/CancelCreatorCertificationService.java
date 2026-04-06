@@ -13,16 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CancelCreatorCertificationService implements CancelCreatorCertificationUseCase {
 
-    private final CreatorCertificationRepositoryPort certificationRepositoryPort;
+    private final CreatorCertificationRepositoryPort creatorCertificationRepositoryPort;
 
     @Override
     @Transactional
     public void cancelCreatorCertification(CancelCreatorCertificationCommand command) {
-        CreatorCertification certification = certificationRepositoryPort.findById(command.creatorCertificationId())
+        CreatorCertification certification = creatorCertificationRepositoryPort.findById(command.creatorCertificationId())
                 .orElseThrow(CertificationNotFoundException::new);
 
         certification.validateCancellable(command.userId());
 
-        certificationRepositoryPort.deleteById(command.creatorCertificationId());
+        creatorCertificationRepositoryPort.deleteById(command.creatorCertificationId());
     }
 }
