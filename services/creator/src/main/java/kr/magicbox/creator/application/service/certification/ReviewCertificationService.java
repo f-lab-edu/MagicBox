@@ -1,7 +1,7 @@
 package kr.magicbox.creator.application.service.certification;
 
 import kr.magicbox.creator.application.dto.command.ReviewCertificationCommand;
-import kr.magicbox.creator.application.port.in.ReviewCertificationUseCase;
+import kr.magicbox.creator.application.port.in.ReviewCreatorCertificationUseCase;
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
@@ -21,7 +21,7 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewCertificationService implements ReviewCertificationUseCase {
+public class ReviewCertificationService implements ReviewCreatorCertificationUseCase {
 
     private final CreatorCertificationRepositoryPort certificationRepositoryPort;
     private final CreatorRepositoryPort creatorRepositoryPort;
@@ -30,7 +30,7 @@ public class ReviewCertificationService implements ReviewCertificationUseCase {
 
     @Transactional
     @Override
-    public void reviewCertification(ReviewCertificationCommand command) {
+    public void reviewCreatorCertification(ReviewCertificationCommand command) {
         CreatorCertification certification = certificationRepositoryPort.findById(command.certificationId())
                 .orElseThrow(CertificationNotFoundException::new);
 

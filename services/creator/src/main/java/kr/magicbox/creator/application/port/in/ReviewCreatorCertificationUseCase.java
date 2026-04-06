@@ -2,7 +2,7 @@ package kr.magicbox.creator.application.port.in;
 
 import kr.magicbox.creator.application.dto.command.ReviewCertificationCommand;
 
-public interface ReviewCertificationUseCase {
+public interface ReviewCreatorCertificationUseCase {
 
-    void reviewCertification(ReviewCertificationCommand command);
+    void reviewCreatorCertification(ReviewCertificationCommand command);
 }
