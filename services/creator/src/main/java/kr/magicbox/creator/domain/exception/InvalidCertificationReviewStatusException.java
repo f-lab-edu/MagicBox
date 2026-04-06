@@ -1,0 +1,11 @@
+package kr.magicbox.creator.domain.exception;
+
+import kr.magicbox.creator.global.exception.BusinessException;
+import org.springframework.http.HttpStatus;
+
+public class InvalidCertificationReviewStatusException extends BusinessException {
+
+    public InvalidCertificationReviewStatusException() {
+        super("심사 상태는 PENDING일 수 없습니다.", HttpStatus.BAD_REQUEST);
+    }
+}

@@ -1,11 +1,8 @@
 spring:
   application:
-    name: creator-local
+    name: creator-dev
   jackson:
     property-naming-strategy: SNAKE_CASE
-  config:
-    import:
-      - file:services/creator/env/local.env[.properties]
   grpc:
     server:
       port: 9095
@@ -62,7 +59,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-
+    open-in-view: false
 server:
   port: ${SERVER_PORT}
 
