@@ -24,7 +24,7 @@ public record UpdateCreatorProfileRequest(
     public UpdateCreatorProfileCommand toCommand(UserId userId) {
         return new UpdateCreatorProfileCommand(
                 userId,
-                Nickname.of(nickname),
+                nickname == null ? null : Nickname.of(nickname),
                 tagline,
                 profileImageUrl,
                 introduction,
