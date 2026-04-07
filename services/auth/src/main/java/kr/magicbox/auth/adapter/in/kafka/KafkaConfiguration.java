@@ -24,10 +24,10 @@ public class KafkaConfiguration {
     @Bean
     public CommonErrorHandler errorHandler(KafkaTemplate<?, ?> kafkaTemplate) {
         DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,
-                (ConsumerRecord<?, ?> record, Exception ex) -> {
-                    String topic = record.topic() + "-dlt";
-                    log.error("[DLT] 메시지 처리 실패, DLT 전송합니다. topic={}, offset={}, exception={}", record.topic(), record.offset(), ex.getMessage());
-                    return new TopicPartition(topic, record.partition());
+                (ConsumerRecord<?, ?> failedRecord, Exception ex) -> {
+                    String topic = failedRecord.topic() + "-dlt";
+                    log.error("[DLT] 메시지 처리 실패, DLT 전송합니다. topic={}, offset={}, exception={}", failedRecord.topic(), failedRecord.offset(), ex.getMessage());
+                    return new TopicPartition(topic, failedRecord.partition());
                 });
         return new DefaultErrorHandler(recoverer, new FixedBackOff(kafkaRetryProperties.getIntervalMs(), kafkaRetryProperties.getMaxAttempts()));
     }
