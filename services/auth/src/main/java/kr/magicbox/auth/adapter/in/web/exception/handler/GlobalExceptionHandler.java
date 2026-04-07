@@ -21,12 +21,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNoResourceFoundException() {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ErrorResponse.of(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."));
+                .body(errorResponse(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."));
     }
 
     @ExceptionHandler(MissingRequestCookieException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestCookieException() {
-        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, "필수 쿠키가 포함되어 있지 않습니다.");
+        ErrorResponse errorResponse = errorResponse(HttpStatus.BAD_REQUEST, "필수 쿠키가 포함되어 있지 않습니다.");
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST.value())
                 .body(errorResponse);
@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("요청 본문을 읽을 수 없습니다: {}", e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, "요청 본문을 읽을 수 없습니다.");
+        ErrorResponse errorResponse = errorResponse(HttpStatus.BAD_REQUEST, "요청 본문을 읽을 수 없습니다.");
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST.value())
                 .body(errorResponse);
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("유효하지 않은 요청 파라미터: {}", e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, "유효하지 않은 요청 파라미터입니다.");
+        ErrorResponse errorResponse = errorResponse(HttpStatus.BAD_REQUEST, "유효하지 않은 요청 파라미터입니다.");
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST.value())
                 .body(errorResponse);
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
         String errorMessage = e.getBindingResult().getFieldError() != null ?
                 e.getBindingResult().getFieldError().getDefaultMessage() : "인자값이 유효하지 않습니다.";
         log.error("요청 데이터 유효성 검증 실패: {}", errorMessage);
-        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, errorMessage);
+        ErrorResponse errorResponse = errorResponse(HttpStatus.BAD_REQUEST, errorMessage);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST.value())
                 .body(errorResponse);
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
                 "유효성 검증에 실패했습니다." :
                 e.getConstraintViolations().iterator().next().getMessage();
         log.error("유효성 검증 실패: {}", errorMessage);
-        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, errorMessage);
+        ErrorResponse errorResponse = errorResponse(HttpStatus.BAD_REQUEST, errorMessage);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST.value())
                 .body(errorResponse);
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
         log.error("지원되지 않는 HTTP 메서드: {}", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(ErrorResponse.of(HttpStatus.METHOD_NOT_ALLOWED, "지원되지 않는 HTTP 메서드입니다."));
+                .body(errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "지원되지 않는 HTTP 메서드입니다."));
     }
 
     @ExceptionHandler(NullPointerException.class)
@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
         log.error("Null Pointer Exception 발생: {}", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .body(ErrorResponse.of(status, "내부 서버 오류가 발생했습니다."));
+                .body(errorResponse(status, "내부 서버 오류가 발생했습니다."));
     }
 
     @ExceptionHandler(BaseException.class)
@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = e.getStatus();
         return ResponseEntity
                 .status(status)
-                .body(ErrorResponse.of(status, e.getMessage()));
+                .body(errorResponse(status, e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
@@ -104,6 +104,13 @@ public class GlobalExceptionHandler {
         log.error("예상하지 못한 오류 발생: {}", e.getMessage(), e);
         return ResponseEntity
                 .status(status)
-                .body(ErrorResponse.of(status, "알 수 없는 오류가 발생했습니다."));
+                .body(errorResponse(status, "알 수 없는 오류가 발생했습니다."));
+    }
+
+    private ErrorResponse errorResponse(HttpStatus status, String message) {
+        return ErrorResponse.builder()
+                .status(status.value())
+                .message(message)
+                .build();
     }
 }

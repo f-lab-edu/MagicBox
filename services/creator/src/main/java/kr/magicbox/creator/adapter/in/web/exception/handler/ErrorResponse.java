@@ -1,9 +1,7 @@
 package kr.magicbox.creator.adapter.in.web.exception.handler;
 
-import org.springframework.http.HttpStatus;
+import lombok.Builder;
 
+@Builder
 public record ErrorResponse(int status, String message) {
-    public static ErrorResponse of(HttpStatus status, String message) {
-        return new ErrorResponse(status.value(), message);
-    }
 }
