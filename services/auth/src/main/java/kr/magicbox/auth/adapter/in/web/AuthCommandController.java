@@ -1,9 +1,11 @@
 package kr.magicbox.auth.adapter.in.web;
 
 import jakarta.validation.Valid;
-import kr.magicbox.auth.adapter.in.web.dto.AccessTokenResponse;
-import kr.magicbox.auth.adapter.in.web.dto.LoginRequest;
-import kr.magicbox.auth.application.dto.TokenResult;
+import kr.magicbox.auth.adapter.in.web.dto.response.AccessTokenResponse;
+import kr.magicbox.auth.adapter.in.web.dto.request.LoginRequest;
+import kr.magicbox.auth.application.dto.command.LogoutCommand;
+import kr.magicbox.auth.application.dto.command.RefreshTokenCommand;
+import kr.magicbox.auth.application.dto.result.TokenResult;
 import kr.magicbox.auth.application.port.in.LoginUseCase;
 import kr.magicbox.auth.application.port.in.LogoutUseCase;
 import kr.magicbox.auth.application.port.in.RefreshTokenUseCase;
@@ -38,7 +40,7 @@ public class AuthCommandController {
 
     @PostMapping("/refresh")
     public ResponseEntity<AccessTokenResponse> refreshToken(@CookieValue(name = "refresh_token") String refreshToken) {
-        TokenResult result = refreshTokenUseCase.refresh(refreshToken);
+        TokenResult result = refreshTokenUseCase.refresh(RefreshTokenCommand.of(refreshToken));
         ResponseCookie cookie = cookieManager.createRefreshTokenCookie(result.refreshToken().refreshTokenValue());
 
         return ResponseEntity.ok()
@@ -50,7 +52,7 @@ public class AuthCommandController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal UserId userId) {
-        logoutUseCase.logout(userId);
+        logoutUseCase.logout(LogoutCommand.of(userId));
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cookieManager.deleteRefreshTokenCookie().toString())
                 .build();

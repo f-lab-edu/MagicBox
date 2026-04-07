@@ -1,6 +1,6 @@
 package kr.magicbox.creator.adapter.in.web;
 
-import kr.magicbox.creator.adapter.in.web.dto.request.ApplyCertificationRequest;
+import kr.magicbox.creator.adapter.in.web.dto.request.ApplyCreatorCertificationRequest;
 import kr.magicbox.creator.application.dto.command.CancelCreatorCertificationCommand;
 import kr.magicbox.creator.application.port.in.ApplyCreatorCertificationUseCase;
 import kr.magicbox.creator.application.port.in.CancelCreatorCertificationUseCase;
@@ -23,7 +23,7 @@ public class CreatorCertificationCommandController {
     @PostMapping
     public ResponseEntity<Void> apply(
             @AuthenticationPrincipal UserId userId,
-            @Valid @RequestBody ApplyCertificationRequest request
+            @Valid @RequestBody ApplyCreatorCertificationRequest request
     ) {
         applyCreatorCertificationUseCase.applyCreatorCertification(request.toCommand(userId));
         return ResponseEntity.noContent().build();

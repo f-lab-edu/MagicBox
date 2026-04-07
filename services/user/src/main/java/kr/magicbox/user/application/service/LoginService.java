@@ -1,7 +1,7 @@
 package kr.magicbox.user.application.service;
 
-import kr.magicbox.user.application.dto.LoadUserCredentialCommand;
-import kr.magicbox.user.application.dto.LoadUserCredentialResult;
+import kr.magicbox.user.application.dto.command.LoadUserCredentialCommand;
+import kr.magicbox.user.application.dto.result.LoadUserCredentialResult;
 import kr.magicbox.user.application.port.in.LoadUserCredentialUseCase;
 import kr.magicbox.user.application.port.out.UserDomainEventRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
@@ -35,7 +35,7 @@ public class LoginService implements LoadUserCredentialUseCase {
     }
 
     private LoadUserCredentialResult handleExistingUser(User user) {
-        userRepository.updateUser(user);
+        userRepository.update(user);
         return LoadUserCredentialResult.builder()
                 .userId(user.getId())
                 .userRole(user.getRole())
@@ -53,7 +53,7 @@ public class LoginService implements LoadUserCredentialUseCase {
                 .oauth2Id(command.oauth2Id())
                 .oauth2Provider(command.provider())
                 .build();
-        User saved = userRepository.saveUser(user);
+        User saved = userRepository.save(user);
 
         UserSignupEvent userSignupEvent = UserSignupEvent.builder()
                 .userId(saved.getId())

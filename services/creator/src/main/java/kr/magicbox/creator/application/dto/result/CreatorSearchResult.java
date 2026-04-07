@@ -14,7 +14,7 @@ public record CreatorSearchResult(
     public static CreatorSearchResult from(Creator creator) {
         return new CreatorSearchResult(
                 creator.getId(),
-                creator.getNicknameValue(),
+                creator.getNickname(),
                 creator.getIntroduction(),
                 creator.getProfileImageUrl(),
                 creator.getTagline()

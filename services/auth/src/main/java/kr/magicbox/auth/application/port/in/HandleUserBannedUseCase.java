@@ -1,7 +1,7 @@
 package kr.magicbox.auth.application.port.in;
 
-import kr.magicbox.auth.domain.vo.UserId;
+import kr.magicbox.auth.application.dto.command.HandleUserBannedCommand;
 
 public interface HandleUserBannedUseCase {
-    void handleUserBanned(UserId userId);
+    void handleUserBanned(HandleUserBannedCommand command);
 }

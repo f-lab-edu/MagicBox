@@ -1,10 +1,10 @@
 package kr.magicbox.creator.domain.aggregate;
 
 import kr.magicbox.creator.domain.enums.CreatorCertificationStatus;
-import kr.magicbox.creator.domain.exception.CertificationAlreadyReviewedException;
-import kr.magicbox.creator.domain.exception.CertificationNotFoundException;
-import kr.magicbox.creator.domain.exception.CertificationPendingAlreadyExistsException;
-import kr.magicbox.creator.domain.exception.InvalidCertificationReviewStatusException;
+import kr.magicbox.creator.domain.exception.CreatorCertificationAlreadyReviewedException;
+import kr.magicbox.creator.domain.exception.CreatorCertificationNotFoundException;
+import kr.magicbox.creator.domain.exception.CreatorCertificationPendingAlreadyExistsException;
+import kr.magicbox.creator.domain.exception.InvalidCreatorCertificationReviewStatusException;
 import kr.magicbox.creator.domain.exception.InvalidFieldException;
 import kr.magicbox.creator.domain.vo.CreatorCertificationId;
 import kr.magicbox.creator.domain.vo.CreatorCertificationRequest;
@@ -25,8 +25,8 @@ public class CreatorCertification {
     private CreatorCertificationResult result;
 
     public static CreatorCertification create(UserId userId, CreatorCertificationRequest request,
-                                              List<CreatorCertification> existingCertifications) {
-        validateNoPendingCertification(existingCertifications);
+                                              List<CreatorCertification> existingCreatorCertifications) {
+        validateNoPendingCreatorCertification(existingCreatorCertifications);
         return CreatorCertification.builder()
                 .request(request)
                 .userId(userId)
@@ -34,11 +34,11 @@ public class CreatorCertification {
                 .build();
     }
 
-    private static void validateNoPendingCertification(List<CreatorCertification> existingCertifications) {
-        boolean hasPending = existingCertifications.stream()
+    private static void validateNoPendingCreatorCertification(List<CreatorCertification> existingCreatorCertifications) {
+        boolean hasPending = existingCreatorCertifications.stream()
                 .anyMatch(c -> c.status == CreatorCertificationStatus.PENDING);
         if (hasPending) {
-            throw new CertificationPendingAlreadyExistsException();
+            throw new CreatorCertificationPendingAlreadyExistsException();
         }
     }
 
@@ -64,10 +64,10 @@ public class CreatorCertification {
 
     public void review(CreatorCertificationStatus status, CreatorCertificationResult result) {
         if (isReviewed()) {
-            throw new CertificationAlreadyReviewedException();
+            throw new CreatorCertificationAlreadyReviewedException();
         }
         if (status == CreatorCertificationStatus.PENDING) {
-            throw new InvalidCertificationReviewStatusException();
+            throw new InvalidCreatorCertificationReviewStatusException();
         }
         this.status = status;
         this.result = result;
@@ -75,10 +75,10 @@ public class CreatorCertification {
 
     public void validateCancellable(UserId requestUserId) {
         if (isReviewed()) {
-            throw new CertificationAlreadyReviewedException("이미 심사가 완료된 인증 신청은 취소할 수 없습니다.");
+            throw new CreatorCertificationAlreadyReviewedException("이미 심사가 완료된 인증 신청은 취소할 수 없습니다.");
         }
         if (!this.userId.equals(requestUserId)) {
-            throw new CertificationNotFoundException();
+            throw new CreatorCertificationNotFoundException();
         }
     }
 }

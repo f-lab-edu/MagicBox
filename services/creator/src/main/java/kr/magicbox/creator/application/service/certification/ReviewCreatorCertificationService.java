@@ -1,0 +1,77 @@
+package kr.magicbox.creator.application.service.certification;
+
+import kr.magicbox.creator.application.dto.command.ReviewCreatorCertificationCommand;
+import kr.magicbox.creator.application.port.in.ReviewCreatorCertificationUseCase;
+import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
+import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
+import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
+import kr.magicbox.creator.application.port.out.UserNicknameQueryPort;
+import kr.magicbox.creator.domain.aggregate.Creator;
+import kr.magicbox.creator.domain.aggregate.CreatorCertification;
+import kr.magicbox.creator.domain.event.CreatorCertificationApprovedEvent;
+import kr.magicbox.creator.domain.event.CreatorCertificationRejectedEvent;
+import kr.magicbox.creator.domain.exception.CreatorCertificationNotFoundException;
+import kr.magicbox.creator.domain.vo.CreatorCertificationResult;
+import kr.magicbox.creator.domain.vo.Nickname;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+
+@Service
+@RequiredArgsConstructor
+public class ReviewCreatorCertificationService implements ReviewCreatorCertificationUseCase {
+
+    private final CreatorCertificationRepositoryPort certificationRepositoryPort;
+    private final CreatorRepositoryPort creatorRepositoryPort;
+    private final CreatorDomainEventRepositoryPort eventRepositoryPort;
+    private final UserNicknameQueryPort userNicknameQueryPort;
+
+    @Transactional
+    @Override
+    public void reviewCreatorCertification(ReviewCreatorCertificationCommand command) {
+        CreatorCertification certification = certificationRepositoryPort.findById(command.certificationId())
+                .orElseThrow(CreatorCertificationNotFoundException::new);
+
+        certification.review(command.certificationStatus(), CreatorCertificationResult.of(command.reviewMessage()));
+        certificationRepositoryPort.update(certification);
+
+        if (certification.isApproved()) {
+            createCreator(certification);
+            eventRepositoryPort.save(buildApprovedEvent(certification));
+        }
+        else {
+            eventRepositoryPort.save(buildRejectedEvent(certification));
+        }
+    }
+
+    private CreatorCertificationApprovedEvent buildApprovedEvent(CreatorCertification certification) {
+        return CreatorCertificationApprovedEvent.builder()
+                .userId(certification.getUserId())
+                .certificationId(certification.getId())
+                .reviewedAt(Instant.now())
+                .build();
+    }
+
+    private CreatorCertificationRejectedEvent buildRejectedEvent(CreatorCertification certification) {
+        return CreatorCertificationRejectedEvent.builder()
+                .userId(certification.getUserId())
+                .certificationId(certification.getId())
+                .reviewMessage(certification.getResult().reviewMessage())
+                .reviewedAt(Instant.now())
+                .build();
+    }
+
+    private void createCreator(CreatorCertification certification) {
+        String nickname = userNicknameQueryPort.getNickname(certification.getUserId());
+
+        Creator creator = Creator.builder()
+                .userId(certification.getUserId())
+                .nickname(Nickname.of(nickname))
+                .genres(certification.getRequest().genres())
+                .build();
+
+        creatorRepositoryPort.save(creator);
+    }
+}

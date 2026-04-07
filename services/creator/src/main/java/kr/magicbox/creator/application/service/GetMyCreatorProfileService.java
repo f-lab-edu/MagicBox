@@ -29,7 +29,7 @@ public class GetMyCreatorProfileService implements GetMyCreatorProfileUseCase {
         Long creatorId = creator.getId().value();
 
         return new CreatorMyProfileResult(
-                creator.getNicknameValue(),
+                creator.getNickname(),
                 creator.getTagline(),
                 subscribeQueryPort.getSubscriberCount(creatorId),
                 releaseQueryPort.getReleaseCount(creatorId),

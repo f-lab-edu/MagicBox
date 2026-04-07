@@ -6,7 +6,7 @@ import kr.magicbox.creator.adapter.out.persistence.repository.CreatorCertificati
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
 import kr.magicbox.creator.domain.enums.CreatorCertificationStatus;
-import kr.magicbox.creator.domain.exception.CertificationNotFoundException;
+import kr.magicbox.creator.domain.exception.CreatorCertificationNotFoundException;
 import kr.magicbox.creator.domain.vo.CreatorCertificationId;
 import kr.magicbox.creator.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class CreatorCertificationJpaAdapter implements CreatorCertificationRepos
     @Override
     public void update(CreatorCertification certification) {
         CreatorCertificationEntity entity = creatorCertificationJpaRepository.findById(certification.getId().value())
-                .orElseThrow(CertificationNotFoundException::new);
+                .orElseThrow(CreatorCertificationNotFoundException::new);
         creatorCertificationMapper.updateEntity(certification, entity);
         creatorCertificationJpaRepository.save(entity);
     }

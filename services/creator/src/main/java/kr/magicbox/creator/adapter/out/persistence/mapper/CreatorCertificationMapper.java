@@ -17,12 +17,12 @@ import java.util.Optional;
 public class CreatorCertificationMapper {
 
     private final CreatorCertificationRequestMapper certificationRequestMapper;
-    private final CertificationResultMapper certificationResultMapper;
+    private final CreatorCertificationResultMapper creatorCertificationResultMapper;
 
     public CreatorCertification toDomain(CreatorCertificationEntity entity) {
         CreatorCertificationRequest request = certificationRequestMapper.toDomain(entity.getRequest());
         CreatorCertificationResult result = Optional.ofNullable(entity.getResult())
-                .map(certificationResultMapper::toDomain)
+                .map(creatorCertificationResultMapper::toDomain)
                 .orElse(null);
 
         return CreatorCertification.builder()

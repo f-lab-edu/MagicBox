@@ -1,7 +1,7 @@
 package kr.magicbox.creator.adapter.in.web;
 
 import jakarta.validation.Valid;
-import kr.magicbox.creator.adapter.in.web.dto.request.ReviewCertificationRequest;
+import kr.magicbox.creator.adapter.in.web.dto.request.ReviewCreatorCertificationRequest;
 import kr.magicbox.creator.application.port.in.ReviewCreatorCertificationUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +19,9 @@ public class AdminCreatorCertificationCommandController {
     private final ReviewCreatorCertificationUseCase reviewCreatorCertificationUseCase;
 
     @PatchMapping("/{creatorCertificationId}/review")
-    public ResponseEntity<Void> reviewCertification(
+    public ResponseEntity<Void> reviewCreatorCertification(
             @PathVariable Long creatorCertificationId,
-            @Valid @RequestBody ReviewCertificationRequest request
+            @Valid @RequestBody ReviewCreatorCertificationRequest request
     ) {
         reviewCreatorCertificationUseCase.reviewCreatorCertification(request.toCommand(creatorCertificationId));
         return ResponseEntity.noContent().build();
