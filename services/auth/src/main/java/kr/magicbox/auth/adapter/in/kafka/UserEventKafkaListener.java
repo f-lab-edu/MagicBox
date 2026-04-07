@@ -20,12 +20,12 @@ public class UserEventKafkaListener {
     @KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "auth-service")
     public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> consumerRecord) {
         UserWithdrawnEvent event = consumerRecord.value();
-        handleUserWithdrawnUseCase.handleUserWithdrawn(event.userId());
+        handleUserWithdrawnUseCase.handleUserWithdrawn(HandleUserWithdrawnCommand.of(event.userId()));
     }
 
     @KafkaListener(topics = "outbox.event.user-banned", groupId = "auth-service")
     public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> consumerRecord) {
         UserBannedEvent event = consumerRecord.value();
-        handleUserBannedUseCase.handleUserBanned(event.userId());
+        handleUserBannedUseCase.handleUserBanned(HandleUserBannedCommand.of(event.userId()));
     }
 }
