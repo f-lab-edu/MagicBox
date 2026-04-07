@@ -5,7 +5,7 @@ import kr.magicbox.creator.domain.vo.UserId;
 
 import java.util.Set;
 
-public record ApplyCertificationCommand(
+public record ApplyCreatorCertificationCommand(
         UserId userId,
         Set<MagicGenre> genres,
         String portfolioUrl

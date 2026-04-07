@@ -7,9 +7,10 @@ import lombok.Builder;
 import java.time.Instant;
 
 @Builder
-public record CertificationApprovedEvent(
+public record CreatorCertificationRejectedEvent(
         UserId userId,
         CreatorCertificationId certificationId,
+        String reviewMessage,
         Instant reviewedAt
 ) implements CreatorDomainEvent {
 
@@ -20,6 +21,6 @@ public record CertificationApprovedEvent(
 
     @Override
     public CreatorDomainEventType eventType() {
-        return CreatorDomainEventType.CREATOR_CERTIFICATION_APPROVED;
+        return CreatorDomainEventType.CREATOR_CERTIFICATION_REJECTED;
     }
 }

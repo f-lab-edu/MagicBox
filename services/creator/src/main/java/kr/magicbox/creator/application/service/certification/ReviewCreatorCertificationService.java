@@ -1,6 +1,6 @@
 package kr.magicbox.creator.application.service.certification;
 
-import kr.magicbox.creator.application.dto.command.ReviewCertificationCommand;
+import kr.magicbox.creator.application.dto.command.ReviewCreatorCertificationCommand;
 import kr.magicbox.creator.application.port.in.ReviewCreatorCertificationUseCase;
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
@@ -8,9 +8,9 @@ import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.application.port.out.UserNicknameQueryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
-import kr.magicbox.creator.domain.event.CertificationApprovedEvent;
-import kr.magicbox.creator.domain.event.CertificationRejectedEvent;
-import kr.magicbox.creator.domain.exception.CertificationNotFoundException;
+import kr.magicbox.creator.domain.event.CreatorCertificationApprovedEvent;
+import kr.magicbox.creator.domain.event.CreatorCertificationRejectedEvent;
+import kr.magicbox.creator.domain.exception.CreatorCertificationNotFoundException;
 import kr.magicbox.creator.domain.vo.CreatorCertificationResult;
 import kr.magicbox.creator.domain.vo.Nickname;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewCertificationService implements ReviewCreatorCertificationUseCase {
+public class ReviewCreatorCertificationService implements ReviewCreatorCertificationUseCase {
 
     private final CreatorCertificationRepositoryPort certificationRepositoryPort;
     private final CreatorRepositoryPort creatorRepositoryPort;
@@ -30,9 +30,9 @@ public class ReviewCertificationService implements ReviewCreatorCertificationUse
 
     @Transactional
     @Override
-    public void reviewCreatorCertification(ReviewCertificationCommand command) {
+    public void reviewCreatorCertification(ReviewCreatorCertificationCommand command) {
         CreatorCertification certification = certificationRepositoryPort.findById(command.certificationId())
-                .orElseThrow(CertificationNotFoundException::new);
+                .orElseThrow(CreatorCertificationNotFoundException::new);
 
         certification.review(command.certificationStatus(), CreatorCertificationResult.of(command.reviewMessage()));
         certificationRepositoryPort.update(certification);
@@ -46,16 +46,16 @@ public class ReviewCertificationService implements ReviewCreatorCertificationUse
         }
     }
 
-    private CertificationApprovedEvent buildApprovedEvent(CreatorCertification certification) {
-        return CertificationApprovedEvent.builder()
+    private CreatorCertificationApprovedEvent buildApprovedEvent(CreatorCertification certification) {
+        return CreatorCertificationApprovedEvent.builder()
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
                 .reviewedAt(Instant.now())
                 .build();
     }
 
-    private CertificationRejectedEvent buildRejectedEvent(CreatorCertification certification) {
-        return CertificationRejectedEvent.builder()
+    private CreatorCertificationRejectedEvent buildRejectedEvent(CreatorCertification certification) {
+        return CreatorCertificationRejectedEvent.builder()
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
                 .reviewMessage(certification.getResult().reviewMessage())

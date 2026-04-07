@@ -1,6 +1,6 @@
 package kr.magicbox.creator.application.service.certification;
 
-import kr.magicbox.creator.application.dto.command.ApplyCertificationCommand;
+import kr.magicbox.creator.application.dto.command.ApplyCreatorCertificationCommand;
 import kr.magicbox.creator.application.port.in.ApplyCreatorCertificationUseCase;
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
@@ -19,8 +19,8 @@ public class ApplyCreatorCertificationService implements ApplyCreatorCertificati
 
     @Transactional
     @Override
-    public void applyCreatorCertification(ApplyCertificationCommand command) {
-        List<CreatorCertification> existingCertifications =
+    public void applyCreatorCertification(ApplyCreatorCertificationCommand command) {
+        List<CreatorCertification> existingCreatorCertifications =
                 certificationRepositoryPort.findAllByUserId(command.userId());
 
         CreatorCertificationRequest request = CreatorCertificationRequest.builder()
@@ -28,7 +28,7 @@ public class ApplyCreatorCertificationService implements ApplyCreatorCertificati
                 .portfolioUrl(command.portfolioUrl())
                 .build();
 
-        CreatorCertification certification = CreatorCertification.create(command.userId(), request, existingCertifications);
+        CreatorCertification certification = CreatorCertification.create(command.userId(), request, existingCreatorCertifications);
 
         certificationRepositoryPort.save(certification);
     }

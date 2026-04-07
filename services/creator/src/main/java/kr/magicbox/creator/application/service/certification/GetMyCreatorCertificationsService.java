@@ -1,7 +1,7 @@
 package kr.magicbox.creator.application.service.certification;
 
 import kr.magicbox.creator.application.dto.result.CreatorCertificationInfoResult;
-import kr.magicbox.creator.application.dto.query.GetMyCertificationsQuery;
+import kr.magicbox.creator.application.dto.query.GetMyCreatorCertificationsQuery;
 import kr.magicbox.creator.application.port.in.GetMyCreatorCertificationsUseCase;
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
@@ -14,13 +14,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GetMyCertificationsService implements GetMyCreatorCertificationsUseCase {
+public class GetMyCreatorCertificationsService implements GetMyCreatorCertificationsUseCase {
 
     private final CreatorCertificationRepositoryPort creatorCertificationRepositoryPort;
 
     @Transactional(readOnly = true)
     @Override
-    public List<CreatorCertificationInfoResult> getMyCertifications(GetMyCertificationsQuery query) {
+    public List<CreatorCertificationInfoResult> getMyCreatorCertifications(GetMyCreatorCertificationsQuery query) {
         return creatorCertificationRepositoryPort.findAllByUserIdByCursor(query.userId(), query.cursorId(), query.size())
                 .stream()
                 .map(this::toResult)

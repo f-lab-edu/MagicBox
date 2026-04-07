@@ -5,7 +5,7 @@ import kr.magicbox.creator.domain.vo.CreatorCertificationResult;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CertificationResultMapper {
+public class CreatorCertificationResultMapper {
 
     public CreatorCertificationResult toDomain(CreatorCertificationResultVO vo) {
         return CreatorCertificationResult.builder()

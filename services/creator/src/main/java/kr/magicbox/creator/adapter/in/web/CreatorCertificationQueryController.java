@@ -4,7 +4,7 @@ import kr.magicbox.creator.adapter.in.web.constants.CursorConstants;
 import kr.magicbox.creator.adapter.in.web.dto.response.CreatorCertificationInfoResponse;
 import kr.magicbox.creator.adapter.in.web.dto.response.CursorResponse;
 import kr.magicbox.creator.adapter.in.web.validation.CursorSize;
-import kr.magicbox.creator.application.dto.query.GetMyCertificationsQuery;
+import kr.magicbox.creator.application.dto.query.GetMyCreatorCertificationsQuery;
 import kr.magicbox.creator.application.port.in.GetMyCreatorCertificationsUseCase;
 import kr.magicbox.creator.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +27,12 @@ public class CreatorCertificationQueryController {
     private final GetMyCreatorCertificationsUseCase getMyCreatorCertificationsUseCase;
 
     @GetMapping("/me")
-    public ResponseEntity<CursorResponse<CreatorCertificationInfoResponse>> getMyCertifications(
+    public ResponseEntity<CursorResponse<CreatorCertificationInfoResponse>> getMyCreatorCertifications(
             @AuthenticationPrincipal UserId userId,
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size) {
         List<CreatorCertificationInfoResponse> content =
-                getMyCreatorCertificationsUseCase.getMyCertifications(GetMyCertificationsQuery.of(userId, cursor, size + 1))
+                getMyCreatorCertificationsUseCase.getMyCreatorCertifications(GetMyCreatorCertificationsQuery.of(userId, cursor, size + 1))
                         .stream()
                         .map(CreatorCertificationInfoResponse::from)
                         .toList();

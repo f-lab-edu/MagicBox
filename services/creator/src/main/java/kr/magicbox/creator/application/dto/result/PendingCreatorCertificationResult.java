@@ -8,7 +8,7 @@ import kr.magicbox.creator.domain.vo.UserId;
 import java.time.Instant;
 import java.util.Set;
 
-public record PendingCertificationResult(
+public record PendingCreatorCertificationResult(
         CreatorCertificationId certificationId,
         UserId userId,
         Set<MagicGenre> genres,
@@ -16,8 +16,8 @@ public record PendingCertificationResult(
         Instant requestedAt
 ) {
 
-    public static PendingCertificationResult from(CreatorCertification certification) {
-        return new PendingCertificationResult(
+    public static PendingCreatorCertificationResult from(CreatorCertification certification) {
+        return new PendingCreatorCertificationResult(
                 certification.getId(),
                 certification.getUserId(),
                 certification.getRequest().genres(),
