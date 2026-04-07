@@ -23,7 +23,7 @@ public class UnbanUserService implements UnbanUserUseCase {
     @Override
     @Transactional
     public void unbanUser(Nickname nickname) {
-        User user = userRepositoryPort.getUserByNickname(nickname)
+        User user = userRepositoryPort.getUserByNicknameWithLock(nickname)
                 .orElseThrow(UserNotFoundException::new);
 
         user.unban();
