@@ -23,6 +23,6 @@ public class HandleUserWithdrawnService implements HandleUserWithdrawnUseCase {
         if(creatorOpt.isEmpty()) return;
         Creator creator = creatorOpt.get();
         creator.delete();
-        creatorRepositoryPort.save(creator);
+        creatorRepositoryPort.update(creator);
     }
 }

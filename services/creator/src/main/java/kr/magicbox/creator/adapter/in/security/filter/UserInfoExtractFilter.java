@@ -8,14 +8,12 @@ import kr.magicbox.creator.adapter.in.security.properties.TrustedIpProperties;
 import kr.magicbox.creator.domain.vo.UserId;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Slf4j
 @RequiredArgsConstructor
 public class UserInfoExtractFilter extends OncePerRequestFilter {
 
@@ -39,7 +37,6 @@ public class UserInfoExtractFilter extends OncePerRequestFilter {
 
         Long userIdLong = Long.valueOf(userIdRequestHeader);
         UserId userId = UserId.of(userIdLong);
-        log.info(String.valueOf(userId));
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
