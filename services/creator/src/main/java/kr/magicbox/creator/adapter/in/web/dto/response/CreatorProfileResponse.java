@@ -1,6 +1,5 @@
 package kr.magicbox.creator.adapter.in.web.dto.response;
 
-import kr.magicbox.creator.application.dto.result.CreatorPublicProfileResult;
 import kr.magicbox.creator.application.dto.result.ReviewRating;
 import lombok.Builder;
 
@@ -18,18 +17,4 @@ public record CreatorProfileResponse(
         String introduction,
         boolean isSubscribed
 ) {
-
-    public static CreatorProfileResponse from(CreatorPublicProfileResult result) {
-        return CreatorProfileResponse.builder()
-                .nickname(result.nickname())
-                .tagline(result.tagline())
-                .subscriberCount(result.subscriberCount())
-                .releaseCount(result.releaseCount())
-                .reviewRating(result.reviewRating())
-                .releases(result.releases())
-                .shortForms(result.shortForms())
-                .introduction(result.introduction())
-                .isSubscribed(result.isSubscribed())
-                .build();
-    }
 }
