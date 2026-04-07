@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.function.ToLongFunction;
 
 @RestController
 @RequestMapping("/api/creator")
@@ -88,7 +87,7 @@ public class CreatorQueryController {
                 .stream()
                 .map(this::toCreatorSearchResponse)
                 .toList();
-        return ResponseEntity.ok(buildCursorResponse(content, size, CreatorSearchResponse::creatorId));
+        return ResponseEntity.ok(CursorResponse.of(content, size, CreatorSearchResponse::creatorId));
     }
 
     @GetMapping("/search")
@@ -100,7 +99,7 @@ public class CreatorQueryController {
                 .stream()
                 .map(this::toCreatorSearchResponse)
                 .toList();
-        return ResponseEntity.ok(buildCursorResponse(content, size, CreatorSearchResponse::creatorId));
+        return ResponseEntity.ok(CursorResponse.of(content, size, CreatorSearchResponse::creatorId));
     }
 
     private CreatorSearchResponse toCreatorSearchResponse(kr.magicbox.creator.application.dto.result.CreatorSearchResult result) {
@@ -110,17 +109,6 @@ public class CreatorQueryController {
                 .introduction(result.introduction())
                 .profileImageUrl(result.profileImageUrl())
                 .tagline(result.tagline())
-                .build();
-    }
-
-    private <T> CursorResponse<T> buildCursorResponse(List<T> content, int size, ToLongFunction<T> cursorExtractor) {
-        boolean hasNext = content.size() > size;
-        List<T> sliced = hasNext ? content.subList(0, size) : content;
-        Long nextCursor = hasNext ? cursorExtractor.applyAsLong(sliced.getLast()) : null;
-        return CursorResponse.<T>builder()
-                .content(sliced)
-                .nextCursor(nextCursor)
-                .hasNext(hasNext)
                 .build();
     }
 }
