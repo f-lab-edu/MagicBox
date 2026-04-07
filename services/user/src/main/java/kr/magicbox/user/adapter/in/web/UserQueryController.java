@@ -22,6 +22,13 @@ public class UserQueryController {
     public ResponseEntity<GetUserProfileResponse> getUserProfile(
             @PathVariable @NotNull(message = "닉네임은 필수 값입니다.") String nickname,
             @AuthenticationPrincipal UserId requestUserId) {
-        return ResponseEntity.ok(GetUserProfileResponse.from(userQueryUseCase.getUserProfile(Nickname.of(nickname), requestUserId)));
+        var result = userQueryUseCase.getUserProfile(Nickname.of(nickname), requestUserId);
+        return ResponseEntity.ok(GetUserProfileResponse.builder()
+                .nickname(result.nickname())
+                .profile(result.profile())
+                .reviews(result.reviews())
+                .role(result.role())
+                .isMe(result.isMe())
+                .build());
     }
 }

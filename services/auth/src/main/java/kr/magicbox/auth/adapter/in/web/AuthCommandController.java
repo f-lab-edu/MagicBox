@@ -31,7 +31,9 @@ public class AuthCommandController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(AccessTokenResponse.from(result));
+                .body(AccessTokenResponse.builder()
+                        .accessToken(result.accessToken().accessTokenValue())
+                        .build());
     }
 
     @PostMapping("/refresh")
@@ -41,7 +43,9 @@ public class AuthCommandController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(AccessTokenResponse.from(result));
+                .body(AccessTokenResponse.builder()
+                        .accessToken(result.accessToken().accessTokenValue())
+                        .build());
     }
 
     @PostMapping("/logout")
