@@ -83,11 +83,19 @@ public class CreatorQueryController {
     public ResponseEntity<CursorResponse<CreatorSearchResponse>> getAllCreators(
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size) {
-        List<CreatorSearchResponse> content = getAllCreatorsUseCase.getAllCreators(GetAllCreatorsQuery.of(cursor, size + 1))
+        List<CreatorSearchResponse> contents = getAllCreatorsUseCase.getAllCreators(GetAllCreatorsQuery.of(cursor, size + 1))
                 .stream()
-                .map(this::toCreatorSearchResponse)
+                .map((content) ->
+                        CreatorSearchResponse.builder()
+                                .creatorId(content.creatorId().value())
+                                .nickname(content.nickname())
+                                .introduction(content.introduction())
+                                .profileImageUrl(content.profileImageUrl())
+                                .tagline(content.tagline())
+                                .build()
+                )
                 .toList();
-        return ResponseEntity.ok(CursorResponse.of(content, size, CreatorSearchResponse::creatorId));
+        return ResponseEntity.ok(CursorResponse.of(contents, size, CreatorSearchResponse::creatorId));
     }
 
     @GetMapping("/search")
@@ -95,20 +103,18 @@ public class CreatorQueryController {
             @RequestParam @NotBlank(message = "닉네임은 필수입니다.") String nickname,
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size) {
-        List<CreatorSearchResponse> content = searchCreatorsUseCase.searchCreators(SearchCreatorsQuery.of(nickname, cursor, size + 1))
+        List<CreatorSearchResponse> contents = searchCreatorsUseCase.searchCreators(SearchCreatorsQuery.of(nickname, cursor, size + 1))
                 .stream()
-                .map(this::toCreatorSearchResponse)
+                .map((content) ->
+                        CreatorSearchResponse.builder()
+                                .creatorId(content.creatorId().value())
+                                .nickname(content.nickname())
+                                .introduction(content.introduction())
+                                .profileImageUrl(content.profileImageUrl())
+                                .tagline(content.tagline())
+                                .build()
+                )
                 .toList();
-        return ResponseEntity.ok(CursorResponse.of(content, size, CreatorSearchResponse::creatorId));
-    }
-
-    private CreatorSearchResponse toCreatorSearchResponse(kr.magicbox.creator.application.dto.result.CreatorSearchResult result) {
-        return CreatorSearchResponse.builder()
-                .creatorId(result.creatorId().value())
-                .nickname(result.nickname())
-                .introduction(result.introduction())
-                .profileImageUrl(result.profileImageUrl())
-                .tagline(result.tagline())
-                .build();
+        return ResponseEntity.ok(CursorResponse.of(contents, size, CreatorSearchResponse::creatorId));
     }
 }
