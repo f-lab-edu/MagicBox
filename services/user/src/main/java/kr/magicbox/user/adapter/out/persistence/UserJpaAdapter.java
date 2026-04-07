@@ -26,8 +26,20 @@ public class UserJpaAdapter implements UserRepositoryPort {
     }
 
     @Override
+    public Optional<User> getUserByNicknameWithLock(Nickname nickname) {
+        return userJpaRepository.findByNicknameWithLock(nickname.value())
+                .map(userMapper::toDomain);
+    }
+
+    @Override
     public Optional<User> getUserById(UserId userId) {
         return userJpaRepository.findById(userId.value())
+                .map(userMapper::toDomain);
+    }
+
+    @Override
+    public Optional<User> getUserByIdWithLock(UserId userId) {
+        return userJpaRepository.findByIdWithLock(userId.value())
                 .map(userMapper::toDomain);
     }
 
@@ -38,14 +50,14 @@ public class UserJpaAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public User saveUser(User user) {
+    public User save(User user) {
         UserEntity entity = userMapper.toEntity(user);
         UserEntity saved = userJpaRepository.save(entity);
         return userMapper.toDomain(saved);
     }
 
     @Override
-    public void updateUser(User user) {
+    public void update(User user) {
         userJpaRepository.findById(user.getId().value())
                 .ifPresent(entity -> {
                     userMapper.updateEntity(user, entity);

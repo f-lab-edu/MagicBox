@@ -110,7 +110,8 @@ public class User {
         return Boolean.TRUE.equals(this.isActive);
     }
 
-    public void accountActivate() {
+    public void activate() {
+        this.isActive = true;
         this.status = UserStatus.ACTIVE;
     }
 
@@ -125,6 +126,7 @@ public class User {
     }
 
     public void delete() {
+        this.isActive = false;
         this.status = UserStatus.DELETED;
     }
 }

@@ -1,4 +1,4 @@
-package kr.magicbox.user.application.dto;
+package kr.magicbox.user.application.dto.result;
 
 import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.vo.UserId;

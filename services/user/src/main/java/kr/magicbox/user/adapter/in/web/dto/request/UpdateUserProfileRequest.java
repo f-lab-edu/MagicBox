@@ -1,9 +1,10 @@
-package kr.magicbox.user.adapter.in.web.dto;
+package kr.magicbox.user.adapter.in.web.dto.request;
 
-import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
+import kr.magicbox.user.application.dto.command.UpdateUserProfileCommand;
 import kr.magicbox.user.domain.constants.UserPolicyConstants;
 import kr.magicbox.user.adapter.in.web.validation.OptionalNotBlank;
 import kr.magicbox.user.domain.vo.Nickname;
+import kr.magicbox.user.domain.vo.UserId;
 import org.hibernate.validator.constraints.Length;
 
 public record UpdateUserProfileRequest(
@@ -16,8 +17,9 @@ public record UpdateUserProfileRequest(
 
         Boolean isReviewVisible
 ) {
-    public UpdateUserProfileCommand toCommand() {
+    public UpdateUserProfileCommand toCommand(UserId userId) {
         return UpdateUserProfileCommand.builder()
+                .userId(userId)
                 .nickname(Nickname.of(nickname))
                 .profile(profile)
                 .isReviewVisible(isReviewVisible)

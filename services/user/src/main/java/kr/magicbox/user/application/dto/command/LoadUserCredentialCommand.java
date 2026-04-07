@@ -1,4 +1,4 @@
-package kr.magicbox.user.application.dto;
+package kr.magicbox.user.application.dto.command;
 
 import kr.magicbox.user.domain.enums.OAuth2Provider;
 

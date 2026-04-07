@@ -1,7 +1,8 @@
 package kr.magicbox.auth.application.port.in;
 
-import kr.magicbox.auth.application.dto.TokenResult;
+import kr.magicbox.auth.application.dto.command.RefreshTokenCommand;
+import kr.magicbox.auth.application.dto.result.TokenResult;
 
 public interface RefreshTokenUseCase {
-    TokenResult refresh(String refreshToken);
+    TokenResult refresh(RefreshTokenCommand command);
 }

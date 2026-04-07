@@ -1,4 +1,4 @@
-package kr.magicbox.auth.application.dto;
+package kr.magicbox.auth.application.dto.result;
 
 import lombok.Builder;
 
