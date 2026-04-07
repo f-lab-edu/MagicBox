@@ -7,6 +7,7 @@ import lombok.Builder;
 public record CreatorSearchResponse(
         Long creatorId,
         String nickname,
+        String introduction,
         String profileImageUrl,
         String tagline
 ) {
@@ -15,6 +16,7 @@ public record CreatorSearchResponse(
         return CreatorSearchResponse.builder()
                 .creatorId(result.creatorId().value())
                 .nickname(result.nickname())
+                .introduction(result.introduction())
                 .profileImageUrl(result.profileImageUrl())
                 .tagline(result.tagline())
                 .build();

@@ -6,6 +6,7 @@ import kr.magicbox.creator.domain.vo.CreatorId;
 public record CreatorSearchResult(
         CreatorId creatorId,
         String nickname,
+        String introduction,
         String profileImageUrl,
         String tagline
 ) {
@@ -14,6 +15,7 @@ public record CreatorSearchResult(
         return new CreatorSearchResult(
                 creator.getId(),
                 creator.getNickname(),
+                creator.getIntroduction(),
                 creator.getProfileImageUrl(),
                 creator.getTagline()
         );
