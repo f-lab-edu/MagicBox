@@ -2,10 +2,11 @@ package kr.magicbox.creator.application.dto.result;
 
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.vo.CreatorId;
+import kr.magicbox.creator.domain.vo.Nickname;
 
 public record CreatorSearchResult(
         CreatorId creatorId,
-        String nickname,
+        Nickname nickname,
         String introduction,
         String profileImageUrl,
         String tagline

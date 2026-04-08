@@ -68,7 +68,7 @@ public class CreatorQueryController {
     ) {
         var result = getMyCreatorProfileUseCase.getMyCreatorProfile(GetMyCreatorProfileQuery.of(userId));
         return ResponseEntity.ok(CreatorMyProfileResponse.builder()
-                .nickname(result.nickname())
+                .nickname(result.nickname().value())
                 .tagline(result.tagline())
                 .subscriberCount(result.subscriberCount())
                 .releaseCount(result.releaseCount())
@@ -88,7 +88,7 @@ public class CreatorQueryController {
                 .map((content) ->
                         CreatorSearchResponse.builder()
                                 .creatorId(content.creatorId().value())
-                                .nickname(content.nickname())
+                                .nickname(content.nickname().value())
                                 .introduction(content.introduction())
                                 .profileImageUrl(content.profileImageUrl())
                                 .tagline(content.tagline())
@@ -108,7 +108,7 @@ public class CreatorQueryController {
                 .map((content) ->
                         CreatorSearchResponse.builder()
                                 .creatorId(content.creatorId().value())
-                                .nickname(content.nickname())
+                                .nickname(content.nickname().value())
                                 .introduction(content.introduction())
                                 .profileImageUrl(content.profileImageUrl())
                                 .tagline(content.tagline())
