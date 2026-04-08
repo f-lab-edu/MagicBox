@@ -9,6 +9,8 @@ import kr.magicbox.subscribe.domain.vo.SubscriberId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class SubscriptionJpaAdapter implements SubscriptionRepositoryPort {
@@ -33,6 +35,22 @@ public class SubscriptionJpaAdapter implements SubscriptionRepositoryPort {
     @Override
     public void deleteAllByCreatorId(CreatorId creatorId) {
         subscriptionJpaRepository.deleteAllByCreatorId(creatorId.value());
+    }
+
+    @Override
+    public List<Subscription> findAllBySubscriberId(SubscriberId subscriberId) {
+        return subscriptionJpaRepository.findAllBySubscriberId(subscriberId.value())
+                .stream()
+                .map(subscriptionMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Subscription> findAllByCreatorId(CreatorId creatorId) {
+        return subscriptionJpaRepository.findAllByCreatorId(creatorId.value())
+                .stream()
+                .map(subscriptionMapper::toDomain)
+                .toList();
     }
 
     @Override

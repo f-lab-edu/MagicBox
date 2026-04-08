@@ -15,6 +15,9 @@ public class HandleCreatorRevokedService implements HandleCreatorRevokedUseCase 
     @Transactional
     @Override
     public void handleCreatorRevoked(HandleCreatorRevokedCommand command) {
+        if (subscriptionRepositoryPort.findAllByCreatorId(command.creatorId()).isEmpty()) {
+            return;
+        }
         subscriptionRepositoryPort.deleteAllByCreatorId(command.creatorId());
     }
 }

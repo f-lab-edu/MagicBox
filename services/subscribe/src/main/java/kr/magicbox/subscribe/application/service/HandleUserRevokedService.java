@@ -15,6 +15,9 @@ public class HandleUserRevokedService implements HandleUserRevokedUseCase {
     @Transactional
     @Override
     public void handleUserRevoked(HandleUserRevokedCommand command) {
+        if (subscriptionRepositoryPort.findAllBySubscriberId(command.subscriberId()).isEmpty()) {
+            return;
+        }
         subscriptionRepositoryPort.deleteAllBySubscriberId(command.subscriberId());
     }
 }
