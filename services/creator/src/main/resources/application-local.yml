@@ -8,7 +8,7 @@ spring:
       - file:services/creator/env/local.env[.properties]
   grpc:
     server:
-      port: 9095
+      port: ${GRPC_SERVER_PORT}
     client:
       channels:
         user:
