@@ -15,6 +15,10 @@ public class HandleUserWithdrawnService implements HandleUserWithdrawnUseCase {
 
     @Override
     public void handleUserWithdrawn(HandleUserWithdrawnCommand command) {
+        if (refreshTokenRepositoryPort.getRefreshToken(command.userId()).isEmpty()) {
+            log.debug("이미 리프레시 토큰이 없는 사용자입니다. userId={}", command.userId().value());
+            return;
+        }
         refreshTokenRepositoryPort.deleteRefreshToken(command.userId());
     }
 }
