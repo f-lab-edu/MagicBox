@@ -6,6 +6,7 @@ import kr.magicbox.user.adapter.out.persistence.repository.UserJpaRepository;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
+import kr.magicbox.user.domain.vo.Nickname;
 import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -19,8 +20,8 @@ public class UserJpaAdapter implements UserRepositoryPort {
     private final UserMapper userMapper;
 
     @Override
-    public Optional<User> getUserByNickname(String nickname) {
-        return userJpaRepository.findByNickname(nickname)
+    public Optional<User> getUserByNickname(Nickname nickname) {
+        return userJpaRepository.findByNickname(nickname.value())
                 .map(userMapper::toDomain);
     }
 

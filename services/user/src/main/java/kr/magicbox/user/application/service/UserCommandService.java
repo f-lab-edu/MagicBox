@@ -1,12 +1,11 @@
 package kr.magicbox.user.application.service;
 
 import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
-import kr.magicbox.user.application.port.in.UserProfileCommandUseCase;
+import kr.magicbox.user.application.port.in.UserCommandUseCase;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.exception.DuplicateNicknameException;
 import kr.magicbox.user.domain.exception.UserNotFoundException;
-import kr.magicbox.user.domain.vo.Nickname;
 import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UserProfileCommandService implements UserProfileCommandUseCase {
+public class UserCommandService implements UserCommandUseCase {
     private final UserRepositoryPort userRepositoryPort;
 
     @Override
@@ -30,7 +29,7 @@ public class UserProfileCommandService implements UserProfileCommandUseCase {
         }
 
         user.updateProfile(
-                command.nickname() != null ? Nickname.of(command.nickname()) : null,
+                command.nickname() != null ? command.nickname() : null,
                 command.profile(),
                 command.isReviewVisible()
         );
