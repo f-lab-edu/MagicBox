@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package magicbox.creator.v1;
+
+option java_package = "kr.magicbox.creator.grpc.generalgoods";
+option java_outer_classname = "GeneralGoodsServiceProto";
+option java_multiple_files = true;
+
+service GeneralGoodsService {
+  rpc GetCreatorIdByUserId(GetCreatorIdByUserIdRequest) returns (GetCreatorIdByUserIdResponse);
+}
+
+message GetCreatorIdByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message GetCreatorIdByUserIdResponse {
+  int64 creator_id = 1;
+}
