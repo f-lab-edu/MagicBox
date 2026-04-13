@@ -2,8 +2,8 @@ package kr.magicbox.auth.adapter.in.kafka;
 
 import kr.magicbox.auth.adapter.in.kafka.event.UserBannedEvent;
 import kr.magicbox.auth.adapter.in.kafka.event.UserWithdrawnEvent;
-import kr.magicbox.auth.application.dto.command.HandleUserBannedCommand;
-import kr.magicbox.auth.application.dto.command.HandleUserWithdrawnCommand;
+import kr.magicbox.auth.application.dto.command.UserBannedCommand;
+import kr.magicbox.auth.application.dto.command.UserWithdrawnCommand;
 import kr.magicbox.auth.application.port.in.HandleUserBannedUseCase;
 import kr.magicbox.auth.application.port.in.HandleUserWithdrawnUseCase;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +20,12 @@ public class UserEventKafkaListener {
     @KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "auth-service")
     public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> consumerRecord) {
         UserWithdrawnEvent event = consumerRecord.value();
-        handleUserWithdrawnUseCase.handleUserWithdrawn(HandleUserWithdrawnCommand.of(event.userId()));
+        handleUserWithdrawnUseCase.handleUserWithdrawn(UserWithdrawnCommand.of(event.userId()));
     }
 
     @KafkaListener(topics = "outbox.event.user-banned", groupId = "auth-service")
     public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> consumerRecord) {
         UserBannedEvent event = consumerRecord.value();
-        handleUserBannedUseCase.handleUserBanned(HandleUserBannedCommand.of(event.userId()));
+        handleUserBannedUseCase.handleUserBanned(UserBannedCommand.of(event.userId()));
     }
 }
