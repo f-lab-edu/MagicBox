@@ -1,4 +1,4 @@
-package kr.magicbox.user.application.dto;
+package kr.magicbox.user.application.dto.result;
 
 import lombok.Builder;
 import java.time.Instant;

@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.magicbox.auth.adapter.in.security.oauth2.properties.CodeProperties;
 import kr.magicbox.auth.adapter.in.security.oauth2.properties.FrontendProperties;
-import kr.magicbox.auth.application.dto.UserResult;
+import kr.magicbox.auth.application.dto.result.UserResult;
 import kr.magicbox.auth.application.port.out.CodeRepositoryPort;
 import kr.magicbox.auth.application.port.out.UserCredentialPort;
 import kr.magicbox.auth.domain.aggregate.Code;
