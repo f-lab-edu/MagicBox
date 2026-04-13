@@ -3,7 +3,7 @@ package kr.magicbox.auth.adapter.out.communication.grpc;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import kr.magicbox.auth.adapter.out.communication.grpc.exception.UnsupportedUserRoleException;
 import kr.magicbox.auth.adapter.out.communication.grpc.exception.UserServiceUnavailableException;
-import kr.magicbox.auth.application.dto.UserResult;
+import kr.magicbox.auth.application.dto.result.UserResult;
 import kr.magicbox.auth.application.port.out.UserCredentialPort;
 import kr.magicbox.auth.domain.enums.UserRole;
 import kr.magicbox.auth.domain.vo.UserId;

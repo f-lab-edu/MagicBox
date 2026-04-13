@@ -1,7 +1,7 @@
-package kr.magicbox.user.adapter.in.web.dto;
+package kr.magicbox.user.adapter.in.web.dto.response;
 
-import kr.magicbox.user.application.dto.GetUserProfileResult;
-import kr.magicbox.user.application.dto.UserReviewResult;
+import kr.magicbox.user.application.dto.result.GetUserProfileResult;
+import kr.magicbox.user.application.dto.result.UserReviewResult;
 import kr.magicbox.user.domain.enums.UserRole;
 import lombok.Builder;
 

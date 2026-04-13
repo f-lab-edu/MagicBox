@@ -68,9 +68,6 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false, updatable = false)
     private OAuth2Provider oauth2Provider;
 
-    @Version
-    private Long version;
-
     @Builder
     public UserEntity(String nickname, String email, UserStatus status, UserRole role, String profile, String oauth2Id, OAuth2Provider oauth2Provider) {
         this.nickname = nickname;
@@ -88,6 +85,7 @@ public class UserEntity extends BaseEntity {
 
     public void updateFromDomain(User user) {
         this.nickname = user.getNickname();
+        this.status = user.getStatus();
         this.profile = user.getProfile();
         this.isActive = user.isActive();
         this.isReviewVisible = user.canShowReview();

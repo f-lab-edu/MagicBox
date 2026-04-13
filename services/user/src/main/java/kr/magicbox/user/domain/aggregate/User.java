@@ -109,15 +109,18 @@ public class User {
         return Boolean.TRUE.equals(this.isActive);
     }
 
-    public void accountActivate() {
+    public void activate() {
+        this.isActive = true;
         this.status = UserStatus.ACTIVE;
     }
 
-    public void accountDeactivate() {
+    public void ban() {
+        this.isActive = false;
         this.status = UserStatus.INACTIVE;
     }
 
-    public void accountDelete() {
+    public void delete() {
+        this.isActive = false;
         this.status = UserStatus.DELETED;
     }
 }
