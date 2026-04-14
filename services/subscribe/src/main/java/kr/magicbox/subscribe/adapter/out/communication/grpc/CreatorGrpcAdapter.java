@@ -37,9 +37,8 @@ public class CreatorGrpcAdapter implements CreatorIdentityQueryPort {
         return response.getSamePerson();
     }
 
-    private boolean isCreatorAndSubscriberSamePersonFallback(CreatorId creatorId,
-                                                             SubscriberId subscriberId,
-                                                             Throwable throwable) {
+    @SuppressWarnings("unused")
+    private boolean isCreatorAndSubscriberSamePersonFallback(Throwable throwable) {
         log.warn("creator 서비스 연결 실패");
         throw new SystemError("creator 서비스 호출을 할 수 없습니다.", HttpStatus.SERVICE_UNAVAILABLE, throwable);
     }

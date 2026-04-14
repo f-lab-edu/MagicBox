@@ -87,7 +87,7 @@ public class CreatorQueryController {
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size) {
         List<CreatorSearchResponse> contents = getAllCreatorsUseCase.getAllCreators(GetAllCreatorsQuery.of(cursor, size + 1))
                 .stream()
-                .map((content) ->
+                .map(content ->
                         CreatorSearchResponse.builder()
                                 .creatorId(content.creatorId().value())
                                 .nickname(content.nickname().value())
@@ -107,7 +107,7 @@ public class CreatorQueryController {
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size) {
         List<CreatorSearchResponse> contents = searchCreatorsUseCase.searchCreators(SearchCreatorsQuery.of(nickname, cursor, size + 1))
                 .stream()
-                .map((content) ->
+                .map(content ->
                         CreatorSearchResponse.builder()
                                 .creatorId(content.creatorId().value())
                                 .nickname(content.nickname().value())
