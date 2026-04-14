@@ -21,4 +21,14 @@ public interface CreatorCertificationJpaRepository extends JpaRepository<Creator
             @Param("cursorId") Long cursorId,
             @Param("size") int size
     );
+
+    @Query(value = """
+        SELECT EXISTS (
+            SELECT 1
+            FROM creator_certification c
+            WHERE c.user_id = :userId
+            AND c.status = :status
+        )
+        """, nativeQuery = true)
+    boolean existsByUserIdAndStatus(@Param("userId") Long userId, @Param("status") CreatorCertificationStatus status);
 }

@@ -4,12 +4,12 @@ import kr.magicbox.creator.application.dto.command.ApplyCertificationCommand;
 import kr.magicbox.creator.application.port.in.ApplyCreatorCertificationUseCase;
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
+import kr.magicbox.creator.domain.enums.CreatorCertificationStatus;
+import kr.magicbox.creator.domain.exception.CertificationPendingAlreadyExistsException;
 import kr.magicbox.creator.domain.vo.CreatorCertificationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,15 +20,15 @@ public class ApplyCreatorCertificationService implements ApplyCreatorCertificati
     @Transactional
     @Override
     public void applyCreatorCertification(ApplyCertificationCommand command) {
-        List<CreatorCertification> existingCertifications =
-                certificationRepositoryPort.findAllByUserId(command.userId());
+        if(certificationRepositoryPort.existsByUserIdAndStatus(command.userId(), CreatorCertificationStatus.PENDING))
+            throw new CertificationPendingAlreadyExistsException();
 
         CreatorCertificationRequest request = CreatorCertificationRequest.builder()
                 .genres(command.genres())
                 .portfolioUrl(command.portfolioUrl())
                 .build();
 
-        CreatorCertification certification = CreatorCertification.create(command.userId(), request, existingCertifications);
+        CreatorCertification certification = CreatorCertification.create(command.userId(), request);
 
         certificationRepositoryPort.save(certification);
     }

@@ -3,7 +3,6 @@ package kr.magicbox.creator.domain.aggregate;
 import kr.magicbox.creator.domain.enums.CreatorCertificationStatus;
 import kr.magicbox.creator.domain.exception.CertificationAlreadyReviewedException;
 import kr.magicbox.creator.domain.exception.CertificationNotFoundException;
-import kr.magicbox.creator.domain.exception.CertificationPendingAlreadyExistsException;
 import kr.magicbox.creator.domain.exception.InvalidCertificationReviewStatusException;
 import kr.magicbox.creator.domain.exception.InvalidFieldException;
 import kr.magicbox.creator.domain.vo.CreatorCertificationId;
@@ -12,8 +11,6 @@ import kr.magicbox.creator.domain.vo.CreatorCertificationResult;
 import kr.magicbox.creator.domain.vo.UserId;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 public class CreatorCertification {
@@ -24,22 +21,12 @@ public class CreatorCertification {
     private CreatorCertificationStatus status;
     private CreatorCertificationResult result;
 
-    public static CreatorCertification create(UserId userId, CreatorCertificationRequest request,
-                                              List<CreatorCertification> existingCertifications) {
-        validateNoPendingCertification(existingCertifications);
+    public static CreatorCertification create(UserId userId, CreatorCertificationRequest request) {
         return CreatorCertification.builder()
                 .request(request)
                 .userId(userId)
                 .status(CreatorCertificationStatus.PENDING)
                 .build();
-    }
-
-    private static void validateNoPendingCertification(List<CreatorCertification> existingCertifications) {
-        boolean hasPending = existingCertifications.stream()
-                .anyMatch(c -> c.status == CreatorCertificationStatus.PENDING);
-        if (hasPending) {
-            throw new CertificationPendingAlreadyExistsException();
-        }
     }
 
     @Builder
