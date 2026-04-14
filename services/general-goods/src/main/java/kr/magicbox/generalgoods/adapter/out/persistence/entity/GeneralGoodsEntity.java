@@ -2,6 +2,7 @@ package kr.magicbox.generalgoods.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
 import kr.magicbox.generalgoods.domain.aggregate.GeneralGoods;
+import kr.magicbox.generalgoods.domain.enums.GeneralGoodsLevel;
 import kr.magicbox.generalgoods.domain.enums.MagicGenre;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,6 +33,10 @@ public class GeneralGoodsEntity extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "level")
+    private GeneralGoodsLevel level;
+
     @ElementCollection
     @CollectionTable(name = "general_goods_category", joinColumns = @JoinColumn(name = "general_goods_id"))
     @Column(name = "category")
@@ -47,12 +52,13 @@ public class GeneralGoodsEntity extends BaseEntity {
     private boolean isDeleted = false;
 
     @Builder
-    public GeneralGoodsEntity(Long creatorId, String name, Long price, Long stock, String description, Set<MagicGenre> categories) {
+    public GeneralGoodsEntity(Long creatorId, String name, Long price, Long stock, String description, GeneralGoodsLevel level, Set<MagicGenre> categories) {
         this.creatorId = creatorId;
         this.name = name;
         this.price = price;
         this.stock = stock;
         this.description = description;
+        this.level = level;
         this.categories = categories;
         this.isDeleted = false;
     }
@@ -67,6 +73,7 @@ public class GeneralGoodsEntity extends BaseEntity {
         this.price = domain.getPrice();
         this.stock = domain.getStock();
         this.description = domain.getDescription();
+        this.level = domain.getLevel();
         this.categories = domain.getCategories();
         this.isDeleted = domain.isDeleted();
     }
