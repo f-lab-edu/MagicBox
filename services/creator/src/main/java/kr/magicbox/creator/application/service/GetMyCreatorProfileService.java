@@ -28,15 +28,15 @@ public class GetMyCreatorProfileService implements GetMyCreatorProfileUseCase {
 
         Long creatorId = creator.getId().value();
 
-        return new CreatorMyProfileResult(
-                creator.getNickname(),
-                creator.getTagline(),
-                subscribeQueryPort.getSubscriberCount(creatorId),
-                releaseQueryPort.getReleaseCount(creatorId),
-                reviewRatingQueryPort.getReviewRating(creatorId),
-                releaseQueryPort.getReleases(creatorId),
-                shortformQueryPort.getShortforms(creatorId),
-                creator.getIntroduction()
-        );
+        return CreatorMyProfileResult.builder()
+                .nickname(creator.getNickname())
+                .tagline(creator.getTagline())
+                .subscriberCount(subscribeQueryPort.getSubscriberCount(creatorId))
+                .releaseCount(releaseQueryPort.getReleaseCount(creatorId))
+                .reviewRating(reviewRatingQueryPort.getReviewRating(creatorId))
+                .releases(releaseQueryPort.getReleases(creatorId))
+                .shortForms(shortformQueryPort.getShortforms(creatorId))
+                .introduction(creator.getIntroduction())
+                .build();
     }
 }

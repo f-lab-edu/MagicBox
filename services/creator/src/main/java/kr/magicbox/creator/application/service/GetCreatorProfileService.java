@@ -30,16 +30,16 @@ public class GetCreatorProfileService implements GetCreatorProfileUseCase {
 
         Long creatorId = creator.getId().value();
 
-        return new CreatorPublicProfileResult(
-                creator.getNicknameValue(),
-                creator.getTagline(),
-                subscribeQueryPort.getSubscriberCount(creatorId),
-                releaseQueryPort.getReleaseCount(creatorId),
-                reviewRatingQueryPort.getReviewRating(creatorId),
-                releaseQueryPort.getReleases(creatorId),
-                shortformQueryPort.getShortforms(creatorId),
-                creator.getIntroduction(),
-                userId != null && subscribeQueryPort.isSubscribed(creatorId, userId.value())
-        );
+        return CreatorPublicProfileResult.builder()
+                .nickname(creator.getNicknameValue())
+                .tagline(creator.getTagline())
+                .subscriberCount(subscribeQueryPort.getSubscriberCount(creatorId))
+                .releaseCount(releaseQueryPort.getReleaseCount(creatorId))
+                .reviewRating(reviewRatingQueryPort.getReviewRating(creatorId))
+                .releases(releaseQueryPort.getReleases(creatorId))
+                .shortForms(shortformQueryPort.getShortforms(creatorId))
+                .introduction(creator.getIntroduction())
+                .isSubscribed(userId != null && subscribeQueryPort.isSubscribed(creatorId, userId.value()))
+                .build();
     }
 }

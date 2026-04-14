@@ -12,8 +12,8 @@ import java.util.Set;
 
 @Builder
 public record ApplyCreatorCertificationRequest(
-        @NotEmpty Set<@NotNull MagicGenre> genres,
-        @NotBlank String portfolioUrl
+        @NotEmpty(message = "장르는 최소 1개 이상 선택해야 합니다.") Set<@NotNull(message = "장르 값은 null일 수 없습니다.") MagicGenre> genres,
+        @NotBlank(message = "포트폴리오 URL은 필수입니다.") String portfolioUrl
 ) {
 
     public ApplyCreatorCertificationCommand toCommand(UserId userId) {

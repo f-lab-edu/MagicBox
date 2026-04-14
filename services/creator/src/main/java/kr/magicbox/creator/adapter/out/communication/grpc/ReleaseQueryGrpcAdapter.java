@@ -4,6 +4,9 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
 import kr.magicbox.creator.adapter.out.communication.ServiceHost;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.ReleaseServiceUnavailableException;
+import kr.magicbox.creator.application.dto.result.ReleaseId;
+import kr.magicbox.creator.application.dto.result.ReleaseLevel;
+import kr.magicbox.creator.application.dto.result.ReleaseResult;
 import kr.magicbox.creator.application.port.out.ReleaseQueryPort;
 import kr.magicbox.creator.grpc.release.GetReleaseCountRequest;
 import kr.magicbox.creator.grpc.release.GetReleaseCountResponse;
@@ -39,7 +42,7 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
 
     @Override
     @CircuitBreaker(name = "releaseService", fallbackMethod = "getReleasesFallback")
-    public List<Object> getReleases(Long creatorId) {
+    public List<ReleaseResult> getReleases(Long creatorId) {
         GetReleasesByCreatorIdRequest request = GetReleasesByCreatorIdRequest.newBuilder()
                 .setCreatorId(creatorId)
                 .build();
@@ -49,7 +52,15 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
         GetReleasesByCreatorIdResponse response = stub.getReleasesByCreatorId(request);
 
         return response.getReleasesList().stream()
-                .map(Object.class::cast)
+                .map(release -> ReleaseResult.builder()
+                        .releaseId(ReleaseId.of(release.getReleaseId()))
+                        .title(release.getTitle())
+                        .thumbnailUrl(release.getThumbnailUrl())
+                        .level(ReleaseLevel.valueOf(release.getLevel().name()))
+                        .creatorNickname(release.getCreatorNickname())
+                        .price(release.getPrice())
+                        .limitedQuantity(release.getLimitedQuantity())
+                        .build())
                 .toList();
     }
 
@@ -60,7 +71,7 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
     }
 
     @SuppressWarnings("unused")
-    private List<Object> getReleasesFallback(Long creatorId, Throwable throwable) {
+    private List<ReleaseResult> getReleasesFallback(Long creatorId, Throwable throwable) {
         throw buildReleaseServiceUnavailableException(throwable);
     }
 
