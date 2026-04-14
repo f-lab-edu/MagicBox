@@ -20,13 +20,14 @@ public class GeneralGoodsMapper {
                 .price(domain.getPrice())
                 .stock(domain.getStock())
                 .description(domain.getDescription())
+                .level(domain.getLevel())
                 .categories(domain.getCategories())
                 .build();
 
         domain.getGeneralGoodsMediaList().forEach(media -> {
             GeneralGoodsMediaEntity mediaEntity = GeneralGoodsMediaEntity.builder()
-                    .mediaUrl(media.mediaUrl())
-                    .sortOrder(media.sortOrder())
+                    .mediaUrl(media.getMediaUrl())
+                    .sortOrder(media.getSortOrder())
                     .build();
             entity.addMedia(mediaEntity);
         });
@@ -49,6 +50,7 @@ public class GeneralGoodsMapper {
                 .price(entity.getPrice())
                 .stock(entity.getStock())
                 .description(entity.getDescription())
+                .level(entity.getLevel())
                 .categories(entity.getCategories())
                 .generalGoodsMediaList(mediaList)
                 .isDeleted(entity.isDeleted())

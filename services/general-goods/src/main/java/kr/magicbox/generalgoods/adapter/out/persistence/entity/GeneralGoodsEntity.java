@@ -45,9 +45,6 @@ public class GeneralGoodsEntity extends BaseEntity {
     @OneToMany(mappedBy = "generalGoods", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GeneralGoodsMediaEntity> generalGoodsMediaList = new ArrayList<>();
 
-    @Version
-    private Integer version;
-
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
