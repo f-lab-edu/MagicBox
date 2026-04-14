@@ -21,7 +21,7 @@ public class GetMyCertificationsService implements GetMyCreatorCertificationsUse
     @Transactional(readOnly = true)
     @Override
     public List<CreatorCertificationInfoResult> getMyCertifications(GetMyCertificationsQuery query) {
-        return creatorCertificationRepositoryPort.findAllByUserIdByCursor(query.userId(), query.cursorId(), query.size())
+        return creatorCertificationRepositoryPort.findAllByUserIdByCursor(query.userId(), query.cursorId(), query.size() + 1)
                 .stream()
                 .map(this::toResult)
                 .toList();

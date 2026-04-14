@@ -32,7 +32,7 @@ public class CreatorCertificationQueryController {
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size) {
         List<CreatorCertificationInfoResponse> content =
-                getMyCreatorCertificationsUseCase.getMyCertifications(GetMyCertificationsQuery.of(userId, cursor, size + 1))
+                getMyCreatorCertificationsUseCase.getMyCertifications(GetMyCertificationsQuery.of(userId, cursor, size))
                         .stream()
                         .map(CreatorCertificationInfoResponse::from)
                         .toList();
