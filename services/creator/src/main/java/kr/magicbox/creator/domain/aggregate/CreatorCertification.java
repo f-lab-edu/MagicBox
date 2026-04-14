@@ -73,12 +73,13 @@ public class CreatorCertification {
         this.result = result;
     }
 
-    public void validateCancellable(UserId requestUserId) {
+    public void cancel(UserId requestUserId) {
         if (isReviewed()) {
             throw new CertificationAlreadyReviewedException("이미 심사가 완료된 인증 신청은 취소할 수 없습니다.");
         }
         if (!this.userId.equals(requestUserId)) {
             throw new CertificationNotFoundException();
         }
+        this.status = CreatorCertificationStatus.CANCELLED;
     }
 }
