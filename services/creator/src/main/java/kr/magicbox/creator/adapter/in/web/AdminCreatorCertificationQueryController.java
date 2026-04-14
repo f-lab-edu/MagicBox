@@ -31,7 +31,7 @@ public class AdminCreatorCertificationQueryController {
     ) {
         List<PendingCertificationResponse> content =
                 getAllPendingCreatorCertificationsUseCase
-                        .getAllPendingCreatorCertifications(GetAllPendingCertificationsQuery.of(cursor, size + 1))
+                        .getAllPendingCreatorCertifications(GetAllPendingCertificationsQuery.of(cursor, size))
                         .stream()
                         .map(PendingCertificationResponse::from)
                         .toList();

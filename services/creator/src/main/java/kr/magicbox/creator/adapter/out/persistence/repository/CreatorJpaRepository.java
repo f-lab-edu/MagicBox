@@ -30,4 +30,14 @@ public interface CreatorJpaRepository extends JpaRepository<CreatorEntity, Long>
 
     @Query("SELECT c FROM CreatorEntity c WHERE c.nickname LIKE %:keyword% AND (:cursorId IS NULL OR c.id < :cursorId) ORDER BY c.id DESC")
     List<CreatorEntity> searchByNickname(@Param("keyword") String keyword, @Param("cursorId") Long cursorId, Pageable limit);
+
+
+    @Query(value = """
+        SELECT EXISTS (
+            SELECT 1
+            FROM creator c
+            WHERE c.user_id = :userId
+        )
+        """, nativeQuery = true)
+    boolean existsByUserId(@Param("userId") Long userId);
 }

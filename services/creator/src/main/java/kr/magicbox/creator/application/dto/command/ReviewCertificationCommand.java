@@ -1,11 +1,12 @@
 package kr.magicbox.creator.application.dto.command;
 
-import kr.magicbox.creator.domain.enums.CreatorCertificationStatus;
 import kr.magicbox.creator.domain.vo.CreatorCertificationId;
+import kr.magicbox.creator.domain.vo.UserId;
 
 public record ReviewCertificationCommand(
+        UserId reviewerId,
         CreatorCertificationId certificationId,
-        CreatorCertificationStatus certificationStatus,
+        ReviewDecisionCommand certificationStatus,
         String reviewMessage
 ) {
 }

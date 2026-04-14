@@ -12,6 +12,8 @@ public interface CreatorRepositoryPort {
     void save(Creator creator);
     void update(Creator creator);
 
+    boolean existsByUserId(UserId userId);
+
     Optional<Creator> findByUserId(UserId userId);
 
     Optional<Creator> findByUserIdWithLock(UserId userId);

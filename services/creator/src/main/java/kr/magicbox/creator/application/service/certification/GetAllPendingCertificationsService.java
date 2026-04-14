@@ -20,7 +20,7 @@ public class GetAllPendingCertificationsService implements GetAllPendingCreatorC
     @Override
     @Transactional(readOnly = true)
     public List<PendingCertificationResult> getAllPendingCreatorCertifications(GetAllPendingCertificationsQuery query) {
-        return creatorCertificationRepositoryPort.findAllByStatusByCursor(CreatorCertificationStatus.PENDING, query.cursorId(), query.size())
+        return creatorCertificationRepositoryPort.findAllByStatusByCursor(CreatorCertificationStatus.PENDING, query.cursorId(), query.size() + 1)
                 .stream()
                 .map(PendingCertificationResult::from)
                 .toList();
