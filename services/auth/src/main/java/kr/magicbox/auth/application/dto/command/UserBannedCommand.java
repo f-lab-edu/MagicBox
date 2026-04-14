@@ -4,10 +4,10 @@ import kr.magicbox.auth.domain.vo.UserId;
 import lombok.Builder;
 
 @Builder
-public record HandleUserBannedCommand(
+public record UserBannedCommand(
         UserId userId
 ) {
-    public static HandleUserBannedCommand of(UserId userId) {
-        return new HandleUserBannedCommand(userId);
+    public static UserBannedCommand of(UserId userId) {
+        return new UserBannedCommand(userId);
     }
 }
