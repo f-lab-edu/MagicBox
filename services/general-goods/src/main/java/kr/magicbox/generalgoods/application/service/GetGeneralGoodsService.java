@@ -27,6 +27,7 @@ public class GetGeneralGoodsService implements GetGeneralGoodsUseCase {
                 .price(goods.getPrice())
                 .stock(goods.getStock())
                 .description(goods.getDescription())
+                .level(goods.getLevel())
                 .categories(goods.getCategories())
                 .mediaList(
                         goods.getGeneralGoodsMediaList().stream().map(media ->

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +32,9 @@ public class UpdateGeneralGoodsService implements UpdateGeneralGoodsUseCase {
             throw new GeneralGoodsUnauthorizedException();
         }
 
-        List<GeneralGoodsMedia> mediaList = command.mediaList().stream()
-                .map(this::toGeneralGoodsMedia)
-                .toList();
+        List<GeneralGoodsMedia> mediaList = Optional.ofNullable(command.mediaList())
+                .map(list -> list.stream().map(this::toGeneralGoodsMedia).toList())
+                .orElse(null);
 
         generalGoods.update(command.name(), command.price(), command.stock(), command.description(), command.level(), command.categories(), mediaList);
 

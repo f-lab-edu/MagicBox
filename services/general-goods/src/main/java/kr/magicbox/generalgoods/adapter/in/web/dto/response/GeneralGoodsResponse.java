@@ -1,6 +1,7 @@
 package kr.magicbox.generalgoods.adapter.in.web.dto.response;
 
 import kr.magicbox.generalgoods.application.dto.result.GeneralGoodsResult;
+import kr.magicbox.generalgoods.domain.enums.GeneralGoodsLevel;
 import kr.magicbox.generalgoods.domain.enums.MagicGenre;
 import lombok.Builder;
 
@@ -15,6 +16,7 @@ public record GeneralGoodsResponse(
         Long price,
         Long stock,
         String description,
+        GeneralGoodsLevel level,
         Set<MagicGenre> categories,
         List<MediaResponse> mediaList
 ) {
@@ -30,6 +32,7 @@ public record GeneralGoodsResponse(
                 result.price(),
                 result.stock(),
                 result.description(),
+                result.level(),
                 result.categories(),
                 mediaResponses
         );

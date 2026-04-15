@@ -67,7 +67,7 @@ public class GeneralGoods {
         if (creatorId == null) throw new InvalidFieldException("크리에이터 ID는 필수입니다.");
         if (name == null || name.isEmpty()) throw new InvalidFieldException("이름은 필수입니다.");
         if (price == null || price <= 0) throw new InvalidFieldException("가격은 양수여야 합니다.");
-        if (stock == null || stock < 0) throw new InvalidFieldException("재고는 0 이상이어야 합니다.");
+        if (stock == null || stock <= 0) throw new InvalidFieldException("재고는 양수여야 합니다.");
         if (categories == null || categories.isEmpty()) throw new InvalidFieldException("카테고리는 하나 이상 필수입니다.");
         if (generalGoodsMediaList == null || generalGoodsMediaList.isEmpty()) throw new InvalidFieldException("미디어는 하나 이상 필수입니다.");
     }
@@ -78,12 +78,12 @@ public class GeneralGoods {
     }
 
     public void update(String name, Long price, Long stock, String description, GeneralGoodsLevel level, Set<MagicGenre> categories, List<GeneralGoodsMedia> mediaList) {
-        if (name != null) this.name = name;
-        if (price != null) this.price = price;
-        if (stock != null) this.stock = stock;
+        if (name != null && !name.isBlank()) this.name = name;
+        if (price != null && price > 0) this.price = price;
+        if (stock != null && stock > 0) this.stock = stock;
         if (description != null) this.description = description;
         if (level != null) this.level = level;
-        if (categories != null) this.categories = categories;
-        if (mediaList != null) this.generalGoodsMediaList = mediaList;
+        if (categories != null && !categories.isEmpty()) this.categories = categories;
+        if (mediaList != null && !mediaList.isEmpty()) this.generalGoodsMediaList = mediaList;
     }
 }

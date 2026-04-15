@@ -17,7 +17,7 @@ import java.util.Set;
 public record RegisterGeneralGoodsRequest(
         @NotBlank(message = "이름은 필수입니다.") String name,
         @NotNull(message = "가격은 필수입니다.") @Min(value = 1, message = "가격은 1 이상이어야 합니다.") Long price,
-        @NotNull(message = "재고는 필수입니다.") @Min(value = 0, message = "재고는 0 이상이어야 합니다.") Long stock,
+        @NotNull(message = "재고는 필수입니다.") @Min(value = 1, message = "재고는 1 이상이어야 합니다.") Long stock,
         String description,
         @NotEmpty(message = "카테고리는 하나 이상 필수입니다.") Set<@NotNull MagicGenre> categories,
         @NotEmpty(message = "미디어는 하나 이상 필수입니다.") List<@NotNull MediaRequest> mediaList

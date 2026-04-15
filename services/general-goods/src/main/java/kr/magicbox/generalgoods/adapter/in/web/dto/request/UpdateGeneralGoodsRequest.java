@@ -16,7 +16,7 @@ import java.util.Set;
 public record UpdateGeneralGoodsRequest(
         String name,
         @Min(value = 1, message = "가격은 1 이상이어야 합니다.") Long price,
-        @Min(value = 0, message = "재고는 0 이상이어야 합니다.") Long stock,
+        @Min(value = 1, message = "재고는 1 이상이어야 합니다.") Long stock,
         String description,
         GeneralGoodsLevel level,
         Set<MagicGenre> categories,
