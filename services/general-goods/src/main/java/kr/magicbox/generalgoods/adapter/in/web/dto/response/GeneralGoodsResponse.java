@@ -20,7 +20,7 @@ public record GeneralGoodsResponse(
 ) {
     public static GeneralGoodsResponse from(GeneralGoodsResult result) {
         List<MediaResponse> mediaResponses = result.mediaList().stream()
-                .map(m -> new MediaResponse(m.getMediaUrl(), m.getSortOrder()))
+                .map(m -> new MediaResponse(m.mediaUrl(), m.sortOrder()))
                 .toList();
 
         return new GeneralGoodsResponse(
