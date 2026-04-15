@@ -4,8 +4,8 @@ import kr.magicbox.user.global.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 
 @SuppressWarnings("java:S110")
-public class UserBannedException extends BusinessException {
-    public UserBannedException() {
-        super("정지된 사용자는 탈퇴할 수 없습니다.", HttpStatus.FORBIDDEN);
+public class UserAlreadyBannedException extends BusinessException {
+    public UserAlreadyBannedException() {
+        super("이미 정지된 사용자입니다.", HttpStatus.CONFLICT);
     }
 }
