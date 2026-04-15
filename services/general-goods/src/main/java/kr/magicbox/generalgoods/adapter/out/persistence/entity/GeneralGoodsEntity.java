@@ -48,6 +48,9 @@ public class GeneralGoodsEntity extends BaseEntity {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
+    @Version
+    private Integer version;
+
     @Builder
     public GeneralGoodsEntity(Long creatorId, String name, Long price, Long stock, String description, GeneralGoodsLevel level, Set<MagicGenre> categories) {
         this.creatorId = creatorId;
