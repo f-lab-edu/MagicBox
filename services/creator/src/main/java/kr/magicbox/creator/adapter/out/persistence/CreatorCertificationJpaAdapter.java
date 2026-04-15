@@ -70,4 +70,9 @@ public class CreatorCertificationJpaAdapter implements CreatorCertificationRepos
     public void deleteById(CreatorCertificationId id) {
         creatorCertificationJpaRepository.deleteById(id.value());
     }
+
+    @Override
+    public boolean existsByUserIdAndStatus(UserId userId, CreatorCertificationStatus status) {
+        return creatorCertificationJpaRepository.existsByUserIdAndStatus(userId.value(), status);
+    }
 }

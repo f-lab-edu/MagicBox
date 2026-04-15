@@ -1,6 +1,6 @@
 package kr.magicbox.user.application.port.out;
 
-import kr.magicbox.user.application.dto.UserReviewResult;
+import kr.magicbox.user.application.dto.result.UserReviewResult;
 
 import java.util.List;
 

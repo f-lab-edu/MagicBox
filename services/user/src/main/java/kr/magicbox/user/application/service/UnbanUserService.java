@@ -27,7 +27,7 @@ public class UnbanUserService implements UnbanUserUseCase {
                 .orElseThrow(UserNotFoundException::new);
 
         user.unban();
-        userRepositoryPort.updateUser(user);
+        userRepositoryPort.update(user);
 
         UserUnbannedEvent event = UserUnbannedEvent.builder()
                 .userId(user.getId())

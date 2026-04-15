@@ -23,4 +23,6 @@ public interface CreatorCertificationRepositoryPort {
     List<CreatorCertification> findAllByStatusByCursor(CreatorCertificationStatus status, Long cursorId, int size);
 
     void deleteById(CreatorCertificationId id);
+
+    boolean existsByUserIdAndStatus(UserId userId, CreatorCertificationStatus status);
 }
