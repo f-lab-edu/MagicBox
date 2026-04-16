@@ -1,8 +1,8 @@
 package kr.magicbox.user.application.port.in;
 
-import kr.magicbox.user.domain.vo.UserId;
+import kr.magicbox.user.application.dto.command.WithdrawUserCommand;
 
 public interface WithdrawUserUseCase {
 
-    void withdrawUser(UserId userId);
+    void withdrawUser(WithdrawUserCommand command);
 }

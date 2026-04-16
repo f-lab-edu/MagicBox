@@ -4,7 +4,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
 import kr.magicbox.user.adapter.out.communication.ServiceHost;
 import kr.magicbox.user.adapter.out.communication.grpc.exception.ReviewServiceUnavailableException;
-import kr.magicbox.user.application.dto.UserReviewResult;
+import kr.magicbox.user.application.dto.result.UserReviewResult;
 import kr.magicbox.user.application.port.out.ReviewQueryPort;
 import kr.magicbox.user.grpc.review.GetAllReviewsByUserIdRequest;
 import kr.magicbox.user.grpc.review.GetAllReviewsByUserIdResponse;
