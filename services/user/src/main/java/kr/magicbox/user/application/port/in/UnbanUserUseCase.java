@@ -1,8 +1,8 @@
 package kr.magicbox.user.application.port.in;
 
-import kr.magicbox.user.domain.vo.Nickname;
+import kr.magicbox.user.application.dto.command.UnbanUserCommand;
 
 public interface UnbanUserUseCase {
 
-    void unbanUser(Nickname nickname);
+    void unbanUser(UnbanUserCommand command);
 }

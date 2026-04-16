@@ -1,6 +1,7 @@
 package kr.magicbox.creator.application.port.out;
 
 import kr.magicbox.creator.domain.aggregate.Creator;
+import kr.magicbox.creator.domain.vo.CreatorId;
 import kr.magicbox.creator.domain.vo.Nickname;
 import kr.magicbox.creator.domain.vo.UserId;
 
@@ -17,6 +18,8 @@ public interface CreatorRepositoryPort {
     Optional<Creator> findByUserId(UserId userId);
 
     Optional<Creator> findByUserIdWithLock(UserId userId);
+
+    Optional<Creator> findByCreatorId(CreatorId creatorId);
 
     Optional<Creator> findByNickname(Nickname nickname);
 

@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class UserInactiveException extends BaseException {
     public UserInactiveException() {
-        super("비활성 사용자입니다.", HttpStatus.BAD_REQUEST);
+        super("비활성 사용자입니다.", HttpStatus.FORBIDDEN);
     }
 }

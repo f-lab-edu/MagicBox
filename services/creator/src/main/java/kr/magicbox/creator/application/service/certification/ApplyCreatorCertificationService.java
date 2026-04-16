@@ -1,11 +1,11 @@
 package kr.magicbox.creator.application.service.certification;
 
-import kr.magicbox.creator.application.dto.command.ApplyCertificationCommand;
+import kr.magicbox.creator.application.dto.command.ApplyCreatorCertificationCommand;
 import kr.magicbox.creator.application.port.in.ApplyCreatorCertificationUseCase;
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
 import kr.magicbox.creator.domain.enums.CreatorCertificationStatus;
-import kr.magicbox.creator.domain.exception.CertificationPendingAlreadyExistsException;
+import kr.magicbox.creator.domain.exception.CreatorCertificationPendingAlreadyExistsException;
 import kr.magicbox.creator.domain.vo.CreatorCertificationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,9 +19,10 @@ public class ApplyCreatorCertificationService implements ApplyCreatorCertificati
 
     @Transactional
     @Override
-    public void applyCreatorCertification(ApplyCertificationCommand command) {
-        if(certificationRepositoryPort.existsByUserIdAndStatus(command.userId(), CreatorCertificationStatus.PENDING))
-            throw new CertificationPendingAlreadyExistsException();
+    public void applyCreatorCertification(ApplyCreatorCertificationCommand command) {
+        if (certificationRepositoryPort.existsByUserIdAndStatus(command.userId(), CreatorCertificationStatus.PENDING)) {
+            throw new CreatorCertificationPendingAlreadyExistsException();
+        }
 
         CreatorCertificationRequest request = CreatorCertificationRequest.builder()
                 .genres(command.genres())

@@ -4,7 +4,7 @@ import kr.magicbox.creator.application.dto.command.CancelCreatorCertificationCom
 import kr.magicbox.creator.application.port.in.CancelCreatorCertificationUseCase;
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
-import kr.magicbox.creator.domain.exception.CertificationNotFoundException;
+import kr.magicbox.creator.domain.exception.CreatorCertificationNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +19,9 @@ public class CancelCreatorCertificationService implements CancelCreatorCertifica
     @Transactional
     public void cancelCreatorCertification(CancelCreatorCertificationCommand command) {
         CreatorCertification certification = creatorCertificationRepositoryPort.findById(command.creatorCertificationId())
-                .orElseThrow(CertificationNotFoundException::new);
+                .orElseThrow(CreatorCertificationNotFoundException::new);
 
         certification.cancel(command.userId());
+        creatorCertificationRepositoryPort.update(certification);
     }
 }

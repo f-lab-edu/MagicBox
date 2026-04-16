@@ -20,7 +20,7 @@ public class ManageUserSessionService implements ManageUserSessionUseCase {
     @Override
     @Transactional
     public void startSession(StartSessionCommand command) {
-        User user = userRepositoryPort.getUserById(command.userId()).orElseThrow(UserNotFoundException::new);
+        User user = userRepositoryPort.getUserByIdWithLock(command.userId()).orElseThrow(UserNotFoundException::new);
         if (user.isActive()) throw new UserAlreadyActiveException();
         user.startSession(command.loginAt());
         userRepositoryPort.update(user);
@@ -29,7 +29,7 @@ public class ManageUserSessionService implements ManageUserSessionUseCase {
     @Override
     @Transactional
     public void endSession(EndSessionCommand command) {
-        User user = userRepositoryPort.getUserById(command.userId()).orElseThrow(UserNotFoundException::new);
+        User user = userRepositoryPort.getUserByIdWithLock(command.userId()).orElseThrow(UserNotFoundException::new);
         if (!user.isActive()) throw new UserSessionNotActiveException();
         user.endSession(command.logoutAt());
         userRepositoryPort.update(user);
