@@ -5,6 +5,7 @@ import kr.magicbox.creator.adapter.out.persistence.mapper.CreatorMapper;
 import kr.magicbox.creator.adapter.out.persistence.repository.CreatorJpaRepository;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
+import kr.magicbox.creator.domain.vo.CreatorId;
 import kr.magicbox.creator.domain.vo.Nickname;
 import kr.magicbox.creator.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
