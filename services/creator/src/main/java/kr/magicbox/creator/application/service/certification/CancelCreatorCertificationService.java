@@ -22,5 +22,6 @@ public class CancelCreatorCertificationService implements CancelCreatorCertifica
                 .orElseThrow(CreatorCertificationNotFoundException::new);
 
         certification.cancel(command.userId());
+        creatorCertificationRepositoryPort.update(certification);
     }
 }
