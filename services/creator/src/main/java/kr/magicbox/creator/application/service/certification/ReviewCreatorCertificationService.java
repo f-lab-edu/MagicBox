@@ -10,14 +10,13 @@ import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
 import kr.magicbox.creator.domain.event.CreatorCertificationApprovedEvent;
 import kr.magicbox.creator.domain.event.CreatorCertificationRejectedEvent;
+import kr.magicbox.creator.domain.exception.CreatorAlreadyExistsException;
 import kr.magicbox.creator.domain.exception.CreatorCertificationNotFoundException;
 import kr.magicbox.creator.domain.vo.CreatorCertificationResult;
 import kr.magicbox.creator.domain.vo.Nickname;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         CreatorCertification certification = certificationRepositoryPort.findById(command.certificationId())
                 .orElseThrow(CreatorCertificationNotFoundException::new);
 
-        certification.review(command.certificationStatus(), CreatorCertificationResult.of(command.reviewMessage()));
+        certification.review(command.certificationStatus().toStatus(), CreatorCertificationResult.of(command.reviewerId(), command.reviewMessage()));
         certificationRepositoryPort.update(certification);
 
         if (certification.isApproved()) {
@@ -50,7 +49,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         return CreatorCertificationApprovedEvent.builder()
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
-                .reviewedAt(Instant.now())
+                .reviewedAt(certification.getResult().reviewedAt())
                 .build();
     }
 
@@ -59,11 +58,14 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
                 .reviewMessage(certification.getResult().reviewMessage())
-                .reviewedAt(Instant.now())
+                .reviewedAt(certification.getResult().reviewedAt())
                 .build();
     }
 
     private void createCreator(CreatorCertification certification) {
+        if (creatorRepositoryPort.existsByUserId(certification.getUserId())) {
+            throw new CreatorAlreadyExistsException();
+        }
         String nickname = userNicknameQueryPort.getNickname(certification.getUserId());
 
         Creator creator = Creator.builder()

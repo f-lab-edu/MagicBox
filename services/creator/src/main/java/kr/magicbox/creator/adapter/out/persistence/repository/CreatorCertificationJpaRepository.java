@@ -12,13 +12,23 @@ public interface CreatorCertificationJpaRepository extends JpaRepository<Creator
 
     List<CreatorCertificationEntity> findAllByUserId(Long userId);
 
-    @Query("SELECT c FROM CreatorCertificationEntity c WHERE c.userId = :userId AND (:cursorId IS NULL OR c.id <= :cursorId) ORDER BY c.id DESC LIMIT :size")
+    @Query("SELECT c FROM CreatorCertificationEntity c WHERE c.userId = :userId AND (:cursorId IS NULL OR c.id > :cursorId) ORDER BY c.id ASC LIMIT :size")
     List<CreatorCertificationEntity> findAllByUserIdWithCursor(@Param("userId") Long userId, @Param("cursorId") Long cursorId, @Param("size") int size);
 
-    @Query("SELECT c FROM CreatorCertificationEntity c WHERE c.status = :status AND (:cursorId IS NULL OR c.id >= :cursorId) ORDER BY c.id ASC LIMIT :size")
+    @Query("SELECT c FROM CreatorCertificationEntity c WHERE c.status = :status AND (:cursorId IS NULL OR c.id > :cursorId) ORDER BY c.id ASC LIMIT :size")
     List<CreatorCertificationEntity> findAllByStatusWithCursor(
             @Param("status") CreatorCertificationStatus status,
             @Param("cursorId") Long cursorId,
             @Param("size") int size
     );
+
+    @Query(value = """
+        SELECT EXISTS (
+            SELECT 1
+            FROM creator_certification c
+            WHERE c.user_id = :userId
+            AND c.status = :status
+        )
+        """, nativeQuery = true)
+    boolean existsByUserIdAndStatus(@Param("userId") Long userId, @Param("status") CreatorCertificationStatus status);
 }
