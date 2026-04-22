@@ -47,6 +47,6 @@ jobs:
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=f-lab-edu-1
             -Dsonar.java.binaries=${{ env.SONAR_JAVA_BINARIES }}
-            -Dsonar.cpd.exclusions=**/services/*/src/main/java/**/adapter/in/web/exception/handler/GlobalExceptionHandler.java,**/services/*/src/main/java/**/adapter/out/persistence/entity/BaseEntity.java,**/services/*/src/main/java/**/adapter/in/security/filter/UserInfoExtractFilter.java,**/services/*/src/main/java/**/adapter/in/security/configuration/SecurityConfiguration.java,**/services/*/src/main/java/**/adapter/in/security/properties/TrustedIpProperties.java
+            -Dsonar.cpd.exclusions=**/services/*/src/main/java/**/adapter/in/web/exception/handler/GlobalExceptionHandler.java,**/services/*/src/main/java/**/adapter/out/persistence/entity/BaseEntity.java,**/services/*/src/main/java/**/adapter/in/security/filter/UserInfoExtractFilter.java,**/services/*/src/main/java/**/adapter/in/security/configuration/SecurityConfiguration.java,**/services/*/src/main/java/**/adapter/in/security/properties/TrustedIpProperties.java,**/services/*/src/main/java/**/adapter/in/kafka/aop/IdempotentAspect.java
 
           
