@@ -38,26 +38,20 @@ public class CreatorJpaAdapter implements CreatorRepositoryPort {
     }
 
     @Override
+    public Optional<Creator> findById(Long id) {
+        return creatorJpaRepository.findById(id)
+                .map(creatorMapper::toDomain);
+    }
+
+    @Override
     public Optional<Creator> findByUserId(UserId userId) {
         return creatorJpaRepository.findByUserId(userId.value())
                 .map(creatorMapper::toDomain);
     }
 
     @Override
-    public Optional<Creator> findByUserIdWithLock(UserId userId) {
-        return creatorJpaRepository.findByUserIdWithLock(userId.value())
-                .map(creatorMapper::toDomain);
-    }
-
-    @Override
     public Optional<Creator> findByNickname(Nickname nickname) {
         return creatorJpaRepository.findByNickname(nickname.value())
-                .map(creatorMapper::toDomain);
-    }
-
-    @Override
-    public Optional<Creator> findByNicknameWithLock(Nickname nickname) {
-        return creatorJpaRepository.findByNicknameWithLock(nickname.value())
                 .map(creatorMapper::toDomain);
     }
 
