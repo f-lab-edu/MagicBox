@@ -35,8 +35,11 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
     retry:
-      interval-ms: 1000
-      max-attempts: 3
+      topic:
+        backoff:
+          multiplier: 2
+          delay: 1s
+        attempts: 5
 
   datasource:
     url: ${MYSQL_URL}
