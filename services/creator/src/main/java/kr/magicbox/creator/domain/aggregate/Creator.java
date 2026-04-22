@@ -41,11 +41,11 @@ public class Creator {
         this.status = status != null ? status : CreatorStatus.ACTIVE;
     }
 
-    public Long getUserId() {
+    public Long getUserIdValue() {
         return this.userId.value();
     }
 
-    public String getNickname() {
+    public String getNicknameValue() {
         return this.nickname.value();
     }
 

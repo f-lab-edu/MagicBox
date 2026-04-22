@@ -1,7 +1,7 @@
 package kr.magicbox.user.application.port.in;
 
-import kr.magicbox.user.domain.vo.UserId;
+import kr.magicbox.user.application.dto.query.CheckUserActiveQuery;
 
 public interface CheckUserActiveUseCase {
-    boolean isActive(UserId userId);
+    boolean isActive(CheckUserActiveQuery query);
 }

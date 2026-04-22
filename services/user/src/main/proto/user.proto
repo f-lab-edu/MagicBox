@@ -9,6 +9,7 @@ option java_multiple_files = true;
 service UserService {
   rpc LoadUserCredential(LoadUserCredentialRequest) returns (LoadUserCredentialResponse);
   rpc CheckUserActive(CheckUserActiveRequest) returns (CheckUserActiveResponse);
+  rpc GetUserNickname(GetUserNicknameRequest) returns (GetUserNicknameResponse);
 }
 
 message LoadUserCredentialRequest {
@@ -29,6 +30,14 @@ message CheckUserActiveRequest {
 
 message CheckUserActiveResponse {
   bool active = 1;
+}
+
+message GetUserNicknameRequest {
+  int64 user_id = 1;
+}
+
+message GetUserNicknameResponse {
+  string nickname = 1;
 }
 
 enum GrpcUserRole {

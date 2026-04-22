@@ -50,6 +50,12 @@ public class CreatorJpaAdapter implements CreatorRepositoryPort {
     }
 
     @Override
+    public Optional<Creator> findByCreatorId(CreatorId creatorId) {
+        return creatorJpaRepository.findById(creatorId.value())
+                .map(creatorMapper::toDomain);
+    }
+
+    @Override
     public Optional<Creator> findByNickname(Nickname nickname) {
         return creatorJpaRepository.findByNickname(nickname.value())
                 .map(creatorMapper::toDomain);

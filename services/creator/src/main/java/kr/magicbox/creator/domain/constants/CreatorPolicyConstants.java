@@ -7,6 +7,5 @@ public class CreatorPolicyConstants {
     public static final int INTRODUCTION_MAX_LENGTH = 500;
 
     private CreatorPolicyConstants() {
-        throw new UnsupportedOperationException("Constants class");
     }
 }

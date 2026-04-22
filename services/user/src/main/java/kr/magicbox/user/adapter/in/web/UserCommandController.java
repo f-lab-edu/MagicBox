@@ -1,7 +1,8 @@
 package kr.magicbox.user.adapter.in.web;
 
 import jakarta.validation.Valid;
-import kr.magicbox.user.adapter.in.web.dto.UpdateUserProfileRequest;
+import kr.magicbox.user.adapter.in.web.dto.request.UpdateUserProfileRequest;
+import kr.magicbox.user.application.dto.command.WithdrawUserCommand;
 import kr.magicbox.user.application.port.in.UserCommandUseCase;
 import kr.magicbox.user.application.port.in.WithdrawUserUseCase;
 import kr.magicbox.user.domain.vo.UserId;
@@ -20,14 +21,15 @@ public class UserCommandController {
 
     @PatchMapping
     public ResponseEntity<Void> updateUserProfile(@AuthenticationPrincipal UserId userId,
-                                                  @RequestBody @Valid UpdateUserProfileRequest request) {
-        userCommandUseCase.updateUserProfile(userId, request.toCommand());
+                                                  @RequestBody @Valid UpdateUserProfileRequest request
+    ) {
+        userCommandUseCase.updateUserProfile(request.toCommand(userId));
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping
     public ResponseEntity<Void> withdraw(@AuthenticationPrincipal UserId userId) {
-        withdrawUserUseCase.withdrawUser(userId);
+        withdrawUserUseCase.withdrawUser(WithdrawUserCommand.of(userId));
         return ResponseEntity.noContent().build();
     }
 }

@@ -64,7 +64,7 @@ public class CreatorEntity extends BaseEntity {
     }
 
     public void updateFromDomain(Creator creator) {
-        this.nickname = creator.getNickname();
+        this.nickname = creator.getNicknameValue();
         this.tagline = creator.getTagline();
         this.profileImageUrl = creator.getProfileImageUrl();
         this.introduction = creator.getIntroduction();

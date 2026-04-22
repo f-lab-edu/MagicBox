@@ -12,7 +12,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuthEventKafkaListener {
@@ -22,7 +21,6 @@ public class AuthEventKafkaListener {
     @Idempotent
     @KafkaListener(topics = "outbox.event.user-logged-in", groupId = "user-service")
     public void handleLoginEvent(ConsumerRecord<String, LoginEvent> record) {
-        log.info("로그인 이벤트 핸들링 함수 접근!");
         LoginEvent event = record.value();
         manageUserSessionUseCase.startSession(StartSessionCommand.of(event.userId(), event.createdAt()));
     }
