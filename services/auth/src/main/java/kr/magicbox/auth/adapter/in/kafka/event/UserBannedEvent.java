@@ -8,6 +8,7 @@ import java.time.Instant;
 
 @Builder
 public record UserBannedEvent(
+        @JsonProperty("event_id") Long eventId,
         @JsonProperty("user_id") UserId userId,
         @JsonProperty("banned_at") Instant bannedAt
-) {}
+) implements InboxEvent {}
