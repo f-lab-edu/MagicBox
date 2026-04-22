@@ -42,8 +42,7 @@ public class IdempotentAspect {
                     .build());
             try {
                 pjp.proceed();
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 status.setRollbackOnly();
                 throw new RuntimeException(e);
             }
@@ -55,7 +54,7 @@ public class IdempotentAspect {
     @SuppressWarnings("unchecked")
     private ConsumerRecord<String, ?> extractRecord(ProceedingJoinPoint pjp) {
         return Arrays.stream(pjp.getArgs())
-                .filter(arg -> arg instanceof ConsumerRecord)
+                .filter(ConsumerRecord.class::isInstance)
                 .map(arg -> (ConsumerRecord<String, ?>) arg)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("@Idempotent 메서드에 ConsumerRecord 파라미터가 없습니다."));

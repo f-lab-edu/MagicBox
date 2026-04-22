@@ -21,15 +21,15 @@ public class UserEventKafkaListener {
 
     @Idempotent
     @KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "creator-service")
-    public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> record) {
-        log.info("[Inbox] user-withdrawn 이벤트 수신. eventId={}", record.key());
-        handleUserWithdrawnUseCase.handleUserWithdrawn(record.value().userId());
+    public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> consumerRecord) {
+        log.info("[Inbox] user-withdrawn 이벤트 수신. eventId={}", consumerRecord.key());
+        handleUserWithdrawnUseCase.handleUserWithdrawn(consumerRecord.value().userId());
     }
 
     @Idempotent
     @KafkaListener(topics = "outbox.event.user-banned", groupId = "creator-service")
-    public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> record) {
-        log.info("[Inbox] user-banned 이벤트 수신. eventId={}", record.key());
-        handleUserBannedUseCase.handleUserBanned(record.value().userId());
+    public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> consumerRecord) {
+        log.info("[Inbox] user-banned 이벤트 수신. eventId={}", consumerRecord.key());
+        handleUserBannedUseCase.handleUserBanned(consumerRecord.value().userId());
     }
 }

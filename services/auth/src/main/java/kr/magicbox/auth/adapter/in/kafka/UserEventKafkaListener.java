@@ -19,13 +19,13 @@ public class UserEventKafkaListener {
 
     @Idempotent
     @KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "auth-service")
-    public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> record) {
-        handleUserWithdrawnUseCase.handleUserWithdrawn(record.value().userId());
+    public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> consumerRecord) {
+        handleUserWithdrawnUseCase.handleUserWithdrawn(consumerRecord.value().userId());
     }
 
     @Idempotent
     @KafkaListener(topics = "outbox.event.user-banned", groupId = "auth-service")
-    public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> record) {
-        handleUserBannedUseCase.handleUserBanned(record.value().userId());
+    public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> consumerRecord) {
+        handleUserBannedUseCase.handleUserBanned(consumerRecord.value().userId());
     }
 }
