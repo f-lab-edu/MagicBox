@@ -65,6 +65,9 @@ services:
       CONFIG_STORAGE_TOPIC: debezium-configs-local
       OFFSET_STORAGE_TOPIC: debezium-offsets-local
       STATUS_STORAGE_TOPIC: debezium-status-local
+      STATUS_STORAGE_PARTITIONS: 1
+      OFFSET_STORAGE_PARTITIONS: 1
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
     ports:
       - "8083:8083"
     depends_on:

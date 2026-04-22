@@ -1,7 +1,7 @@
 package kr.magicbox.auth.application.port.in;
 
-import kr.magicbox.auth.application.dto.command.HandleUserWithdrawnCommand;
+import kr.magicbox.auth.domain.vo.UserId;
 
 public interface HandleUserWithdrawnUseCase {
-    void handleUserWithdrawn(HandleUserWithdrawnCommand command);
+    void handleUserWithdrawn(UserId userId);
 }

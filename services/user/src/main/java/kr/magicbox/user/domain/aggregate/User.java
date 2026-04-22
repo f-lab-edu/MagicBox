@@ -125,7 +125,7 @@ public class User {
 
     public void unban() {
         if (this.status != UserStatus.BANNED) throw new UserNotBannedException();
-        this.status = UserStatus.ACTIVE;
+        activate();
     }
 
     public void delete() {

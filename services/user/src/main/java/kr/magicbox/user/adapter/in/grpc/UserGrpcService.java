@@ -5,6 +5,7 @@ import kr.magicbox.user.application.dto.query.CheckUserActiveQuery;
 import kr.magicbox.user.application.dto.command.LoadUserCredentialCommand;
 import kr.magicbox.user.application.dto.result.LoadUserCredentialResult;
 import kr.magicbox.user.application.port.in.CheckUserActiveUseCase;
+import kr.magicbox.user.application.port.in.GetUserNicknameUseCase;
 import kr.magicbox.user.application.port.in.LoadUserCredentialUseCase;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
 import kr.magicbox.user.domain.enums.UserRole;
@@ -20,6 +21,7 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
 
     private final LoadUserCredentialUseCase loadUserCredentialUseCase;
     private final CheckUserActiveUseCase checkUserActiveUseCase;
+    private final GetUserNicknameUseCase getUserNicknameUseCase;
 
     @Override
     public void loadUserCredential(LoadUserCredentialRequest request,
@@ -47,6 +49,17 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
 
         responseObserver.onNext(CheckUserActiveResponse.newBuilder()
                 .setActive(active)
+                .build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getUserNickname(GetUserNicknameRequest request,
+                                StreamObserver<GetUserNicknameResponse> responseObserver) {
+        String nickname = getUserNicknameUseCase.getUserNickname(UserId.of(request.getUserId()));
+
+        responseObserver.onNext(GetUserNicknameResponse.newBuilder()
+                .setNickname(nickname)
                 .build());
         responseObserver.onCompleted();
     }
