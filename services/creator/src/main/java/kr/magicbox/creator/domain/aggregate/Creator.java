@@ -3,6 +3,7 @@ package kr.magicbox.creator.domain.aggregate;
 import kr.magicbox.creator.domain.constants.CreatorPolicyConstants;
 import kr.magicbox.creator.domain.enums.CreatorStatus;
 import kr.magicbox.creator.domain.enums.MagicGenre;
+import kr.magicbox.creator.domain.exception.CreatorAlreadyBannedException;
 import kr.magicbox.creator.domain.exception.CreatorNotBannedException;
 import kr.magicbox.creator.domain.exception.InvalidFieldException;
 import kr.magicbox.creator.domain.vo.CreatorId;
@@ -48,6 +49,10 @@ public class Creator {
         return this.nickname.value();
     }
 
+    public boolean isBanned() {
+        return this.status == CreatorStatus.BANNED;
+    }
+
     public void updateProfile(Nickname nickname, String tagline, String profileImageUrl,
                               String introduction, Set<MagicGenre> genres) {
         if (nickname != null) {
@@ -74,6 +79,9 @@ public class Creator {
     }
 
     public void ban() {
+        if (this.status == CreatorStatus.BANNED) {
+            throw new CreatorAlreadyBannedException();
+        }
         this.status = CreatorStatus.BANNED;
     }
 
