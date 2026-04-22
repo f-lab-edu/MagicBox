@@ -17,6 +17,8 @@ public interface CreatorRepositoryPort {
 
     Optional<Creator> findByUserId(UserId userId);
 
+    boolean existsByUserId(UserId userId);
+
     Optional<Creator> findByCreatorId(CreatorId creatorId);
 
     Optional<Creator> findByNickname(Nickname nickname);

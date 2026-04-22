@@ -50,6 +50,11 @@ public class CreatorJpaAdapter implements CreatorRepositoryPort {
     }
 
     @Override
+    public boolean existsByUserId(UserId userId) {
+        return creatorJpaRepository.existsByUserId(userId.value());
+    }
+
+    @Override
     public Optional<Creator> findByCreatorId(CreatorId creatorId) {
         return creatorJpaRepository.findById(creatorId.value())
                 .map(creatorMapper::toDomain);
