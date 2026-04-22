@@ -25,8 +25,8 @@ public class IdempotentAspect {
 
     @Around("@annotation(kr.magicbox.auth.adapter.in.kafka.annotation.Idempotent)")
     public Object around(ProceedingJoinPoint pjp) {
-        ConsumerRecord<String, ?> record = extractRecord(pjp);
-        Long eventId = Long.parseLong(record.key());
+        ConsumerRecord<String, ?> consumerRecord = extractRecord(pjp);
+        Long eventId = Long.parseLong(consumerRecord.key());
 
         return transactionTemplate.execute(status -> {
             if (authInboxRepository.existsByEventId(eventId)) {
@@ -35,9 +35,9 @@ public class IdempotentAspect {
             }
             AuthInboxEntity inbox = authInboxRepository.save(AuthInboxEntity.builder()
                     .eventId(eventId)
-                    .topic(record.topic())
-                    .partition(record.partition())
-                    .offset(record.offset())
+                    .topic(consumerRecord.topic())
+                    .partition(consumerRecord.partition())
+                    .offset(consumerRecord.offset())
                     .status(AuthInboxStatus.PENDING)
                     .build());
             try {

@@ -25,10 +25,8 @@ public class IdempotentAspect {
 
     @Around("@annotation(kr.magicbox.user.adapter.in.kafka.annotation.Idempotent)")
     public Object around(ProceedingJoinPoint pjp) {
-        log.info("[Idempotent AOP]: AOP 진입!");
-        ConsumerRecord<String, ?> record = extractRecord(pjp);
-        Long eventId = Long.parseLong(record.key());
-        log.info("[Idempotent AOP]: {}", eventId);
+        ConsumerRecord<String, ?> consumerRecord = extractRecord(pjp);
+        Long eventId = Long.parseLong(consumerRecord.key());
 
         return transactionTemplate.execute(status -> {
             if (userInboxRepository.existsByEventId(eventId)) {
@@ -37,15 +35,14 @@ public class IdempotentAspect {
             }
             UserInboxEntity inbox = userInboxRepository.save(UserInboxEntity.builder()
                     .eventId(eventId)
-                    .topic(record.topic())
-                    .partition(record.partition())
-                    .offset(record.offset())
+                    .topic(consumerRecord.topic())
+                    .partition(consumerRecord.partition())
+                    .offset(consumerRecord.offset())
                     .status(UserInboxStatus.PENDING)
                     .build());
             try {
                 pjp.proceed();
-            } 
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 status.setRollbackOnly();
                 throw new RuntimeException(e);
             }
