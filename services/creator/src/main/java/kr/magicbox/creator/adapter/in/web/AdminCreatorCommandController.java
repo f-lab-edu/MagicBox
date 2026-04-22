@@ -4,7 +4,7 @@ import kr.magicbox.creator.application.dto.command.BanCreatorCommand;
 import kr.magicbox.creator.application.dto.command.UnbanCreatorCommand;
 import kr.magicbox.creator.application.port.in.BanCreatorUseCase;
 import kr.magicbox.creator.application.port.in.UnbanCreatorUseCase;
-import kr.magicbox.creator.domain.vo.Nickname;
+import kr.magicbox.creator.domain.vo.CreatorId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,15 +19,15 @@ public class AdminCreatorCommandController {
     private final BanCreatorUseCase banCreatorUseCase;
     private final UnbanCreatorUseCase unbanCreatorUseCase;
 
-    @PatchMapping("/{nickname}/ban")
-    public ResponseEntity<Void> banCreator(@PathVariable String nickname) {
-        banCreatorUseCase.banCreator(BanCreatorCommand.of(Nickname.of(nickname)));
+    @PatchMapping("/{creatorId}/ban")
+    public ResponseEntity<Void> banCreator(@PathVariable Long creatorId) {
+        banCreatorUseCase.banCreator(BanCreatorCommand.of(CreatorId.of(creatorId)));
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{nickname}/unban")
-    public ResponseEntity<Void> unbanCreator(@PathVariable String nickname) {
-        unbanCreatorUseCase.unbanCreator(UnbanCreatorCommand.of(Nickname.of(nickname)));
+    @PatchMapping("/{creatorId}/unban")
+    public ResponseEntity<Void> unbanCreator(@PathVariable Long creatorId) {
+        unbanCreatorUseCase.unbanCreator(UnbanCreatorCommand.of(CreatorId.of(creatorId)));
         return ResponseEntity.noContent().build();
     }
 }
