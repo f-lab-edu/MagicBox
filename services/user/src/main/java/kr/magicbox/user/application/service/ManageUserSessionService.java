@@ -24,15 +24,15 @@ public class ManageUserSessionService implements ManageUserSessionUseCase {
         User user = userRepositoryPort.getUserById(command.userId()).orElseThrow(UserNotFoundException::new);
         if (user.isActive()) throw new UserAlreadyActiveException();
         user.startSession(command.loginAt());
-        userRepositoryPort.updateUser(user);
+        userRepositoryPort.update(user);
     }
 
     @Override
     @Transactional
     public void endSession(EndSessionCommand command) {
         User user = userRepositoryPort.getUserById(command.userId()).orElseThrow(UserNotFoundException::new);
-        if (!user.isActive()) throw new UserAlreadyInactiveException();
+        if (!user.isActive()) throw new UserSessionNotActiveException();
         user.endSession(command.logoutAt());
-        userRepositoryPort.updateUser(user);
+        userRepositoryPort.update(user);
     }
 }
