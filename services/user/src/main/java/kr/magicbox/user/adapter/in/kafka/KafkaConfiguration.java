@@ -1,6 +1,7 @@
 package kr.magicbox.user.adapter.in.kafka;
 
 import kr.magicbox.user.adapter.in.kafka.properties.KafkaRetryProperties;
+import kr.magicbox.user.adapter.out.persistence.repository.UserInboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -20,14 +21,19 @@ import org.springframework.util.backoff.FixedBackOff;
 @RequiredArgsConstructor
 public class KafkaConfiguration {
     private final KafkaRetryProperties kafkaRetryProperties;
+    private final UserInboxRepository userInboxRepository;
 
     @Bean
     public CommonErrorHandler errorHandler(KafkaTemplate<?, ?> kafkaTemplate) {
-          DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,
+        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,
                 (ConsumerRecord<?, ?> record, Exception ex) -> {
-                    String topic = record.topic() + "-dlt";
                     log.error("[DLT] 메시지 처리 실패, DLT 전송합니다. topic={}, offset={}, exception={}", record.topic(), record.offset(), ex.getMessage());
-                    return new TopicPartition(topic, record.partition());
+                    userInboxRepository.findByTopicAndPartitionAndOffset(record.topic(), record.partition(), record.offset())
+                            .ifPresent(inbox -> {
+                                inbox.markDeadLettered();
+                                userInboxRepository.save(inbox);
+                            });
+                    return new TopicPartition(record.topic() + "-dlt", record.partition());
                 });
         return new DefaultErrorHandler(recoverer, new FixedBackOff(kafkaRetryProperties.getIntervalMs(), kafkaRetryProperties.getMaxAttempts()));
     }

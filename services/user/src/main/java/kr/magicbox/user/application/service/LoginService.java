@@ -3,7 +3,7 @@ package kr.magicbox.user.application.service;
 import kr.magicbox.user.application.dto.LoadUserCredentialCommand;
 import kr.magicbox.user.application.dto.LoadUserCredentialResult;
 import kr.magicbox.user.application.port.in.LoadUserCredentialUseCase;
-import kr.magicbox.user.application.port.out.UserDomainEventRepositoryPort;
+import kr.magicbox.user.application.port.out.UserOutboxPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
@@ -23,7 +23,7 @@ import java.util.UUID;
 public class LoginService implements LoadUserCredentialUseCase {
 
     private final UserRepositoryPort userRepository;
-    private final UserDomainEventRepositoryPort userDomainEventRepository;
+    private final UserOutboxPort userDomainEventRepository;
     private final UserProperties userProperties;
 
     @Override
