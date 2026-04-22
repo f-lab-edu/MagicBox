@@ -16,7 +16,7 @@ import java.time.Instant;
 public class LogoutService implements LogoutUseCase {
     private final UserStatusPort userStatusPort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
-    private final AuthDomainEventRepositoryPort authDomainEventRepositoryPort;
+    private final AuthOutboxPort authOutboxPort;
 
     @Override
     @Transactional
@@ -32,6 +32,6 @@ public class LogoutService implements LogoutUseCase {
                 .userId(userId)
                 .createdAt(Instant.now())
                 .build();
-        authDomainEventRepositoryPort.save(loggedOutEvent);
+        authOutboxPort.save(loggedOutEvent);
     }
 }

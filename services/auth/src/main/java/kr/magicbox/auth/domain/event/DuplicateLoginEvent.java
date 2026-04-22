@@ -9,11 +9,6 @@ import java.time.Instant;
 public record DuplicateLoginEvent(UserId userId, Instant createdAt) implements AuthDomainEvent {
 
     @Override
-    public String key() {
-        return userId.toString();
-    }
-
-    @Override
     public AuthDomainEventType eventType() {
         return AuthDomainEventType.USER_DUPLICATE_LOGGED_IN;
     }
