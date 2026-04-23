@@ -84,6 +84,9 @@ public class User {
     }
 
     public void startSession(Instant loginAt) {
+        if (!UserStatus.ACTIVE.equals(this.status)) {
+            throw new IllegalStateException("활성 상태가 아닌 사용자는 세션을 시작할 수 없습니다.");
+        }
         this.isActive = true;
         this.lastLoginAt = loginAt;
     }
@@ -125,7 +128,8 @@ public class User {
 
     public void unban() {
         if (this.status != UserStatus.BANNED) throw new UserNotBannedException();
-        activate();
+        this.status = UserStatus.ACTIVE;
+        this.isActive = false;
     }
 
     public void delete() {
