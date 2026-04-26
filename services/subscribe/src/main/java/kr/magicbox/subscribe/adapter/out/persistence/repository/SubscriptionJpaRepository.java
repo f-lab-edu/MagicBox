@@ -2,6 +2,9 @@ package kr.magicbox.subscribe.adapter.out.persistence.repository;
 
 import kr.magicbox.subscribe.adapter.out.persistence.entity.SubscriptionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -16,7 +19,11 @@ public interface SubscriptionJpaRepository extends JpaRepository<SubscriptionEnt
 
     void deleteBySubscriberIdAndCreatorId(Long subscriberId, Long creatorId);
 
-    void deleteAllBySubscriberId(Long subscriberId);
+    @Modifying(clearAutomatically = true)
+    @Query("delete from SubscriptionEntity s where s.subscriberId = :subscriberId")
+    int deleteAllBySubscriberId(@Param("subscriberId") Long subscriberId);
 
-    void deleteAllByCreatorId(Long creatorId);
+    @Modifying(clearAutomatically = true)
+    @Query("delete from SubscriptionEntity s where s.creatorId = :creatorId")
+    int deleteAllByCreatorId(@Param("creatorId") Long creatorId);
 }

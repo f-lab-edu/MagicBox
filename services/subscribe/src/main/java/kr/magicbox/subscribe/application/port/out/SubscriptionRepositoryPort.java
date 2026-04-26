@@ -11,9 +11,9 @@ public interface SubscriptionRepositoryPort {
 
     void deleteBySubscriberIdAndCreatorId(SubscriberId subscriberId, CreatorId creatorId);
 
-    void deleteAllBySubscriberId(SubscriberId subscriberId);
+    int deleteAllBySubscriberId(SubscriberId subscriberId);
 
-    void deleteAllByCreatorId(CreatorId creatorId);
+    int deleteAllByCreatorId(CreatorId creatorId);
 
     List<Subscription> findAllBySubscriberId(SubscriberId subscriberId);
 
