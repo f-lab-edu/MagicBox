@@ -1,9 +1,10 @@
 package kr.magicbox.auth.application.service;
 
+import kr.magicbox.auth.application.dto.command.LogoutCommand;
 import kr.magicbox.auth.application.port.in.LogoutUseCase;
 import kr.magicbox.auth.application.port.out.*;
 import kr.magicbox.auth.domain.event.LogoutEvent;
-import kr.magicbox.auth.domain.exception.InActiveUserException;
+import kr.magicbox.auth.domain.exception.UserInactiveException;
 import kr.magicbox.auth.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,14 +17,15 @@ import java.time.Instant;
 public class LogoutService implements LogoutUseCase {
     private final UserStatusPort userStatusPort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
-    private final AuthDomainEventRepositoryPort authDomainEventRepositoryPort;
+    private final AuthOutboxPort authOutboxPort;
 
     @Override
     @Transactional
-    public void logout(UserId userId) {
+    public void logout(LogoutCommand command) {
+        UserId userId = command.userId();
 
         if (!userStatusPort.isActive(userId.value())) {
-            throw new InActiveUserException();
+            throw new UserInactiveException();
         }
         refreshTokenRepositoryPort.deleteRefreshToken(userId);
 
@@ -32,6 +34,6 @@ public class LogoutService implements LogoutUseCase {
                 .userId(userId)
                 .createdAt(Instant.now())
                 .build();
-        authDomainEventRepositoryPort.save(loggedOutEvent);
+        authOutboxPort.save(loggedOutEvent);
     }
 }

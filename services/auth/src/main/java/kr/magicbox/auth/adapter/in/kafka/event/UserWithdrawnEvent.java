@@ -8,6 +8,7 @@ import java.time.Instant;
 
 @Builder
 public record UserWithdrawnEvent(
+        @JsonProperty("event_id") Long eventId,
         @JsonProperty("user_id") UserId userId,
         @JsonProperty("withdrawn_at") Instant withdrawnAt
-) {}
+) implements InboxEvent {}

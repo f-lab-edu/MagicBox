@@ -1,9 +1,9 @@
 package kr.magicbox.user.application.service;
 
+import kr.magicbox.user.application.dto.query.CheckUserActiveQuery;
 import kr.magicbox.user.application.port.in.CheckUserActiveUseCase;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
-import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +16,8 @@ public class CheckUserActiveService implements CheckUserActiveUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isActive(UserId userId) {
-        return userRepositoryPort.getUserById(userId)
+    public boolean isActive(CheckUserActiveQuery query) {
+        return userRepositoryPort.getUserById(query.userId())
                 .map(User::isActive)
                 .orElse(false);
     }

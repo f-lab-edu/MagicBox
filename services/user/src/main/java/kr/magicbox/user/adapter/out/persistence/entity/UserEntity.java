@@ -88,6 +88,7 @@ public class UserEntity extends BaseEntity {
 
     public void updateFromDomain(User user) {
         this.nickname = user.getNickname();
+        this.status = user.getStatus();
         this.profile = user.getProfile();
         this.isActive = user.isActive();
         this.isReviewVisible = user.canShowReview();

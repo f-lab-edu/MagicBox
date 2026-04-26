@@ -11,6 +11,6 @@ public interface UserRepositoryPort {
     Optional<User> getUserByNickname(Nickname nickname);
     Optional<User> getUserById(UserId userId);
     Optional<User> findByOauth2IdAndProvider(String oauth2Id, OAuth2Provider provider);
-    User saveUser(User user);
-    void updateUser(User user);
+    User save(User user);
+    void update(User user);
 }
