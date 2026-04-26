@@ -45,10 +45,10 @@ public class GrpcExceptionInterceptor implements ServerInterceptor {
                 catch (SystemError e) {
                     log.error("gRPC 시스템 오류: {}", e.getMessage(), e);
                     call.close(Status.INTERNAL.withDescription("서버 내부 오류가 발생했습니다."), new Metadata());
-                } 
+                }
                 catch (Exception e) {
-                    log.error("gRPC 처리 중 예외: {}", e.getMessage(), e);
-                    call.close(Status.INTERNAL.withDescription("서버 내부 오류가 발생했습니다."), new Metadata());
+                    log.error("gRPC 예상치 못한 예외: {}", e.getMessage(), e);
+                    call.close(Status.UNKNOWN.withDescription("예상치 못한 오류가 발생했습니다."), new Metadata());
                 }
             }
         };
