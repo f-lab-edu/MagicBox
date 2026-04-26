@@ -1,14 +1,11 @@
 package kr.magicbox.user.domain.aggregate;
 
+import kr.magicbox.user.domain.exception.*;
 import kr.magicbox.user.domain.vo.Nickname;
 import kr.magicbox.user.domain.vo.UserId;
 import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
-import kr.magicbox.user.domain.exception.InvalidFieldException;
-import kr.magicbox.user.domain.exception.UserAlreadyBannedException;
-import kr.magicbox.user.domain.exception.UserNotActiveForDeletionException;
-import kr.magicbox.user.domain.exception.UserNotBannedException;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -84,14 +81,15 @@ public class User {
     }
 
     public void startSession(Instant loginAt) {
-        if (!UserStatus.ACTIVE.equals(this.status)) {
-            throw new IllegalStateException("활성 상태가 아닌 사용자는 세션을 시작할 수 없습니다.");
-        }
+        if (UserStatus.BANNED.equals(this.status)) throw new UserBannedException();
+        if (UserStatus.DELETED.equals(this.status)) throw new UserDeletedException();
+        if (this.isActive()) throw new UserAlreadyActiveException();
         this.isActive = true;
         this.lastLoginAt = loginAt;
     }
 
     public void endSession(Instant logoutAt) {
+        if (!this.isActive()) throw new UserAlreadyNotActiveException();
         if (Boolean.TRUE.equals(this.isActive) && this.lastLoginAt != null) {
             Duration sessionTime = Duration.between(this.lastLoginAt, logoutAt);
             this.totalUsageTime = this.totalUsageTime.plus(sessionTime);
