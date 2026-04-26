@@ -1,13 +1,13 @@
 package kr.magicbox.user.application.dto.command;
 
-import kr.magicbox.user.domain.vo.Nickname;
+import kr.magicbox.user.domain.vo.UserId;
 import lombok.Builder;
 
 @Builder
 public record UnbanUserCommand(
-        Nickname nickname
+        UserId userId
 ) {
-    public static UnbanUserCommand of(Nickname nickname) {
-        return new UnbanUserCommand(nickname);
+    public static UnbanUserCommand of(UserId userId) {
+        return new UnbanUserCommand(userId);
     }
 }
