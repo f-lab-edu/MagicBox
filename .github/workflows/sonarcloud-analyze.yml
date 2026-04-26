@@ -24,7 +24,7 @@ jobs:
           java-version: '21'
 
       - name: Compile Java classes
-        run: ./gradlew --no-daemon :services:auth:classes :services:user:classes
+        run: ./gradlew --no-daemon :services:auth:classes :services:user:classes :services:creator:classes :services:subscribe:classes
 
       - name: Set SonarCloud Project Key
         run: |
