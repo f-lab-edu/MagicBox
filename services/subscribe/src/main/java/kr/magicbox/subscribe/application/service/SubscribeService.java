@@ -20,7 +20,7 @@ public class SubscribeService implements SubscribeUseCase {
     @Transactional
     @Override
     public void subscribe(SubscribeCommand command) {
-        if (creatorIdentityQueryPort.isCreatorAndSubscriberSamePerson(command.creatorId(), command.subscriberId())) {
+        if (creatorIdentityQueryPort.isCreatorOwnedByUser(command.creatorId(), command.subscriberId())) {
             throw new SelfSubscriptionNotAllowedException();
         }
 

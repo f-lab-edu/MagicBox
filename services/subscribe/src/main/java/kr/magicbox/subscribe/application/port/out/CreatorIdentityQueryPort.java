@@ -4,5 +4,5 @@ import kr.magicbox.subscribe.domain.vo.CreatorId;
 import kr.magicbox.subscribe.domain.vo.SubscriberId;
 
 public interface CreatorIdentityQueryPort {
-    boolean isCreatorAndSubscriberSamePerson(CreatorId creatorId, SubscriberId subscriberId);
+    boolean isCreatorOwnedByUser(CreatorId creatorId, SubscriberId subscriberId);
 }

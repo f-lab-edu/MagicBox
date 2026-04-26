@@ -4,10 +4,14 @@ import kr.magicbox.subscribe.adapter.out.persistence.mapper.SubscriptionMapper;
 import kr.magicbox.subscribe.adapter.out.persistence.repository.SubscriptionJpaRepository;
 import kr.magicbox.subscribe.application.port.out.SubscriptionRepositoryPort;
 import kr.magicbox.subscribe.domain.aggregate.Subscription;
+import kr.magicbox.subscribe.domain.exception.AlreadySubscribedException;
 import kr.magicbox.subscribe.domain.vo.CreatorId;
 import kr.magicbox.subscribe.domain.vo.SubscriberId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +21,12 @@ public class SubscriptionJpaAdapter implements SubscriptionRepositoryPort {
 
     @Override
     public void save(Subscription subscription) {
-        subscriptionJpaRepository.save(subscriptionMapper.toEntity(subscription));
+        try {
+            subscriptionJpaRepository.save(subscriptionMapper.toEntity(subscription));
+        } 
+        catch (DataIntegrityViolationException e) {
+            throw new AlreadySubscribedException();
+        }
     }
 
     @Override
@@ -26,13 +35,29 @@ public class SubscriptionJpaAdapter implements SubscriptionRepositoryPort {
     }
 
     @Override
-    public void deleteAllBySubscriberId(SubscriberId subscriberId) {
-        subscriptionJpaRepository.deleteAllBySubscriberId(subscriberId.value());
+    public int deleteAllBySubscriberId(SubscriberId subscriberId) {
+        return subscriptionJpaRepository.deleteAllBySubscriberId(subscriberId.value());
     }
 
     @Override
-    public void deleteAllByCreatorId(CreatorId creatorId) {
-        subscriptionJpaRepository.deleteAllByCreatorId(creatorId.value());
+    public int deleteAllByCreatorId(CreatorId creatorId) {
+        return subscriptionJpaRepository.deleteAllByCreatorId(creatorId.value());
+    }
+
+    @Override
+    public List<Subscription> findAllBySubscriberId(SubscriberId subscriberId) {
+        return subscriptionJpaRepository.findAllBySubscriberId(subscriberId.value())
+                .stream()
+                .map(subscriptionMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Subscription> findAllByCreatorId(CreatorId creatorId) {
+        return subscriptionJpaRepository.findAllByCreatorId(creatorId.value())
+                .stream()
+                .map(subscriptionMapper::toDomain)
+                .toList();
     }
 
     @Override

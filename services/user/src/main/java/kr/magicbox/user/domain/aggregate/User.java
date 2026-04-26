@@ -6,6 +6,10 @@ import kr.magicbox.user.domain.vo.UserId;
 import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
+import kr.magicbox.user.domain.exception.InvalidFieldException;
+import kr.magicbox.user.domain.exception.UserAlreadyBannedException;
+import kr.magicbox.user.domain.exception.UserNotActiveForDeletionException;
+import kr.magicbox.user.domain.exception.UserNotBannedException;
 import lombok.Builder;
 import lombok.Getter;
 
