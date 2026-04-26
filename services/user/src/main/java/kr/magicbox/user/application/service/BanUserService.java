@@ -23,7 +23,7 @@ public class BanUserService implements BanUserUseCase {
     @Override
     @Transactional
     public void banUser(BanUserCommand command) {
-        User user = userRepositoryPort.getUserByNicknameWithLock(command.nickname())
+        User user = userRepositoryPort.getUserById(command.userId())
                 .orElseThrow(UserNotFoundException::new);
 
         user.ban();

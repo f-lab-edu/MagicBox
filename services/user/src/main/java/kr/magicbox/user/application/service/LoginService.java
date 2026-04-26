@@ -7,6 +7,9 @@ import kr.magicbox.user.application.port.out.UserOutboxPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.enums.UserStatus;
+import kr.magicbox.user.domain.exception.UserBannedException;
+import kr.magicbox.user.domain.exception.UserDeletedException;
+
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.event.UserSignupEvent;
 import kr.magicbox.user.domain.vo.Nickname;
@@ -35,6 +38,12 @@ public class LoginService implements LoadUserCredentialUseCase {
     }
 
     private LoadUserCredentialResult handleExistingUser(User user) {
+        if (UserStatus.BANNED.equals(user.getStatus())) {
+            throw new UserBannedException();
+        }
+        if (UserStatus.DELETED.equals(user.getStatus())) {
+            throw new UserDeletedException();
+        }
         userRepository.update(user);
         return LoadUserCredentialResult.builder()
                 .userId(user.getId())

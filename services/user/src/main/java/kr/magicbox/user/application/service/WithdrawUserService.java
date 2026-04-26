@@ -23,7 +23,7 @@ public class WithdrawUserService implements WithdrawUserUseCase {
     @Transactional
     @Override
     public void withdrawUser(WithdrawUserCommand command) {
-        User user = userRepositoryPort.getUserByIdWithLock(command.userId())
+        User user = userRepositoryPort.getUserById(command.userId())
                 .orElseThrow(UserNotFoundException::new);
 
         user.delete();
