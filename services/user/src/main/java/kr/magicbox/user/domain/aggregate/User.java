@@ -1,5 +1,6 @@
 package kr.magicbox.user.domain.aggregate;
 
+import kr.magicbox.user.domain.exception.*;
 import kr.magicbox.user.domain.vo.Nickname;
 import kr.magicbox.user.domain.vo.UserId;
 import kr.magicbox.user.domain.enums.UserRole;
@@ -84,11 +85,15 @@ public class User {
     }
 
     public void startSession(Instant loginAt) {
+        if (UserStatus.BANNED.equals(this.status)) throw new UserBannedException();
+        if (UserStatus.DELETED.equals(this.status)) throw new UserDeletedException();
+        if (this.isActive()) throw new UserAlreadyActiveException();
         this.isActive = true;
         this.lastLoginAt = loginAt;
     }
 
     public void endSession(Instant logoutAt) {
+        if (!this.isActive()) throw new UserAlreadyNotActiveException();
         if (Boolean.TRUE.equals(this.isActive) && this.lastLoginAt != null) {
             Duration sessionTime = Duration.between(this.lastLoginAt, logoutAt);
             this.totalUsageTime = this.totalUsageTime.plus(sessionTime);
@@ -126,6 +131,7 @@ public class User {
     public void unban() {
         if (this.status != UserStatus.BANNED) throw new UserNotBannedException();
         this.status = UserStatus.ACTIVE;
+        this.isActive = false;
     }
 
     public void delete() {

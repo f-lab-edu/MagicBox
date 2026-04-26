@@ -29,9 +29,19 @@ message GetReleasesByCreatorIdResponse {
   repeated Release releases = 1;
 }
 
+enum ReleaseLevel {
+  BEGINNER = 0;
+  INTERMEDIATE = 1;
+  ADVANCED = 2;
+}
+
 message Release {
   int64 release_id = 1;
   string title = 2;
   string thumbnail_url = 3;
-  google.protobuf.Timestamp created_at = 4;
+  ReleaseLevel level = 4;
+  string creator_nickname = 5;
+  int64 price = 6;
+  int32 limited_quantity = 7;
+  google.protobuf.Timestamp created_at = 8;
 }

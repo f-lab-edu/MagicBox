@@ -4,10 +4,12 @@ import kr.magicbox.creator.domain.aggregate.CreatorCertification;
 import kr.magicbox.creator.domain.enums.MagicGenre;
 import kr.magicbox.creator.domain.vo.CreatorCertificationId;
 import kr.magicbox.creator.domain.vo.UserId;
+import lombok.Builder;
 
 import java.time.Instant;
 import java.util.Set;
 
+@Builder
 public record PendingCreatorCertificationResult(
         CreatorCertificationId certificationId,
         UserId userId,
@@ -17,12 +19,12 @@ public record PendingCreatorCertificationResult(
 ) {
 
     public static PendingCreatorCertificationResult from(CreatorCertification certification) {
-        return new PendingCreatorCertificationResult(
-                certification.getId(),
-                certification.getUserId(),
-                certification.getRequest().genres(),
-                certification.getRequest().portfolioUrl(),
-                certification.getRequest().requestedAt()
-        );
+        return PendingCreatorCertificationResult.builder()
+                .certificationId(certification.getId())
+                .userId(certification.getUserId())
+                .genres(certification.getRequest().genres())
+                .portfolioUrl(certification.getRequest().portfolioUrl())
+                .requestedAt(certification.getRequest().requestedAt())
+                .build();
     }
 }

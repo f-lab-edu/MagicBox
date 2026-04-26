@@ -6,6 +6,8 @@ import kr.magicbox.creator.adapter.in.web.dto.response.CreatorMyProfileResponse;
 import kr.magicbox.creator.adapter.in.web.dto.response.CreatorProfileResponse;
 import kr.magicbox.creator.adapter.in.web.dto.response.CreatorSearchResponse;
 import kr.magicbox.creator.adapter.in.web.dto.response.CursorResponse;
+import kr.magicbox.creator.adapter.in.web.dto.response.ReleaseResponse;
+import kr.magicbox.creator.adapter.in.web.dto.response.ShortformResponse;
 import kr.magicbox.creator.adapter.in.web.validation.CursorSize;
 import kr.magicbox.creator.application.dto.result.CreatorPublicProfileResult;
 import kr.magicbox.creator.application.dto.query.GetAllCreatorsQuery;
@@ -55,8 +57,8 @@ public class CreatorQueryController {
                 .subscriberCount(result.subscriberCount())
                 .releaseCount(result.releaseCount())
                 .reviewRating(result.reviewRating())
-                .releases(result.releases())
-                .shortForms(result.shortForms())
+                .releases(result.releases().stream().map(ReleaseResponse::from).toList())
+                .shortForms(result.shortForms().stream().map(ShortformResponse::from).toList())
                 .introduction(result.introduction())
                 .isSubscribed(result.isSubscribed())
                 .build());
@@ -73,8 +75,8 @@ public class CreatorQueryController {
                 .subscriberCount(result.subscriberCount())
                 .releaseCount(result.releaseCount())
                 .reviewRating(result.reviewRating())
-                .releases(result.releases())
-                .shortForms(result.shortForms())
+                .releases(result.releases().stream().map(ReleaseResponse::from).toList())
+                .shortForms(result.shortForms().stream().map(ShortformResponse::from).toList())
                 .introduction(result.introduction())
                 .build());
     }

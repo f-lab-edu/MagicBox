@@ -21,8 +21,7 @@ public class CancelCreatorCertificationService implements CancelCreatorCertifica
         CreatorCertification certification = creatorCertificationRepositoryPort.findById(command.creatorCertificationId())
                 .orElseThrow(CreatorCertificationNotFoundException::new);
 
-        certification.validateCancellable(command.userId());
-
-        creatorCertificationRepositoryPort.deleteById(command.creatorCertificationId());
+        certification.cancel(command.userId());
+        creatorCertificationRepositoryPort.update(certification);
     }
 }

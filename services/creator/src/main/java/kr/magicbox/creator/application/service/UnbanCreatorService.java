@@ -23,7 +23,7 @@ public class UnbanCreatorService implements UnbanCreatorUseCase {
     @Override
     @Transactional
     public void unbanCreator(UnbanCreatorCommand command) {
-        Creator creator = creatorRepositoryPort.findByNicknameWithLock(command.nickname())
+        Creator creator = creatorRepositoryPort.findById(command.creatorId().value())
                 .orElseThrow(CreatorNotFoundException::new);
 
         creator.unban();

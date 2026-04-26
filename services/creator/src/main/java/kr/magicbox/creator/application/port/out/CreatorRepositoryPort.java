@@ -13,15 +13,15 @@ public interface CreatorRepositoryPort {
     void save(Creator creator);
     void update(Creator creator);
 
+    Optional<Creator> findById(Long id);
+
     Optional<Creator> findByUserId(UserId userId);
 
-    Optional<Creator> findByUserIdWithLock(UserId userId);
+    boolean existsByUserId(UserId userId);
 
     Optional<Creator> findByCreatorId(CreatorId creatorId);
 
     Optional<Creator> findByNickname(Nickname nickname);
-
-    Optional<Creator> findByNicknameWithLock(Nickname nickname);
 
     List<Creator> findAllByCursor(Long cursorId, int size);
 

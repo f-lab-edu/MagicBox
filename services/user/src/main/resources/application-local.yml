@@ -30,12 +30,16 @@ spring:
       properties:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
         spring.json.trusted.packages: "kr.magicbox.user.adapter.in.kafka.event"
+        spring.json.type.mapping: user-logged-in:kr.magicbox.user.adapter.in.kafka.event.LoginEvent,user-logged-out:kr.magicbox.user.adapter.in.kafka.event.LogoutEvent
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
     retry:
-      interval-ms: 1000
-      max-attempts: 3
+      topic:
+        backoff:
+          multiplier: 2
+          delay: 1s
+        attempts: 5
 
   datasource:
     url: ${MYSQL_URL}

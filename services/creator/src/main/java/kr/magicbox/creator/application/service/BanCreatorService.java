@@ -23,10 +23,10 @@ public class BanCreatorService implements BanCreatorUseCase {
     @Override
     @Transactional
     public void banCreator(BanCreatorCommand command) {
-        Creator creator = creatorRepositoryPort.findByNicknameWithLock(command.nickname())
+        Creator creator = creatorRepositoryPort.findById(command.creatorId().value())
                 .orElseThrow(CreatorNotFoundException::new);
-        creator.ban();
 
+        creator.ban();
         creatorRepositoryPort.update(creator);
         eventRepositoryPort.save(
                 CreatorRevokedEvent.builder()

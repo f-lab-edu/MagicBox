@@ -20,6 +20,9 @@ import java.util.Set;
 @Getter
 public class CreatorEntity extends BaseEntity {
 
+    @Version
+    private Long version;
+
     @Column(nullable = false, unique = true, updatable = false)
     private Long userId;
 

@@ -26,20 +26,8 @@ public class UserJpaAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public Optional<User> getUserByNicknameWithLock(Nickname nickname) {
-        return userJpaRepository.findByNicknameWithLock(nickname.value())
-                .map(userMapper::toDomain);
-    }
-
-    @Override
     public Optional<User> getUserById(UserId userId) {
         return userJpaRepository.findById(userId.value())
-                .map(userMapper::toDomain);
-    }
-
-    @Override
-    public Optional<User> getUserByIdWithLock(UserId userId) {
-        return userJpaRepository.findByIdWithLock(userId.value())
                 .map(userMapper::toDomain);
     }
 

@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.util.Optional;
 
 @Entity
 @Table(name = "creator_certification")
@@ -42,6 +43,8 @@ public class CreatorCertificationEntity extends BaseEntity {
     public void updateFromDomain(CreatorCertification creatorCertification) {
         this.status = creatorCertification.getStatus();
         this.request = CreatorCertificationRequestVO.of(creatorCertification.getRequest());
-        this.result = CreatorCertificationResultVO.of(creatorCertification.getResult());
+        this.result = Optional.ofNullable(creatorCertification.getResult())
+                .map(CreatorCertificationResultVO::of)
+                .orElse(null);
     }
 }

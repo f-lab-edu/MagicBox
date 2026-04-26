@@ -2,7 +2,7 @@ package kr.magicbox.user.application.service;
 
 import kr.magicbox.user.application.dto.command.BanUserCommand;
 import kr.magicbox.user.application.port.in.BanUserUseCase;
-import kr.magicbox.user.application.port.out.UserDomainEventRepositoryPort;
+import kr.magicbox.user.application.port.out.UserOutboxPort;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.event.UserBannedEvent;
@@ -18,12 +18,12 @@ import java.time.Instant;
 public class BanUserService implements BanUserUseCase {
 
     private final UserRepositoryPort userRepositoryPort;
-    private final UserDomainEventRepositoryPort userDomainEventRepositoryPort;
+    private final UserOutboxPort userOutboxPort;
 
     @Override
     @Transactional
     public void banUser(BanUserCommand command) {
-        User user = userRepositoryPort.getUserByNicknameWithLock(command.nickname())
+        User user = userRepositoryPort.getUserById(command.userId())
                 .orElseThrow(UserNotFoundException::new);
 
         user.ban();
@@ -33,6 +33,6 @@ public class BanUserService implements BanUserUseCase {
                 .userId(user.getId())
                 .bannedAt(Instant.now())
                 .build();
-        userDomainEventRepositoryPort.save(event);
+        userOutboxPort.save(event);
     }
 }

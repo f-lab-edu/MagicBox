@@ -12,8 +12,8 @@ public record CreatorProfileResponse(
         long subscriberCount,
         long releaseCount,
         ReviewRating reviewRating,
-        List<Object> releases,
-        List<Object> shortForms,
+        List<ReleaseResponse> releases,
+        List<ShortformResponse> shortForms,
         String introduction,
         boolean isSubscribed
 ) {

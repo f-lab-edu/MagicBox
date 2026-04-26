@@ -2,7 +2,7 @@ package kr.magicbox.user.application.service;
 
 import kr.magicbox.user.application.dto.command.UnbanUserCommand;
 import kr.magicbox.user.application.port.in.UnbanUserUseCase;
-import kr.magicbox.user.application.port.out.UserDomainEventRepositoryPort;
+import kr.magicbox.user.application.port.out.UserOutboxPort;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.event.UserUnbannedEvent;
@@ -18,12 +18,12 @@ import java.time.Instant;
 public class UnbanUserService implements UnbanUserUseCase {
 
     private final UserRepositoryPort userRepositoryPort;
-    private final UserDomainEventRepositoryPort userDomainEventRepositoryPort;
+    private final UserOutboxPort userOutboxPort;
 
     @Override
     @Transactional
     public void unbanUser(UnbanUserCommand command) {
-        User user = userRepositoryPort.getUserByNicknameWithLock(command.nickname())
+        User user = userRepositoryPort.getUserById(command.userId())
                 .orElseThrow(UserNotFoundException::new);
 
         user.unban();
@@ -33,6 +33,6 @@ public class UnbanUserService implements UnbanUserUseCase {
                 .userId(user.getId())
                 .unbannedAt(Instant.now())
                 .build();
-        userDomainEventRepositoryPort.save(event);
+        userOutboxPort.save(event);
     }
 }

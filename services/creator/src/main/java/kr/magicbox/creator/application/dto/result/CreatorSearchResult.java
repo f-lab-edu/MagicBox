@@ -3,7 +3,9 @@ package kr.magicbox.creator.application.dto.result;
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.vo.CreatorId;
 import kr.magicbox.creator.domain.vo.Nickname;
+import lombok.Builder;
 
+@Builder
 public record CreatorSearchResult(
         CreatorId creatorId,
         Nickname nickname,
@@ -13,12 +15,12 @@ public record CreatorSearchResult(
 ) {
 
     public static CreatorSearchResult from(Creator creator) {
-        return new CreatorSearchResult(
-                creator.getId(),
-                creator.getNickname(),
-                creator.getIntroduction(),
-                creator.getProfileImageUrl(),
-                creator.getTagline()
-        );
+        return CreatorSearchResult.builder()
+                .creatorId(creator.getId())
+                .nickname(creator.getNickname())
+                .introduction(creator.getIntroduction())
+                .profileImageUrl(creator.getProfileImageUrl())
+                .tagline(creator.getTagline())
+                .build();
     }
 }
