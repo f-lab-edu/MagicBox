@@ -21,9 +21,6 @@ public class GeneralGoodsMediaEntity extends BaseEntity {
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;
 
-    @Version
-    private Integer version;
-
     @Builder
     public GeneralGoodsMediaEntity(String mediaUrl, Integer sortOrder) {
         this.mediaUrl = mediaUrl;

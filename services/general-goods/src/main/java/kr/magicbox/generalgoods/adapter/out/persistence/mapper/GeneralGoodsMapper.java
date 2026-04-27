@@ -35,6 +35,13 @@ public class GeneralGoodsMapper {
         return entity;
     }
 
+    public GeneralGoodsMediaEntity toMediaEntity(GeneralGoodsMedia media) {
+        return GeneralGoodsMediaEntity.builder()
+                .mediaUrl(media.getMediaUrl())
+                .sortOrder(media.getSortOrder())
+                .build();
+    }
+
     public GeneralGoods toDomain(GeneralGoodsEntity entity) {
         List<GeneralGoodsMedia> mediaList = entity.getGeneralGoodsMediaList().stream()
                 .map(media -> GeneralGoodsMedia.builder()

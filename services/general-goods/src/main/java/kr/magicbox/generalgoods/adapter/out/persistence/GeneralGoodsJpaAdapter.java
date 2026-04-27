@@ -1,7 +1,6 @@
 package kr.magicbox.generalgoods.adapter.out.persistence;
 
 import kr.magicbox.generalgoods.adapter.out.persistence.entity.GeneralGoodsEntity;
-import kr.magicbox.generalgoods.adapter.out.persistence.entity.GeneralGoodsMediaEntity;
 import kr.magicbox.generalgoods.adapter.out.persistence.mapper.GeneralGoodsMapper;
 import kr.magicbox.generalgoods.adapter.out.persistence.repository.GeneralGoodsJpaRepository;
 import kr.magicbox.generalgoods.application.port.out.GeneralGoodsRepositoryPort;
@@ -9,8 +8,13 @@ import kr.magicbox.generalgoods.domain.aggregate.GeneralGoods;
 import kr.magicbox.generalgoods.domain.exception.GeneralGoodsNotFoundException;
 import kr.magicbox.generalgoods.domain.vo.CreatorId;
 import kr.magicbox.generalgoods.domain.vo.GeneralGoodsId;
+import kr.magicbox.generalgoods.domain.vo.GeneralGoodsMedia;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -29,22 +33,25 @@ public class GeneralGoodsJpaAdapter implements GeneralGoodsRepositoryPort {
                 .orElseThrow(GeneralGoodsNotFoundException::new);
         entity.updateFromDomain(generalGoods);
 
-        entity.getGeneralGoodsMediaList().clear();
-        generalGoods.getGeneralGoodsMediaList().forEach(media -> {
-            GeneralGoodsMediaEntity mediaEntity = GeneralGoodsMediaEntity.builder()
-                    .mediaUrl(media.getMediaUrl())
-                    .sortOrder(media.getSortOrder())
-                    .build();
-            entity.addMedia(mediaEntity);
-        });
+        syncMediaList(entity, generalGoods.getGeneralGoodsMediaList());
     }
 
-    @Override
-    public void delete(GeneralGoodsId id) {
-        int affected = generalGoodsJpaRepository.softDeleteById(id.value());
-        if (affected == 0) {
-            throw new GeneralGoodsNotFoundException();
-        }
+    private void syncMediaList(GeneralGoodsEntity entity, List<GeneralGoodsMedia> newMediaList) {
+        Set<String> incomingKeys = newMediaList.stream()
+                .map(m -> m.getMediaUrl() + "|" + m.getSortOrder())
+                .collect(Collectors.toSet());
+
+        entity.getGeneralGoodsMediaList().removeIf(existing ->
+                !incomingKeys.contains(existing.getMediaUrl() + "|" + existing.getSortOrder()));
+
+        Set<String> existingKeys = entity.getGeneralGoodsMediaList().stream()
+                .map(e -> e.getMediaUrl() + "|" + e.getSortOrder())
+                .collect(Collectors.toSet());
+
+        newMediaList.stream()
+                .filter(m -> !existingKeys.contains(m.getMediaUrl() + "|" + m.getSortOrder()))
+                .map(generalGoodsMapper::toMediaEntity)
+                .forEach(entity::addMedia);
     }
 
     @Override
