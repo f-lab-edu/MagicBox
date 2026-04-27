@@ -11,6 +11,7 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 public class GeneralGoods {
@@ -70,6 +71,16 @@ public class GeneralGoods {
         if (stock == null || stock <= 0) throw new InvalidFieldException("재고는 양수여야 합니다.");
         if (categories == null || categories.isEmpty()) throw new InvalidFieldException("카테고리는 하나 이상 필수입니다.");
         if (generalGoodsMediaList == null || generalGoodsMediaList.isEmpty()) throw new InvalidFieldException("미디어는 하나 이상 필수입니다.");
+        validateMediaSortOrder(generalGoodsMediaList);
+    }
+
+    private void validateMediaSortOrder(List<GeneralGoodsMedia> mediaList) {
+        Set<Integer> sortOrders = mediaList.stream()
+                .map(GeneralGoodsMedia::getSortOrder)
+                .collect(Collectors.toSet());
+        if (sortOrders.size() != mediaList.size()) {
+            throw new InvalidFieldException("미디어 정렬 순서는 중복될 수 없습니다.");
+        }
     }
 
     private void validateReconstruct(GeneralGoodsId id, CreatorId creatorId) {
@@ -84,6 +95,9 @@ public class GeneralGoods {
         if (description != null) this.description = description;
         if (level != null) this.level = level;
         if (categories != null && !categories.isEmpty()) this.categories = categories;
-        if (mediaList != null && !mediaList.isEmpty()) this.generalGoodsMediaList = mediaList;
+        if (mediaList != null && !mediaList.isEmpty()) {
+            validateMediaSortOrder(mediaList);
+            this.generalGoodsMediaList = mediaList;
+        }
     }
 }
