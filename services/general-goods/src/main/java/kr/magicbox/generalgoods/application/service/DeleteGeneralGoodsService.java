@@ -27,6 +27,7 @@ public class DeleteGeneralGoodsService implements DeleteGeneralGoodsUseCase {
             throw new GeneralGoodsUnauthorizedException();
         }
 
-        generalGoodsRepositoryPort.delete(command.id());
+        generalGoods.delete();
+        generalGoodsRepositoryPort.update(generalGoods);
     }
 }

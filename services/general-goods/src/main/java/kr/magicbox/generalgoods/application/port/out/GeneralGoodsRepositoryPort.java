@@ -9,8 +9,6 @@ public interface GeneralGoodsRepositoryPort {
 
     void update(GeneralGoods generalGoods);
 
-    void delete(GeneralGoodsId id);
-
     void softDeleteByCreatorId(CreatorId creatorId);
 
     GeneralGoods findById(GeneralGoodsId id);

@@ -21,10 +21,6 @@ public interface GeneralGoodsJpaRepository extends JpaRepository<GeneralGoodsEnt
     List<GeneralGoodsEntity> findByNameOrDescriptionContaining(@Param("keyword") String keyword);
 
     @Modifying
-    @Query("UPDATE GeneralGoodsEntity g SET g.isDeleted = true WHERE g.id = :id AND g.isDeleted = false")
-    int softDeleteById(@Param("id") Long id);
-
-    @Modifying
     @Query("UPDATE GeneralGoodsEntity g SET g.isDeleted = true WHERE g.creatorId = :creatorId AND g.isDeleted = false")
     void softDeleteByCreatorId(@Param("creatorId") Long creatorId);
 }

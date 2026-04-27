@@ -1,10 +1,12 @@
 package kr.magicbox.generalgoods.domain.vo;
 
+import kr.magicbox.generalgoods.domain.exception.InvalidFieldException;
+
 public record UserId(Long value) {
 
     public UserId {
         if (value == null || value <= 0) {
-            throw new IllegalArgumentException("사용자 ID는 양수여야 합니다.");
+            throw new InvalidFieldException("사용자 ID는 양수여야 합니다.");
         }
     }
 
