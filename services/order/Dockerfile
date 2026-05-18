@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu
-ARG JAR_FILE=build/libs/*.jar
+ARG JAR_FILE=services/order/build/libs/*.jar
 WORKDIR /app
 COPY ${JAR_FILE} app.jar
 EXPOSE 8080
