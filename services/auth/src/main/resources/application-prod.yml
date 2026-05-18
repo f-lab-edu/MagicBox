@@ -97,7 +97,7 @@ code:
   ttl-seconds: ${OAUTH2_CODE_TTL_SECONDS}
 
 frontend:
-  uri: ${FRONTEND_URI}
+  uri: ${FRONTEND_URL}
 
 security:
   trusted:
