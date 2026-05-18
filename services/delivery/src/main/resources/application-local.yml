@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: delivery-local
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  config:
+    import:
+      - file:services/delivery/env/local.env[.properties]
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/delivery}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  cloud:
+    openfeign:
+      client:
+        config:
+          sweetTracker:
+            connect-timeout: 3000
+            read-timeout: 5000
+
+server:
+  port: ${SERVER_PORT:8097}
+
+security:
+  trusted:
+    ips:
+      - 127.0.0.1
+      - "::1"
+      - 0:0:0:0:0:0:0:1
+
+sweet-tracker:
+  api-key: ${SWEET_TRACKER_API_KEY:dummy-key}
+  base-url: ${SWEET_TRACKER_BASE_URL:https://info.sweettracker.co.kr}
+  delivery-complete-level: 6
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      sweetTrackerService:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3

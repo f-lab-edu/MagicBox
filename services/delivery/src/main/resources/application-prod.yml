@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: delivery-prod
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+server:
+  port: ${SERVER_PORT}
+
+security:
+  trusted:
+    ips: ${TRUSTED_IPS}
+
+sweet-tracker:
+  api-key: ${SWEET_TRACKER_API_KEY:dummy-key}
+  base-url: ${SWEET_TRACKER_BASE_URL:https://info.sweettracker.co.kr}
+  cache-ttl-hours: 6
+
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
