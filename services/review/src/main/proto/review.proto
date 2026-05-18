@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package magicbox.review.v1;
+
+option java_package = "kr.magicbox.review.grpc.review";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+
+service ReviewService {
+  rpc GetReviewRating(GetReviewRatingRequest) returns (GetReviewRatingResponse);
+  rpc GetAllReviewsByUserId(GetAllReviewsByUserIdRequest) returns (GetAllReviewsByUserIdResponse);
+}
+
+message GetReviewRatingRequest {
+  int64 creator_id = 1;
+}
+
+message GetReviewRatingResponse {
+  double rating = 1;
+}
+
+message GetAllReviewsByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message GetAllReviewsByUserIdResponse {
+  repeated Review reviews = 1;
+}
+
+message Review {
+  int64 review_id = 1;
+  string content = 2;
+  google.protobuf.Timestamp created_at = 3;
+}
