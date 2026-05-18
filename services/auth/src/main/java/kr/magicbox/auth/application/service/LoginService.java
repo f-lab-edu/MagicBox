@@ -1,8 +1,8 @@
 package kr.magicbox.auth.application.service;
 
 import kr.magicbox.auth.adapter.out.cache.exception.CodeNotFoundException;
-import kr.magicbox.auth.application.dto.LoginCommand;
-import kr.magicbox.auth.application.dto.TokenResult;
+import kr.magicbox.auth.application.dto.command.LoginCommand;
+import kr.magicbox.auth.application.dto.result.TokenResult;
 import kr.magicbox.auth.application.port.in.LoginUseCase;
 import kr.magicbox.auth.application.port.out.*;
 import kr.magicbox.auth.domain.aggregate.Code;
@@ -26,7 +26,7 @@ public class LoginService implements LoginUseCase {
 
     private final CodeRepositoryPort codeRepositoryPort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
-    private final AuthDomainEventRepositoryPort authDomainEventRepositoryPort;
+    private final AuthOutboxPort authOutboxPort;
     private final UserStatusPort userStatusPort;
     private final TokenManager tokenManager;
 
@@ -65,7 +65,7 @@ public class LoginService implements LoginUseCase {
         AuthDomainEvent event = isDuplicate
                 ? DuplicateLoginEvent.builder().userId(userId).createdAt(now).build()
                 : LoginEvent.builder().userId(userId).createdAt(now).build();
-        authDomainEventRepositoryPort.save(event);
+        authOutboxPort.save(event);
     }
 
     private void saveRefreshToken(UserId userId, RefreshTokenValue refreshTokenValue) {

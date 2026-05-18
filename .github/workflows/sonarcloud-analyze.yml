@@ -24,7 +24,7 @@ jobs:
           java-version: '21'
 
       - name: Compile Java classes
-        run: ./services/auth/gradlew --no-daemon classes
+        run: ./gradlew --no-daemon :services:auth:classes :services:user:classes :services:creator:classes :services:subscribe:classes
 
       - name: Set SonarCloud Project Key
         run: |
@@ -47,5 +47,6 @@ jobs:
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=f-lab-edu-1
             -Dsonar.java.binaries=${{ env.SONAR_JAVA_BINARIES }}
+            -Dsonar.cpd.exclusions=**/services/*/src/main/java/**/adapter/in/web/exception/handler/GlobalExceptionHandler.java,**/services/*/src/main/java/**/adapter/out/persistence/entity/BaseEntity.java,**/services/*/src/main/java/**/adapter/in/security/filter/UserInfoExtractFilter.java,**/services/*/src/main/java/**/adapter/in/security/configuration/SecurityConfiguration.java,**/services/*/src/main/java/**/adapter/in/security/properties/TrustedIpProperties.java,**/services/*/src/main/java/**/adapter/in/kafka/aop/IdempotentAspect.java,**/services/*/src/main/java/**/adapter/out/persistence/entity/*InboxEntity.java,**/services/*/src/main/java/**/adapter/in/grpc/GrpcExceptionInterceptor.java
 
           

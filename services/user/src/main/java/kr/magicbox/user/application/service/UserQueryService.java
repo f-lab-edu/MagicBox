@@ -1,14 +1,13 @@
 package kr.magicbox.user.application.service;
 
-import kr.magicbox.user.application.dto.GetUserProfileResult;
-import kr.magicbox.user.application.dto.UserReviewResult;
+import kr.magicbox.user.application.dto.query.GetUserProfileQuery;
+import kr.magicbox.user.application.dto.result.GetUserProfileResult;
+import kr.magicbox.user.application.dto.result.UserReviewResult;
 import kr.magicbox.user.application.port.in.UserQueryUseCase;
 import kr.magicbox.user.application.port.out.ReviewQueryPort;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
 import kr.magicbox.user.domain.exception.UserNotFoundException;
-import kr.magicbox.user.domain.vo.Nickname;
-import kr.magicbox.user.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +23,8 @@ public class UserQueryService implements UserQueryUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public GetUserProfileResult getUserProfile(Nickname nickname, UserId requestUserId) {
-        User user = userRepositoryPort.getUserByNickname(nickname)
+    public GetUserProfileResult getUserProfile(GetUserProfileQuery query) {
+        User user = userRepositoryPort.getUserByNickname(query.nickname())
                 .orElseThrow(UserNotFoundException::new);
 
         List<UserReviewResult> reviews = user.canShowReview() ?
@@ -35,7 +34,7 @@ public class UserQueryService implements UserQueryUseCase {
                 .nickname(user.getNickname())
                 .reviews(reviews)
                 .role(user.getRole())
-                .isMe(user.getId().equals(requestUserId))
+                .isMe(user.getId().equals(query.requestUserId()))
                 .build();
     }
 }

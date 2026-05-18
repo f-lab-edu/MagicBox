@@ -1,6 +1,6 @@
 package kr.magicbox.user.application.service;
 
-import kr.magicbox.user.application.dto.UpdateUserProfileCommand;
+import kr.magicbox.user.application.dto.command.UpdateUserProfileCommand;
 import kr.magicbox.user.application.port.in.UserCommandUseCase;
 import kr.magicbox.user.application.port.out.UserRepositoryPort;
 import kr.magicbox.user.domain.aggregate.User;
@@ -18,7 +18,8 @@ public class UserCommandService implements UserCommandUseCase {
 
     @Override
     @Transactional
-    public void updateUserProfile(UserId userId, UpdateUserProfileCommand command) {
+    public void updateUserProfile(UpdateUserProfileCommand command) {
+        UserId userId = command.userId();
         User user = userRepositoryPort.getUserById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -34,6 +35,6 @@ public class UserCommandService implements UserCommandUseCase {
                 command.isReviewVisible()
         );
 
-        userRepositoryPort.updateUser(user);
+        userRepositoryPort.update(user);
     }
 }
