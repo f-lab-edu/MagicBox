@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/general-goods")
 @RequiredArgsConstructor
+@Validated
 public class GeneralGoodsCommandController {
     private final RegisterGeneralGoodsUseCase registerGeneralGoodsUseCase;
     private final UpdateGeneralGoodsUseCase updateGeneralGoodsUseCase;
