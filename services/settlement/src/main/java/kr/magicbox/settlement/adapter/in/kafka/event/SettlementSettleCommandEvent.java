@@ -1,0 +1,16 @@
+package kr.magicbox.settlement.adapter.in.kafka.event;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+
+import java.time.Instant;
+
+@Builder
+public record SettlementSettleCommandEvent(
+        @JsonProperty("order_id") Long orderId,
+        @JsonProperty("order_line_id") Long orderLineId,
+        @JsonProperty("seller_id") Long sellerId,
+        @JsonProperty("gross_amount") long grossAmount,
+        @JsonProperty("occurred_at") Instant occurredAt
+) {
+}
