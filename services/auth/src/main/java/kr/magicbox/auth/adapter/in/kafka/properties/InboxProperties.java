@@ -6,9 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "spring.kafka.retry")
-public class KafkaRetryProperties {
-
-    private final Long intervalMs;
-    private final Long maxAttempts;
+@ConfigurationProperties(prefix = "inbox")
+public class InboxProperties {
+    private final long maxEventAgeMinutes;
 }

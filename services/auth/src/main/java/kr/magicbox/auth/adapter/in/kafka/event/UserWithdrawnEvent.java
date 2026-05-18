@@ -9,5 +9,5 @@ import java.time.Instant;
 public record UserWithdrawnEvent(
         @JsonProperty("event_id") Long eventId,
         @JsonProperty("user_id") Long userId,
-        @JsonProperty("withdrawn_at") Instant withdrawnAt
+        @JsonProperty("occurred_at") Instant occurredAt
 ) implements InboxEvent {}

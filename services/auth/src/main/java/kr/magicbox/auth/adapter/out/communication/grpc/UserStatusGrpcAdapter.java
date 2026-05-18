@@ -6,9 +6,9 @@ import kr.magicbox.auth.application.port.out.UserStatusPort;
 import kr.magicbox.auth.grpc.user.CheckUserActiveRequest;
 import kr.magicbox.auth.grpc.user.CheckUserActiveResponse;
 import kr.magicbox.auth.grpc.user.UserServiceGrpc;
+import io.grpc.ManagedChannel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserStatusGrpcAdapter implements UserStatusPort {
 
-    private final GrpcChannelFactory grpcChannelFactory;
+    private final ManagedChannel userManagedChannel;
 
     @Override
     @CircuitBreaker(name = "userService", fallbackMethod = "checkUserActiveFallback")
@@ -25,8 +25,7 @@ public class UserStatusGrpcAdapter implements UserStatusPort {
                 .setUserId(userId)
                 .build();
 
-        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc.newBlockingStub(
-                grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()));
+        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc.newBlockingStub(userManagedChannel);
         CheckUserActiveResponse response = stub.checkUserActive(request);
 
         return response.getActive();
