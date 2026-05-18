@@ -2,7 +2,6 @@ package kr.magicbox.creator.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
-import kr.magicbox.creator.adapter.out.communication.ServiceHost;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.SubscribeServiceUnavailableException;
 import kr.magicbox.creator.application.port.out.SubscribeQueryPort;
 import kr.magicbox.creator.grpc.subscribe.GetSubscriberCountRequest;
@@ -12,14 +11,13 @@ import kr.magicbox.creator.grpc.subscribe.IsSubscribedResponse;
 import kr.magicbox.creator.grpc.subscribe.SubscribeServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class SubscribeGrpcAdapter implements SubscribeQueryPort {
-    private final GrpcChannelFactory grpcChannelFactory;
+    private final ManagedChannel subscribeManagedChannel;
 
     @Override
     @CircuitBreaker(name = "subscribeService", fallbackMethod = "getSubscriberCountFallback")
@@ -28,8 +26,7 @@ public class SubscribeGrpcAdapter implements SubscribeQueryPort {
                 .setCreatorId(creatorId)
                 .build();
 
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.SUBSCRIBE.getHostName());
-        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(channel);
+        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(subscribeManagedChannel);
         GetSubscriberCountResponse response = stub.getSubscriberCount(request);
 
         return response.getSubscriberCount();
@@ -43,8 +40,7 @@ public class SubscribeGrpcAdapter implements SubscribeQueryPort {
                 .setUserId(userId)
                 .build();
 
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.SUBSCRIBE.getHostName());
-        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(channel);
+        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(subscribeManagedChannel);
         IsSubscribedResponse response = stub.isSubscribed(request);
 
         return response.getSubscribed();

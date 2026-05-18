@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -20,6 +21,7 @@ public class UserEventKafkaListener {
     private final HandleUserBannedUseCase handleUserBannedUseCase;
 
     @Idempotent
+    @RetryableTopic
     @KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "creator-service")
     public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> consumerRecord) {
         log.info("[Inbox] user-withdrawn 이벤트 수신. eventId={}", consumerRecord.key());
@@ -27,6 +29,7 @@ public class UserEventKafkaListener {
     }
 
     @Idempotent
+    @RetryableTopic
     @KafkaListener(topics = "outbox.event.user-banned", groupId = "creator-service")
     public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> consumerRecord) {
         log.info("[Inbox] user-banned 이벤트 수신. eventId={}", consumerRecord.key());

@@ -2,7 +2,6 @@ package kr.magicbox.creator.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
-import kr.magicbox.creator.adapter.out.communication.ServiceHost;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.ReleaseServiceUnavailableException;
 import kr.magicbox.creator.application.dto.result.ReleaseId;
 import kr.magicbox.creator.application.dto.result.ReleaseLevel;
@@ -15,7 +14,6 @@ import kr.magicbox.creator.grpc.release.GetReleasesByCreatorIdResponse;
 import kr.magicbox.creator.grpc.release.ReleaseServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
-    private final GrpcChannelFactory grpcChannelFactory;
+    private final ManagedChannel releaseManagedChannel;
 
     @Override
     @CircuitBreaker(name = "releaseService", fallbackMethod = "getReleaseCountFallback")
@@ -33,8 +31,7 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .setCreatorId(creatorId)
                 .build();
 
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
-        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(channel);
+        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(releaseManagedChannel);
         GetReleaseCountResponse response = stub.getReleaseCount(request);
 
         return response.getReleaseCount();
@@ -47,8 +44,7 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .setCreatorId(creatorId)
                 .build();
 
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
-        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(channel);
+        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(releaseManagedChannel);
         GetReleasesByCreatorIdResponse response = stub.getReleasesByCreatorId(request);
 
         return response.getReleasesList().stream()

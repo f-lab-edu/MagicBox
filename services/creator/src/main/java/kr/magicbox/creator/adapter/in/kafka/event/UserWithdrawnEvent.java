@@ -9,5 +9,5 @@ import java.time.Instant;
 @Builder
 public record UserWithdrawnEvent(
         @JsonProperty("user_id") UserId userId,
-        @JsonProperty("withdrawn_at") Instant withdrawnAt
+        @JsonProperty("occurred_at") Instant occurredAt
 ) {}
