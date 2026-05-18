@@ -2,7 +2,6 @@ package kr.magicbox.user.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
-import kr.magicbox.user.adapter.out.communication.ServiceHost;
 import kr.magicbox.user.adapter.out.communication.grpc.exception.ReviewServiceUnavailableException;
 import kr.magicbox.user.application.dto.result.UserReviewResult;
 import kr.magicbox.user.application.port.out.ReviewQueryPort;
@@ -12,7 +11,6 @@ import kr.magicbox.user.grpc.review.Review;
 import kr.magicbox.user.grpc.review.ReviewServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -22,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ReviewQueryGrpcAdapter implements ReviewQueryPort {
-    private final GrpcChannelFactory grpcChannelFactory;
+    private final ManagedChannel reviewManagedChannel;
 
     @Override
     @CircuitBreaker(name = "reviewService", fallbackMethod = "getAllReviewsFallback")
@@ -31,8 +29,7 @@ public class ReviewQueryGrpcAdapter implements ReviewQueryPort {
             .setUserId(userId)
             .build();
 
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.REVIEW.getHostName());
-        ReviewServiceGrpc.ReviewServiceBlockingStub reviewStub = ReviewServiceGrpc.newBlockingStub(channel);
+        ReviewServiceGrpc.ReviewServiceBlockingStub reviewStub = ReviewServiceGrpc.newBlockingStub(reviewManagedChannel);
         GetAllReviewsByUserIdResponse response = reviewStub.getAllReviewsByUserId(request);
 
         return response.getReviewsList().stream()

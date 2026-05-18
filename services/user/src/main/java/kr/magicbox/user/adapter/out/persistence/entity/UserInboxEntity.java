@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -28,13 +30,17 @@ public class UserInboxEntity extends BaseEntity {
     @Column(nullable = false)
     private UserInboxStatus status;
 
+    @Column(name = "occurred_at", nullable = false)
+    private Instant occurredAt;
+
     @Builder
-    public UserInboxEntity(Long eventId, String topic, Integer partition, Long offset, UserInboxStatus status) {
+    public UserInboxEntity(Long eventId, String topic, Integer partition, Long offset, UserInboxStatus status, Instant occurredAt) {
         this.eventId = eventId;
         this.topic = topic;
         this.partition = partition;
         this.offset = offset;
         this.status = status;
+        this.occurredAt = occurredAt;
     }
 
     public void markProcessed() {

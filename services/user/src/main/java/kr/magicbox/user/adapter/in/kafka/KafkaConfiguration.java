@@ -1,50 +1,43 @@
 package kr.magicbox.user.adapter.in.kafka;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.TopicPartition;
-import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
+import kr.magicbox.user.adapter.in.kafka.properties.InboxProperties;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.CommonErrorHandler;
-import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
-import org.springframework.kafka.listener.DefaultErrorHandler;
-import org.springframework.util.backoff.ExponentialBackOff;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.ContainerProperties;
 
-@Slf4j
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
-@RequiredArgsConstructor
+@EnableConfigurationProperties(InboxProperties.class)
 public class KafkaConfiguration {
-    private final KafkaProperties kafkaProperties;
+
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
 
     @Bean
-    public CommonErrorHandler errorHandler(KafkaTemplate<?, ?> kafkaTemplate) {
-        KafkaProperties.Retry.Topic retryTopic = kafkaProperties.getRetry().getTopic();
-        ExponentialBackOff backOff = new ExponentialBackOff(
-                retryTopic.getBackoff().getDelay().toMillis(),
-                retryTopic.getBackoff().getMultiplier()
-        );
-        backOff.setMaxAttempts(retryTopic.getAttempts());
-
-        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,
-                (ConsumerRecord<?, ?> record, Exception ex) -> {
-                    log.error("[DLT] 메시지 처리 실패, DLT 전송합니다. topic={}, offset={}, exception={}", record.topic(), record.offset(), ex.getMessage());
-                    return new TopicPartition(record.topic() + "-dlt", record.partition());
-                });
-        return new DefaultErrorHandler(recoverer, backOff);
+    public ConsumerFactory<String, String> stringConsumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "user-service");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(props);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<?, ?> kafkaListenerContainerFactory(
-            ConsumerFactory<Object, Object> consumerFactory,
-            CommonErrorHandler errorHandler) {
-        ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory);
-        factory.setCommonErrorHandler(errorHandler);
+    public ConcurrentKafkaListenerContainerFactory<String, String> stringKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(stringConsumerFactory());
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
         return factory;
     }
 }
