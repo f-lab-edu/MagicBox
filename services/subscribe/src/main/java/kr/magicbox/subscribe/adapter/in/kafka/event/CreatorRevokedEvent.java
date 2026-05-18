@@ -9,6 +9,6 @@ import java.time.Instant;
 @Builder
 public record CreatorRevokedEvent(
         @JsonProperty("creator_id") CreatorId creatorId,
-        @JsonProperty("revoked_at") Instant revokedAt
+        @JsonProperty("occurred_at") Instant occurredAt
 ) {
 }

@@ -8,6 +8,7 @@ import kr.magicbox.subscribe.domain.vo.SubscriberId;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class UserEventKafkaListener {
     private final HandleUserRevokedUseCase handleUserRevokedUseCase;
 
+    @RetryableTopic
     @KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "subscribe-service")
     public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> consumerRecord) {
         UserWithdrawnEvent event = consumerRecord.value();
@@ -23,6 +25,7 @@ public class UserEventKafkaListener {
         );
     }
 
+    @RetryableTopic
     @KafkaListener(topics = "outbox.event.user-banned", groupId = "subscribe-service")
     public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> consumerRecord) {
         UserBannedEvent event = consumerRecord.value();

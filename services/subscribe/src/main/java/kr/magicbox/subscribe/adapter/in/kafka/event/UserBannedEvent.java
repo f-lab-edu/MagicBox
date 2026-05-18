@@ -9,6 +9,6 @@ import java.time.Instant;
 @Builder
 public record UserBannedEvent(
         @JsonProperty("user_id") UserId userId,
-        @JsonProperty("banned_at") Instant bannedAt
+        @JsonProperty("occurred_at") Instant occurredAt
 ) {
 }
