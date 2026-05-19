@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu
-ARG JAR_FILE=services/orchestrator/build/libs/*.jar
+ARG JAR_FILE=build/libs/*.jar
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 WORKDIR /app
 COPY ${JAR_FILE} app.jar
