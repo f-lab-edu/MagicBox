@@ -3,6 +3,15 @@ spring:
     name: order-prod
   jackson:
     property-naming-strategy: SNAKE_CASE
+  grpc:
+    client:
+      channels:
+        waiting-service:
+          address: ${WAITING_SERVICE_URL}
+          negotiation-type: plaintext
+        release-service:
+          address: ${RELEASE_SERVICE_URL}
+          negotiation-type: plaintext
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     listener:
@@ -33,12 +42,10 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
-server:
-  port: ${SERVER_PORT}
-
 security:
   trusted:
-    ips: ${TRUSTED_IPS}
+    ips:
+      - ${TRUSTED_IP_GATEWAY}
 
 inbox:
   max-event-age-minutes: 5
