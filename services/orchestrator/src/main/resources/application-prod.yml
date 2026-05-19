@@ -3,9 +3,6 @@ spring:
     name: orchestrator-prod
   jackson:
     property-naming-strategy: SNAKE_CASE
-  config:
-    import:
-      - file:services/orchestrator/env/prod.env[.properties]
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     listener:
@@ -39,5 +36,7 @@ spring:
 inbox:
   max-event-age-minutes: 5
 
-server:
-  port: ${SERVER_PORT}
+security:
+  trusted:
+    ips:
+      - ${TRUSTED_IP_GATEWAY}
