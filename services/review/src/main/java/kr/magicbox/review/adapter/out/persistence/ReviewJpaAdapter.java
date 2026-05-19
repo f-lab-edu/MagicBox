@@ -5,6 +5,7 @@ import kr.magicbox.review.adapter.out.persistence.mapper.ReviewMapper;
 import kr.magicbox.review.adapter.out.persistence.repository.ReviewJpaRepository;
 import kr.magicbox.review.application.port.out.ReviewRepositoryPort;
 import kr.magicbox.review.domain.aggregate.Review;
+import kr.magicbox.review.domain.enums.ReviewTargetType;
 import kr.magicbox.review.domain.exception.DuplicateReviewException;
 import kr.magicbox.review.domain.exception.ReviewNotFoundException;
 import kr.magicbox.review.domain.vo.CreatorId;
@@ -49,6 +50,13 @@ public class ReviewJpaAdapter implements ReviewRepositoryPort {
     @Override
     public List<Review> findAllByUserId(UserId userId) {
         return reviewJpaRepository.findAllByUserId(userId.value()).stream()
+                .map(reviewMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Review> findAllByTarget(Long targetId, ReviewTargetType targetType) {
+        return reviewJpaRepository.findAllByTarget(targetId, targetType).stream()
                 .map(reviewMapper::toDomain)
                 .toList();
     }
