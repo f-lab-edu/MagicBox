@@ -34,4 +34,4 @@ spring:
     open-in-view: false
 
 inbox:
-  max-event-age-minutes: 5
+  max-event-age-minutes: 60
