@@ -15,22 +15,22 @@ spring:
           keep-alive-timeout: 5s
         subscribe:
           address: ${SUBSCRIBE_SERVICE_URL}
-          negotiation-type: tls
+          negotiation-type: plaintext
           keep-alive-time: 30s
           keep-alive-timeout: 5s
         review:
           address: ${REVIEW_SERVICE_URL}
-          negotiation-type: tls
+          negotiation-type: plaintext
           keep-alive-time: 30s
           keep-alive-timeout: 5s
         shortform:
           address: ${SHORTFORM_SERVICE_URL}
-          negotiation-type: tls
+          negotiation-type: plaintext
           keep-alive-time: 30s
           keep-alive-timeout: 5s
         release:
           address: ${RELEASE_SERVICE_URL}
-          negotiation-type: tls
+          negotiation-type: plaintext
           keep-alive-time: 30s
           keep-alive-timeout: 5s
   kafka:
@@ -66,5 +66,7 @@ spring:
 security:
   trusted:
     ips:
-      - 127.0.0.1
-      - 0:0:0:0:0:0:0:1
+      - ${TRUSTED_IP_GATEWAY}
+
+inbox:
+  max-event-age-minutes: 5

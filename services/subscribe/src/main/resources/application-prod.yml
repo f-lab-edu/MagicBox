@@ -10,7 +10,7 @@ spring:
       channels:
         creator:
           address: ${CREATOR_SERVICE_URL}
-          negotiation-type: tls
+          negotiation-type: plaintext
           keep-alive-time: 30s
           keep-alive-timeout: 5s
   kafka:
@@ -47,3 +47,6 @@ security:
   trusted:
     ips:
       - ${TRUSTED_IP_GATEWAY}
+
+inbox:
+  max-event-age-minutes: 5
