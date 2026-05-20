@@ -1,5 +1,6 @@
 package kr.magicbox.creator.domain.event;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.magicbox.creator.domain.vo.CreatorCertificationId;
 import kr.magicbox.creator.domain.vo.UserId;
 import lombok.Builder;
@@ -8,10 +9,10 @@ import java.time.Instant;
 
 @Builder
 public record CreatorCertificationRejectedEvent(
-        UserId userId,
-        CreatorCertificationId certificationId,
-        String reviewMessage,
-        Instant reviewedAt
+        @JsonProperty("user_id") UserId userId,
+        @JsonProperty("certification_id") CreatorCertificationId certificationId,
+        @JsonProperty("review_message") String reviewMessage,
+        @JsonProperty("occurred_at") Instant occurredAt
 ) implements CreatorDomainEvent {
 
     @Override
