@@ -2,7 +2,7 @@ package kr.magicbox.creator.application.service;
 
 import kr.magicbox.creator.application.dto.command.WithdrawCreatorCommand;
 import kr.magicbox.creator.application.port.in.WithdrawCreatorUseCase;
-import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
+import kr.magicbox.creator.application.port.out.CreatorOutboxRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.event.CreatorRevokedEvent;
@@ -17,7 +17,7 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class WithdrawCreatorService implements WithdrawCreatorUseCase {
     private final CreatorRepositoryPort creatorRepositoryPort;
-    private final CreatorDomainEventRepositoryPort eventRepositoryPort;
+    private final CreatorOutboxRepositoryPort eventRepositoryPort;
 
     @Transactional
     @Override
