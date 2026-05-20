@@ -1,9 +1,0 @@
-spring:
-  application:
-    name: shopping-cart-local
-  config:
-    import:
-      - file:services/shopping-cart/env/local.env[.properties]
-
-server:
-  port: ${SERVER_PORT}
