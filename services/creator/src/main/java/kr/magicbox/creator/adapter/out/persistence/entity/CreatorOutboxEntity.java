@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "creator_domain_event")
-public class CreatorDomainEventEntity extends BaseEntity {
+@Table(name = "creator_outbox")
+public class CreatorOutboxEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String eventType;
@@ -24,7 +24,7 @@ public class CreatorDomainEventEntity extends BaseEntity {
     private String payload;
 
     @Builder
-    public CreatorDomainEventEntity(String eventType, String key, String payload) {
+    public CreatorOutboxEntity(String eventType, String key, String payload) {
         this.eventType = eventType;
         this.key = key;
         this.payload = payload;
