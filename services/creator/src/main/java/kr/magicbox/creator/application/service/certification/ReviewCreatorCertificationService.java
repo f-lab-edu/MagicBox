@@ -3,7 +3,7 @@ package kr.magicbox.creator.application.service.certification;
 import kr.magicbox.creator.application.dto.command.ReviewCreatorCertificationCommand;
 import kr.magicbox.creator.application.port.in.ReviewCreatorCertificationUseCase;
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
-import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
+import kr.magicbox.creator.application.port.out.CreatorOutboxRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.application.port.out.UserNicknameQueryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
@@ -24,7 +24,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
 
     private final CreatorCertificationRepositoryPort certificationRepositoryPort;
     private final CreatorRepositoryPort creatorRepositoryPort;
-    private final CreatorDomainEventRepositoryPort eventRepositoryPort;
+    private final CreatorOutboxRepositoryPort eventRepositoryPort;
     private final UserNicknameQueryPort userNicknameQueryPort;
 
     @Transactional
@@ -49,7 +49,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         return CreatorCertificationApprovedEvent.builder()
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
-                .reviewedAt(certification.getResult().reviewedAt())
+                .occurredAt(certification.getResult().reviewedAt())
                 .build();
     }
 
@@ -58,7 +58,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
                 .reviewMessage(certification.getResult().reviewMessage())
-                .reviewedAt(certification.getResult().reviewedAt())
+                .occurredAt(certification.getResult().reviewedAt())
                 .build();
     }
 
@@ -68,7 +68,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         }
         String nickname = userNicknameQueryPort.getNickname(certification.getUserId());
 
-        Creator creator = Creator.builder()
+        Creator creator = Creator.createBuilder()
                 .userId(certification.getUserId())
                 .nickname(Nickname.of(nickname))
                 .genres(certification.getRequest().genres())
