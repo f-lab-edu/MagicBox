@@ -63,14 +63,14 @@ public class LoginService implements LoginUseCase {
         boolean isDuplicate = userStatusPort.isActive(userId.value());
 
         AuthDomainEvent event = isDuplicate
-                ? DuplicateLoginEvent.builder().userId(userId).createdAt(now).build()
-                : LoginEvent.builder().userId(userId).createdAt(now).build();
+                ? DuplicateLoginEvent.builder().userId(userId).occurredAt(now).build()
+                : LoginEvent.builder().userId(userId).occurredAt(now).build();
         authOutboxPort.save(event);
     }
 
     private void saveRefreshToken(UserId userId, RefreshTokenValue refreshTokenValue) {
         Instant expiresAt = Instant.now().plusMillis(tokenManager.getRefreshTokenExpiration());
-        RefreshToken refreshToken = RefreshToken.builder()
+        RefreshToken refreshToken = RefreshToken.createBuilder()
                 .refreshTokenValue(refreshTokenValue)
                 .userId(userId)
                 .expiresAt(expiresAt)
