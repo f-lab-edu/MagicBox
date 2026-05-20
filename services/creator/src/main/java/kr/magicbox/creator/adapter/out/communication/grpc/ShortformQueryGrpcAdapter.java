@@ -32,7 +32,8 @@ public class ShortformQueryGrpcAdapter implements ShortformQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.SHORTFORM.getHostName());
-        ShortformServiceGrpc.ShortformServiceBlockingStub stub = ShortformServiceGrpc.newBlockingStub(channel)
+        ShortformServiceGrpc.ShortformServiceBlockingStub stub = ShortformServiceGrpc
+                .newBlockingStub(channel)
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetShortformsByCreatorIdResponse response = stub.getShortformsByCreatorId(request);
 
