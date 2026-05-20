@@ -1,5 +1,6 @@
 package kr.magicbox.user.adapter.in.kafka.aop;
 
+import kr.magicbox.user.adapter.in.kafka.properties.InboxProperties;
 import kr.magicbox.user.adapter.out.persistence.entity.UserInboxEntity;
 import kr.magicbox.user.adapter.out.persistence.entity.UserInboxStatus;
 import kr.magicbox.user.adapter.out.persistence.repository.UserInboxRepository;
@@ -12,6 +13,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.lang.reflect.RecordComponent;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 @Slf4j
@@ -22,11 +26,18 @@ public class IdempotentAspect {
 
     private final UserInboxRepository userInboxRepository;
     private final TransactionTemplate transactionTemplate;
+    private final InboxProperties inboxProperties;
 
     @Around("@annotation(kr.magicbox.user.adapter.in.kafka.annotation.Idempotent)")
     public Object around(ProceedingJoinPoint pjp) {
         ConsumerRecord<String, ?> consumerRecord = extractRecord(pjp);
         Long eventId = Long.parseLong(consumerRecord.key());
+        Instant occurredAt = extractOccurredAt(consumerRecord.value());
+
+        if (isTooOld(occurredAt)) {
+            log.warn("[Inbox] 만료된 메시지 폐기. eventId={}, occurredAt={}", eventId, occurredAt);
+            return null;
+        }
 
         return transactionTemplate.execute(status -> {
             if (userInboxRepository.existsByEventId(eventId)) {
@@ -39,6 +50,7 @@ public class IdempotentAspect {
                     .partition(consumerRecord.partition())
                     .offset(consumerRecord.offset())
                     .status(UserInboxStatus.PENDING)
+                    .occurredAt(occurredAt)
                     .build());
             try {
                 pjp.proceed();
@@ -49,6 +61,29 @@ public class IdempotentAspect {
             inbox.markProcessed();
             return null;
         });
+    }
+
+    private boolean isTooOld(Instant occurredAt) {
+        return occurredAt.isBefore(Instant.now().minus(inboxProperties.getMaxEventAgeMinutes(), ChronoUnit.MINUTES));
+    }
+
+    private Instant extractOccurredAt(Object payload) {
+        if (payload == null) {
+            return Instant.now();
+        }
+        try {
+            for (RecordComponent component : payload.getClass().getRecordComponents()) {
+                if (component.getName().equals("occurredAt")) {
+                    Object value = component.getAccessor().invoke(payload);
+                    if (value instanceof Instant instant) {
+                        return instant;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("[Inbox] occurredAt 추출 실패, 현재 시각으로 대체. payload={}", payload.getClass().getSimpleName());
+        }
+        return Instant.now();
     }
 
     @SuppressWarnings("unchecked")
