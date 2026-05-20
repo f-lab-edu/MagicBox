@@ -97,18 +97,18 @@ code:
   ttl-seconds: ${OAUTH2_CODE_TTL_SECONDS}
 
 frontend:
-  uri: ${FRONTEND_URI}
+  uri: ${FRONTEND_URL}
 
 security:
   trusted:
     ips:
       - ${TRUSTED_IP_GATEWAY}
 
+inbox:
+  max-event-age-minutes: 5
+
 logging:
   level:
     org.springframework.web: WARN
     org.springframework.data.redis: WARN
     root: INFO
-
-inbox:
-  max-event-age-minutes: 5
