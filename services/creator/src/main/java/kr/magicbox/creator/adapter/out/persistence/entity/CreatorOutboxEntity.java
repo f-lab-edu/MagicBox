@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "creator_domain_event")
+@Table(name = "creator_outbox")
 public class CreatorOutboxEntity extends BaseEntity {
 
     @Column(nullable = false)
