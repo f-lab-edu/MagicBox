@@ -1,4 +1,4 @@
-package kr.magicbox.auth.adapter.out.persistence.entity;
+package kr.magicbox.generalgoods.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,8 +11,8 @@ import java.time.Instant;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "auth_inbox")
-public class AuthInboxEntity extends BaseEntity {
+@Table(name = "general_goods_inbox")
+public class GeneralGoodsInboxEntity extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private Long eventId;
@@ -28,13 +28,13 @@ public class AuthInboxEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AuthInboxStatus status;
+    private GeneralGoodsInboxStatus status;
 
     @Column(name = "occurred_at", nullable = false)
     private Instant occurredAt;
 
     @Builder
-    public AuthInboxEntity(Long eventId, String topic, Integer partition, Long offset, AuthInboxStatus status, Instant occurredAt) {
+    public GeneralGoodsInboxEntity(Long eventId, String topic, Integer partition, Long offset, GeneralGoodsInboxStatus status, Instant occurredAt) {
         this.eventId = eventId;
         this.topic = topic;
         this.partition = partition;
@@ -44,10 +44,10 @@ public class AuthInboxEntity extends BaseEntity {
     }
 
     public void markProcessed() {
-        this.status = AuthInboxStatus.PROCESSED;
+        this.status = GeneralGoodsInboxStatus.PROCESSED;
     }
 
     public void markDeadLettered() {
-        this.status = AuthInboxStatus.DEAD_LETTERED;
+        this.status = GeneralGoodsInboxStatus.DEAD_LETTERED;
     }
 }
