@@ -7,10 +7,11 @@ import java.time.Instant;
 
 @Builder
 public record OrderPurchaseConfirmedEvent(
+        @JsonProperty("event_id") Long eventId,
         @JsonProperty("order_id") Long orderId,
         @JsonProperty("customer_id") Long customerId,
         @JsonProperty("order_line_id") Long orderLineId,
         @JsonProperty("seller_id") Long sellerId,
         @JsonProperty("gross_amount") long grossAmount,
         @JsonProperty("occurred_at") Instant occurredAt
-) {}
+) implements InboxEvent {}
