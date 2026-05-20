@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -28,7 +30,9 @@ public class UserNicknameQueryGrpcAdapter implements UserNicknameQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.USER.getHostName());
-        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc.newBlockingStub(channel);
+        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc
+                .newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetUserNicknameResponse response = stub.getUserNickname(request);
 
         return response.getNickname();

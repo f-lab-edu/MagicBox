@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -28,7 +30,9 @@ public class ReviewQueryGrpcAdapter implements ReviewRatingQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.REVIEW.getHostName());
-        ReviewServiceGrpc.ReviewServiceBlockingStub stub = ReviewServiceGrpc.newBlockingStub(channel);
+        ReviewServiceGrpc.ReviewServiceBlockingStub stub = ReviewServiceGrpc
+                .newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReviewRatingResponse response = stub.getReviewRating(request);
 
         return ReviewRating.of(response.getRating());
