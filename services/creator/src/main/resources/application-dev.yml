@@ -60,9 +60,6 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: false
-server:
-  port: ${SERVER_PORT}
-
 security:
   trusted:
     ips:
