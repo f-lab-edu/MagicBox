@@ -65,3 +65,6 @@ security:
     ips:
       - 127.0.0.1
       - 0:0:0:0:0:0:0:1
+
+inbox:
+  max-event-age-minutes: 5
