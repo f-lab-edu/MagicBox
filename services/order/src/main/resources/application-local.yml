@@ -55,5 +55,27 @@ security:
       - 127.0.0.1
       - 0:0:0:0:0:0:0:1
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      releaseService:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        minimumNumberOfCalls: 10
+      waitingService:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        minimumNumberOfCalls: 10
+  timelimiter:
+    instances:
+      releaseService:
+        timeoutDuration: 2s
+      waitingService:
+        timeoutDuration: 2s
+
 inbox:
   max-event-age-minutes: 5
