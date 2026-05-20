@@ -1,10 +1,10 @@
-package kr.magicbox.auth.adapter.in.kafka.aop;
+package kr.magicbox.subscribe.adapter.in.kafka.aop;
 
-import kr.magicbox.auth.adapter.in.kafka.event.InboxEvent;
-import kr.magicbox.auth.adapter.in.kafka.properties.InboxProperties;
-import kr.magicbox.auth.adapter.out.persistence.entity.AuthInboxEntity;
-import kr.magicbox.auth.adapter.out.persistence.entity.AuthInboxStatus;
-import kr.magicbox.auth.adapter.out.persistence.repository.AuthInboxRepository;
+import kr.magicbox.subscribe.adapter.in.kafka.event.InboxEvent;
+import kr.magicbox.subscribe.adapter.in.kafka.properties.InboxProperties;
+import kr.magicbox.subscribe.adapter.out.persistence.entity.SubscribeInboxEntity;
+import kr.magicbox.subscribe.adapter.out.persistence.entity.SubscribeInboxStatus;
+import kr.magicbox.subscribe.adapter.out.persistence.repository.SubscribeInboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -24,11 +24,11 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class IdempotentAspect {
 
-    private final AuthInboxRepository authInboxRepository;
+    private final SubscribeInboxRepository subscribeInboxRepository;
     private final TransactionTemplate transactionTemplate;
     private final InboxProperties inboxProperties;
 
-    @Around("@annotation(kr.magicbox.auth.adapter.in.kafka.annotation.Idempotent)")
+    @Around("@annotation(kr.magicbox.subscribe.adapter.in.kafka.annotation.Idempotent)")
     public Object around(ProceedingJoinPoint pjp) {
         ConsumerRecord<String, ?> consumerRecord = extractRecord(pjp);
         InboxEvent event = (InboxEvent) consumerRecord.value();
@@ -41,16 +41,16 @@ public class IdempotentAspect {
         }
 
         return transactionTemplate.execute(status -> {
-            if (authInboxRepository.existsByEventId(eventId)) {
+            if (subscribeInboxRepository.existsByEventId(eventId)) {
                 log.warn("[Inbox] 중복 메시지 폐기. eventId={}", eventId);
                 return null;
             }
-            AuthInboxEntity inbox = authInboxRepository.save(AuthInboxEntity.builder()
+            SubscribeInboxEntity inbox = subscribeInboxRepository.save(SubscribeInboxEntity.builder()
                     .eventId(eventId)
                     .topic(consumerRecord.topic())
                     .partition(consumerRecord.partition())
                     .offset(consumerRecord.offset())
-                    .status(AuthInboxStatus.PENDING)
+                    .status(SubscribeInboxStatus.PENDING)
                     .occurredAt(occurredAt)
                     .build());
             try {
