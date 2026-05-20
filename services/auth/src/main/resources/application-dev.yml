@@ -108,3 +108,6 @@ logging:
   level:
     org.springframework.web: INFO
     org.springframework.data.redis: INFO
+
+inbox:
+  max-event-age-minutes: 5
