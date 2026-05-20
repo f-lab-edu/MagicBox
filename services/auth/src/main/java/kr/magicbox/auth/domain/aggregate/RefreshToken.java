@@ -18,15 +18,25 @@ public class RefreshToken {
     private final Instant createdAt;
     private boolean isRevoked;
 
-    @Builder
-    public RefreshToken(RefreshTokenValue refreshTokenValue, UserId userId, Instant expiresAt, Boolean isRevoked) {
+    @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
+    public RefreshToken(RefreshTokenValue refreshTokenValue, UserId userId, Instant expiresAt) {
         validateFields(refreshTokenValue, userId, expiresAt);
 
         this.refreshTokenValue = refreshTokenValue;
         this.userId = userId;
         this.expiresAt = expiresAt;
         this.createdAt = Instant.now();
-        this.isRevoked = isRevoked != null ? isRevoked : false;
+        this.isRevoked = false;
+    }
+
+    @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
+    public RefreshToken(RefreshTokenValue refreshTokenValue, UserId userId, Instant expiresAt,
+                        Instant createdAt, boolean isRevoked) {
+        this.refreshTokenValue = refreshTokenValue;
+        this.userId = userId;
+        this.expiresAt = expiresAt;
+        this.createdAt = createdAt;
+        this.isRevoked = isRevoked;
     }
 
     public boolean isExpired() {
