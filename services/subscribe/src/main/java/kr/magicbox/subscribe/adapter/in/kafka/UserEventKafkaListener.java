@@ -1,5 +1,6 @@
 package kr.magicbox.subscribe.adapter.in.kafka;
 
+import kr.magicbox.subscribe.adapter.in.kafka.annotation.Idempotent;
 import kr.magicbox.subscribe.adapter.in.kafka.event.UserBannedEvent;
 import kr.magicbox.subscribe.adapter.in.kafka.event.UserWithdrawnEvent;
 import kr.magicbox.subscribe.application.dto.command.HandleUserRevokedCommand;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class UserEventKafkaListener {
     private final HandleUserRevokedUseCase handleUserRevokedUseCase;
 
+    @Idempotent
     @RetryableTopic
     @KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "subscribe-service")
     public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> consumerRecord) {
@@ -25,6 +27,7 @@ public class UserEventKafkaListener {
         );
     }
 
+    @Idempotent
     @RetryableTopic
     @KafkaListener(topics = "outbox.event.user-banned", groupId = "subscribe-service")
     public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> consumerRecord) {

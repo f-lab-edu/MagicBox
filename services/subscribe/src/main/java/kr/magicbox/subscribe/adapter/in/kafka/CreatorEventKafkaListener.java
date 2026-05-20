@@ -1,5 +1,6 @@
 package kr.magicbox.subscribe.adapter.in.kafka;
 
+import kr.magicbox.subscribe.adapter.in.kafka.annotation.Idempotent;
 import kr.magicbox.subscribe.adapter.in.kafka.event.CreatorRevokedEvent;
 import kr.magicbox.subscribe.application.dto.command.HandleCreatorRevokedCommand;
 import kr.magicbox.subscribe.application.port.in.HandleCreatorRevokedUseCase;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 public class CreatorEventKafkaListener {
     private final HandleCreatorRevokedUseCase handleCreatorRevokedUseCase;
 
+    @Idempotent
     @RetryableTopic
     @KafkaListener(topics = "outbox.event.creator-revoked", groupId = "subscribe-service")
     public void handleCreatorRevokedEvent(ConsumerRecord<String, CreatorRevokedEvent> consumerRecord) {

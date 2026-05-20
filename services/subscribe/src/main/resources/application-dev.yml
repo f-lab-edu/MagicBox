@@ -48,6 +48,9 @@ security:
     ips:
       - ${TRUSTED_IP_GATEWAY}
 
+inbox:
+  max-event-age-minutes: 5
+
 resilience4j:
   circuitbreaker:
     instances:
