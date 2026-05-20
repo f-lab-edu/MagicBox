@@ -1,7 +1,7 @@
 package kr.magicbox.creator.application.service;
 
 import kr.magicbox.creator.application.port.in.HandleUserBannedUseCase;
-import kr.magicbox.creator.application.port.out.CreatorOutboxRepositoryPort;
+import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.event.CreatorRevokedEvent;
@@ -18,7 +18,7 @@ import java.util.Optional;
 public class HandleUserBannedService implements HandleUserBannedUseCase {
 
     private final CreatorRepositoryPort creatorRepositoryPort;
-    private final CreatorOutboxRepositoryPort eventRepositoryPort;
+    private final CreatorDomainEventRepositoryPort eventRepositoryPort;
 
     @Override
     @Transactional
