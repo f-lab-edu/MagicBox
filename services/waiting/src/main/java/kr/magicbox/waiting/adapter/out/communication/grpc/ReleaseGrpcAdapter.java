@@ -18,6 +18,7 @@ import reactor.core.scheduler.Schedulers;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -33,7 +34,8 @@ public class ReleaseGrpcAdapter implements ReleaseQueryPort {
             IsReleaseOnSaleRequest request = IsReleaseOnSaleRequest.newBuilder()
                     .setReleaseId(releaseId.value())
                     .build();
-            ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(releaseManagedChannel);
+            ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(releaseManagedChannel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
             IsReleaseOnSaleResponse response = stub.isReleaseOnSale(request);
             return response.getOnSale();
         }).subscribeOn(Schedulers.boundedElastic());
@@ -46,7 +48,8 @@ public class ReleaseGrpcAdapter implements ReleaseQueryPort {
             GetRemainingQuantityRequest request = GetRemainingQuantityRequest.newBuilder()
                     .setReleaseId(releaseId.value())
                     .build();
-            ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(releaseManagedChannel);
+            ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(releaseManagedChannel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
             return stub.getRemainingQuantity(request).getRemainingQuantity();
         }).subscribeOn(Schedulers.boundedElastic());
     }
