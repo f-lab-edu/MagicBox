@@ -69,3 +69,6 @@ resilience4j:
 
 user:
   default-profile-image-url: ${USER_PROFILE_DEFAULT_IMAGE_URL}
+
+inbox:
+  max-event-age-minutes: 5
