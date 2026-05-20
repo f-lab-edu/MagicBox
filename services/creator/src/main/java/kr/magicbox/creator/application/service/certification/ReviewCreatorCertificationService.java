@@ -3,7 +3,7 @@ package kr.magicbox.creator.application.service.certification;
 import kr.magicbox.creator.application.dto.command.ReviewCreatorCertificationCommand;
 import kr.magicbox.creator.application.port.in.ReviewCreatorCertificationUseCase;
 import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPort;
-import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
+import kr.magicbox.creator.application.port.out.CreatorOutboxRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.application.port.out.UserNicknameQueryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
@@ -24,7 +24,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
 
     private final CreatorCertificationRepositoryPort certificationRepositoryPort;
     private final CreatorRepositoryPort creatorRepositoryPort;
-    private final CreatorDomainEventRepositoryPort eventRepositoryPort;
+    private final CreatorOutboxRepositoryPort eventRepositoryPort;
     private final UserNicknameQueryPort userNicknameQueryPort;
 
     @Transactional

@@ -2,7 +2,7 @@ package kr.magicbox.creator.application.service;
 
 import kr.magicbox.creator.application.dto.command.UnbanCreatorCommand;
 import kr.magicbox.creator.application.port.in.UnbanCreatorUseCase;
-import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
+import kr.magicbox.creator.application.port.out.CreatorOutboxRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.event.CreatorUnbannedEvent;
@@ -18,7 +18,7 @@ import java.time.Instant;
 public class UnbanCreatorService implements UnbanCreatorUseCase {
 
     private final CreatorRepositoryPort creatorRepositoryPort;
-    private final CreatorDomainEventRepositoryPort creatorDomainEventRepositoryPort;
+    private final CreatorOutboxRepositoryPort creatorOutboxRepositoryPort;
 
     @Override
     @Transactional
@@ -33,6 +33,6 @@ public class UnbanCreatorService implements UnbanCreatorUseCase {
                 .creatorId(creator.getId())
                 .unbannedAt(Instant.now())
                 .build();
-        creatorDomainEventRepositoryPort.save(event);
+        creatorOutboxRepositoryPort.save(event);
     }
 }
