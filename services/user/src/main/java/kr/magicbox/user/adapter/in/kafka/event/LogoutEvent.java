@@ -9,6 +9,7 @@ import java.time.Instant;
 
 @Builder
 public record LogoutEvent(
+        @JsonProperty("event_id") Long eventId,
         @JsonProperty("user_id") UserId userId,
         @JsonProperty("occurred_at") @JsonAlias("created_at") Instant occurredAt
-) {}
+) implements InboxEvent {}
