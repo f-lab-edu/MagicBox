@@ -20,10 +20,11 @@ public class RefreshTokenMapper {
     }
 
     public RefreshToken toDomain(RefreshTokenEntity entity) {
-        return RefreshToken.builder()
+        return RefreshToken.reconstructBuilder()
                 .refreshTokenValue(RefreshTokenValue.of(entity.getToken()))
                 .userId(UserId.of(entity.getUserId()))
                 .expiresAt(entity.getExpiresAt())
+                .createdAt(entity.getCreatedAt())
                 .isRevoked(entity.isRevoked())
                 .build();
     }
