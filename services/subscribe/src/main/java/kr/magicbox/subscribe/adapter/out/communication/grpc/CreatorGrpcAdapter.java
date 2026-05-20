@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +31,8 @@ public class CreatorGrpcAdapter implements CreatorIdentityQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.CREATOR.getHostName());
-        CreatorServiceGrpc.CreatorServiceBlockingStub stub = CreatorServiceGrpc.newBlockingStub(channel);
+        CreatorServiceGrpc.CreatorServiceBlockingStub stub = CreatorServiceGrpc.newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         IsCreatorAndSubscriberSamePersonResponse response = stub.isCreatorAndSubscriberSamePerson(request);
 
         return response.getSamePerson();
