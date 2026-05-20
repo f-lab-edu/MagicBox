@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -28,13 +30,17 @@ public class AuthInboxEntity extends BaseEntity {
     @Column(nullable = false)
     private AuthInboxStatus status;
 
+    @Column(name = "occurred_at", nullable = false)
+    private Instant occurredAt;
+
     @Builder
-    public AuthInboxEntity(Long eventId, String topic, Integer partition, Long offset, AuthInboxStatus status) {
+    public AuthInboxEntity(Long eventId, String topic, Integer partition, Long offset, AuthInboxStatus status, Instant occurredAt) {
         this.eventId = eventId;
         this.topic = topic;
         this.partition = partition;
         this.offset = offset;
         this.status = status;
+        this.occurredAt = occurredAt;
     }
 
     public void markProcessed() {
