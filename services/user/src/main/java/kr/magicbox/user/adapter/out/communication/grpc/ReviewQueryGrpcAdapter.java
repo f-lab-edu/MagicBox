@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +33,8 @@ public class ReviewQueryGrpcAdapter implements ReviewQueryPort {
             .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.REVIEW.getHostName());
-        ReviewServiceGrpc.ReviewServiceBlockingStub reviewStub = ReviewServiceGrpc.newBlockingStub(channel);
+        ReviewServiceGrpc.ReviewServiceBlockingStub reviewStub = ReviewServiceGrpc.newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetAllReviewsByUserIdResponse response = reviewStub.getAllReviewsByUserId(request);
 
         return response.getReviewsList().stream()
