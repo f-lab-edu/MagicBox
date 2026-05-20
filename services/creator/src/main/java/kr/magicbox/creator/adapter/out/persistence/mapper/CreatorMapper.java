@@ -23,7 +23,7 @@ public class CreatorMapper {
     }
 
     public Creator toDomain(CreatorEntity entity) {
-        return Creator.builder()
+        return Creator.reconstructBuilder()
                 .id(CreatorId.of(entity.getId()))
                 .userId(UserId.of(entity.getUserId()))
                 .nickname(Nickname.of(entity.getNickname()))

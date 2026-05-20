@@ -35,7 +35,8 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
-        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(channel)
+        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc
+                .newBlockingStub(channel)
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReleaseCountResponse response = stub.getReleaseCount(request);
 
@@ -50,7 +51,8 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
-        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(channel)
+        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc
+                .newBlockingStub(channel)
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReleasesByCreatorIdResponse response = stub.getReleasesByCreatorId(request);
 
