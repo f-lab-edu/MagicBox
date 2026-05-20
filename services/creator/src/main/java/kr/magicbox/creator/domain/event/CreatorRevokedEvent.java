@@ -8,8 +8,8 @@ import java.time.Instant;
 
 @Builder
 public record CreatorRevokedEvent(
-        @JsonProperty("creator_id") CreatorId creatorId,
-        @JsonProperty("occurred_at") Instant occurredAt
+        CreatorId creatorId,
+        Instant occurredAt
 ) implements CreatorDomainEvent {
 
     @Override
