@@ -1,4 +1,4 @@
-package kr.magicbox.auth.adapter.in.kafka.event;
+package kr.magicbox.subscribe.adapter.in.kafka.event;
 
 import java.time.Instant;
 
