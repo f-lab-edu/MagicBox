@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -25,8 +27,9 @@ public class UserStatusGrpcAdapter implements UserStatusPort {
                 .setUserId(userId)
                 .build();
 
-        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc.newBlockingStub(
-                grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()));
+        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc
+                .newBlockingStub(grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()))
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         CheckUserActiveResponse response = stub.checkUserActive(request);
 
         return response.getActive();
