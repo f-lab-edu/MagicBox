@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +30,8 @@ public class SubscribeGrpcAdapter implements SubscribeQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.SUBSCRIBE.getHostName());
-        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(channel);
+        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetSubscriberCountResponse response = stub.getSubscriberCount(request);
 
         return response.getSubscriberCount();
@@ -44,7 +46,8 @@ public class SubscribeGrpcAdapter implements SubscribeQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.SUBSCRIBE.getHostName());
-        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(channel);
+        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         IsSubscribedResponse response = stub.isSubscribed(request);
 
         return response.getSubscribed();

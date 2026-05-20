@@ -10,6 +10,7 @@ import kr.magicbox.order.grpc.waiting.WaitingServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -27,7 +28,8 @@ public class WaitingGrpcAdapter implements PurchaseTokenValidationPort {
                 .setPurchaseToken(purchaseToken)
                 .build();
 
-        WaitingServiceGrpc.WaitingServiceBlockingStub stub = WaitingServiceGrpc.newBlockingStub(waitingManagedChannel);
+        WaitingServiceGrpc.WaitingServiceBlockingStub stub = WaitingServiceGrpc.newBlockingStub(waitingManagedChannel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         ValidatePurchaseTokenResponse response = stub.validatePurchaseToken(request);
 
         return response.getValid();

@@ -9,6 +9,7 @@ import kr.magicbox.order.grpc.release.ReleaseServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -24,7 +25,8 @@ public class ReleaseGrpcAdapter implements ReleaseIncreaseSoldQuantityPort {
                 .setReleaseId(releaseId)
                 .build();
 
-        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(releaseManagedChannel);
+        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(releaseManagedChannel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         stub.increaseSoldQuantity(request);
     }
 
