@@ -1,7 +1,7 @@
 package kr.magicbox.creator.application.service;
 
 import kr.magicbox.creator.application.port.in.HandleUserWithdrawnUseCase;
-import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
+import kr.magicbox.creator.application.port.out.CreatorOutboxRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.event.CreatorRevokedEvent;
@@ -18,7 +18,7 @@ import java.util.Optional;
 public class HandleUserWithdrawnService implements HandleUserWithdrawnUseCase {
 
     private final CreatorRepositoryPort creatorRepositoryPort;
-    private final CreatorDomainEventRepositoryPort creatorDomainEventRepositoryPort;
+    private final CreatorOutboxRepositoryPort creatorOutboxRepositoryPort;
 
     @Override
     @Transactional
@@ -28,7 +28,7 @@ public class HandleUserWithdrawnService implements HandleUserWithdrawnUseCase {
         Creator creator = creatorOpt.get();
         creator.delete();
         creatorRepositoryPort.update(creator);
-        creatorDomainEventRepositoryPort.save(
+        creatorOutboxRepositoryPort.save(
                 CreatorRevokedEvent.builder()
                         .creatorId(creator.getId())
                         .occurredAt(Instant.now())
