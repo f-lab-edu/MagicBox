@@ -32,7 +32,7 @@ public class LogoutService implements LogoutUseCase {
         // OutBox Pattern Applies
         LogoutEvent loggedOutEvent = LogoutEvent.builder()
                 .userId(userId)
-                .createdAt(Instant.now())
+                .occurredAt(Instant.now())
                 .build();
         authOutboxPort.save(loggedOutEvent);
     }

@@ -2,7 +2,7 @@ package kr.magicbox.creator.application.service;
 
 import kr.magicbox.creator.application.dto.command.BanCreatorCommand;
 import kr.magicbox.creator.application.port.in.BanCreatorUseCase;
-import kr.magicbox.creator.application.port.out.CreatorDomainEventRepositoryPort;
+import kr.magicbox.creator.application.port.out.CreatorOutboxRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.event.CreatorRevokedEvent;
@@ -18,7 +18,7 @@ import java.time.Instant;
 public class BanCreatorService implements BanCreatorUseCase {
 
     private final CreatorRepositoryPort creatorRepositoryPort;
-    private final CreatorDomainEventRepositoryPort eventRepositoryPort;
+    private final CreatorOutboxRepositoryPort eventRepositoryPort;
 
     @Override
     @Transactional
@@ -31,7 +31,7 @@ public class BanCreatorService implements BanCreatorUseCase {
         eventRepositoryPort.save(
                 CreatorRevokedEvent.builder()
                         .creatorId(creator.getId())
-                        .revokedAt(Instant.now())
+                        .occurredAt(Instant.now())
                         .build()
         );
     }
