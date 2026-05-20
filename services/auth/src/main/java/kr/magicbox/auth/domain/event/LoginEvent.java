@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.time.Instant;
 
 @Builder
-public record LoginEvent(UserId userId, Instant createdAt) implements AuthDomainEvent {
+public record LoginEvent(UserId userId, Instant occurredAt) implements AuthDomainEvent {
 
     @Override
     public AuthDomainEventType eventType() {

@@ -22,13 +22,13 @@ public class AuthEventKafkaListener {
     @KafkaListener(topics = "outbox.event.user-logged-in", groupId = "user-service")
     public void handleLoginEvent(ConsumerRecord<String, LoginEvent> record) {
         LoginEvent event = record.value();
-        manageUserSessionUseCase.startSession(StartSessionCommand.of(event.userId(), event.createdAt()));
+        manageUserSessionUseCase.startSession(StartSessionCommand.of(event.userId(), event.occurredAt()));
     }
 
     @Idempotent
     @KafkaListener(topics = "outbox.event.user-logged-out", groupId = "user-service")
     public void handleLogoutEvent(ConsumerRecord<String, LogoutEvent> record) {
         LogoutEvent event = record.value();
-        manageUserSessionUseCase.endSession(EndSessionCommand.of(event.userId(), event.createdAt()));
+        manageUserSessionUseCase.endSession(EndSessionCommand.of(event.userId(), event.occurredAt()));
     }
 }
