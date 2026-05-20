@@ -12,16 +12,18 @@ import kr.magicbox.auth.grpc.user.GrpcUserRole;
 import kr.magicbox.auth.grpc.user.LoadUserCredentialRequest;
 import kr.magicbox.auth.grpc.user.LoadUserCredentialResponse;
 import kr.magicbox.auth.grpc.user.UserServiceGrpc;
-import io.grpc.ManagedChannel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class UserGrpcAdapter implements UserCredentialPort {
-    private final ManagedChannel userManagedChannel;
+    private final GrpcChannelFactory grpcChannelFactory;
 
     @Override
     @CircuitBreaker(name = "userService", fallbackMethod = "loadCredentialFallback")
@@ -33,7 +35,9 @@ public class UserGrpcAdapter implements UserCredentialPort {
                 .setProfileImage(profileImage != null ? profileImage : "")
                 .build();
 
-        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc.newBlockingStub(userManagedChannel);
+        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc
+                .newBlockingStub(grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()))
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         LoadUserCredentialResponse response = stub.loadUserCredential(request);
 
         return new UserResult(UserId.of(response.getUserId()), toUserRole(response.getUserRole()));

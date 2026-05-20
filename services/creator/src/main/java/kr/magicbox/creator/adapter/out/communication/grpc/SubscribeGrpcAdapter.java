@@ -2,6 +2,7 @@ package kr.magicbox.creator.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
+import kr.magicbox.creator.adapter.out.communication.ServiceHost;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.SubscribeServiceUnavailableException;
 import kr.magicbox.creator.application.port.out.SubscribeQueryPort;
 import kr.magicbox.creator.grpc.subscribe.GetSubscriberCountRequest;
@@ -11,13 +12,16 @@ import kr.magicbox.creator.grpc.subscribe.IsSubscribedResponse;
 import kr.magicbox.creator.grpc.subscribe.SubscribeServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class SubscribeGrpcAdapter implements SubscribeQueryPort {
-    private final ManagedChannel subscribeManagedChannel;
+    private final GrpcChannelFactory grpcChannelFactory;
 
     @Override
     @CircuitBreaker(name = "subscribeService", fallbackMethod = "getSubscriberCountFallback")
@@ -26,7 +30,10 @@ public class SubscribeGrpcAdapter implements SubscribeQueryPort {
                 .setCreatorId(creatorId)
                 .build();
 
-        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(subscribeManagedChannel);
+        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.SUBSCRIBE.getHostName());
+        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc
+                .newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetSubscriberCountResponse response = stub.getSubscriberCount(request);
 
         return response.getSubscriberCount();
@@ -40,7 +47,10 @@ public class SubscribeGrpcAdapter implements SubscribeQueryPort {
                 .setUserId(userId)
                 .build();
 
-        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc.newBlockingStub(subscribeManagedChannel);
+        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.SUBSCRIBE.getHostName());
+        SubscribeServiceGrpc.SubscribeServiceBlockingStub stub = SubscribeServiceGrpc
+                .newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         IsSubscribedResponse response = stub.isSubscribed(request);
 
         return response.getSubscribed();
