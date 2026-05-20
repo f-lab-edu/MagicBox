@@ -19,6 +19,7 @@ import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -34,7 +35,8 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
-        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(channel);
+        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReleaseCountResponse response = stub.getReleaseCount(request);
 
         return response.getReleaseCount();
@@ -48,7 +50,8 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
-        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(channel);
+        ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc.newBlockingStub(channel)
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReleasesByCreatorIdResponse response = stub.getReleasesByCreatorId(request);
 
         return response.getReleasesList().stream()
