@@ -70,7 +70,7 @@ public class LoginService implements LoginUseCase {
 
     private void saveRefreshToken(UserId userId, RefreshTokenValue refreshTokenValue) {
         Instant expiresAt = Instant.now().plusMillis(tokenManager.getRefreshTokenExpiration());
-        RefreshToken refreshToken = RefreshToken.createBuilder()
+        RefreshToken refreshToken = RefreshToken.builder()
                 .refreshTokenValue(refreshTokenValue)
                 .userId(userId)
                 .expiresAt(expiresAt)
