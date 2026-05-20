@@ -1,5 +1,6 @@
 package kr.magicbox.order.adapter.in.kafka.aop;
 
+import kr.magicbox.order.adapter.in.kafka.event.InboxEvent;
 import kr.magicbox.order.adapter.in.kafka.properties.InboxProperties;
 import kr.magicbox.order.adapter.out.persistence.entity.OrderInboxEntity;
 import kr.magicbox.order.adapter.out.persistence.entity.OrderInboxStatus;
@@ -13,7 +14,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.lang.reflect.RecordComponent;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -31,8 +31,9 @@ public class IdempotentAspect {
     @Around("@annotation(kr.magicbox.order.adapter.in.kafka.annotation.Idempotent)")
     public Object around(ProceedingJoinPoint pjp) {
         ConsumerRecord<String, ?> consumerRecord = extractRecord(pjp);
-        Long eventId = Long.parseLong(consumerRecord.key());
-        Instant occurredAt = extractOccurredAt(consumerRecord.value());
+        InboxEvent event = (InboxEvent) consumerRecord.value();
+        Long eventId = event.eventId();
+        Instant occurredAt = event.occurredAt();
 
         if (isTooOld(occurredAt)) {
             log.warn("[Inbox] 만료된 메시지 폐기. eventId={}, occurredAt={}", eventId, occurredAt);
@@ -65,25 +66,6 @@ public class IdempotentAspect {
 
     private boolean isTooOld(Instant occurredAt) {
         return occurredAt.isBefore(Instant.now().minus(inboxProperties.getMaxEventAgeMinutes(), ChronoUnit.MINUTES));
-    }
-
-    private Instant extractOccurredAt(Object payload) {
-        if (payload == null) {
-            return Instant.now();
-        }
-        try {
-            for (RecordComponent component : payload.getClass().getRecordComponents()) {
-                if (component.getName().equals("occurredAt")) {
-                    Object value = component.getAccessor().invoke(payload);
-                    if (value instanceof Instant instant) {
-                        return instant;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.warn("[Inbox] occurredAt 추출 실패, 현재 시각으로 대체. payload={}", payload.getClass().getSimpleName());
-        }
-        return Instant.now();
     }
 
     @SuppressWarnings("unchecked")

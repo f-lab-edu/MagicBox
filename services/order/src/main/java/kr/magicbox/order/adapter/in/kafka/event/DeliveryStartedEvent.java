@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 
 public record DeliveryStartedEvent(
+        @JsonProperty("event_id") Long eventId,
         @JsonProperty("order_id") Long orderId,
         @JsonProperty("order_line_id") Long orderLineId,
         @JsonProperty("customer_id") Long customerId,
@@ -14,4 +15,4 @@ public record DeliveryStartedEvent(
         @JsonProperty("tracking_number") String trackingNumber,
         @JsonProperty("dispatched_at") Instant dispatchedAt,
         @JsonProperty("occurred_at") Instant occurredAt
-) {}
+) implements InboxEvent {}

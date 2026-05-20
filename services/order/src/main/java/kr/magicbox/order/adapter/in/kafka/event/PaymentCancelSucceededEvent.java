@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.List;
 
 public record PaymentCancelSucceededEvent(
+        @JsonProperty("event_id") Long eventId,
         @JsonProperty("order_id") Long orderId,
         @JsonProperty("customer_id") Long customerId,
         @JsonProperty("pg_transaction_id") String pgTransactionId,
@@ -14,7 +15,7 @@ public record PaymentCancelSucceededEvent(
         @JsonProperty("refunded_at") Instant refundedAt,
         @JsonProperty("items") List<ItemPayload> items,
         @JsonProperty("occurred_at") Instant occurredAt
-) {
+) implements InboxEvent {
     public record ItemPayload(
             @JsonProperty("product_id") Long productId,
             @JsonProperty("quantity") int quantity
