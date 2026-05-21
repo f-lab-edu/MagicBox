@@ -12,6 +12,7 @@ import kr.magicbox.order.domain.enums.OrderStatus;
 import kr.magicbox.order.domain.exception.OrderNotFoundException;
 import kr.magicbox.order.domain.vo.OrderId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -89,8 +90,9 @@ public class OrderJpaAdapter implements OrderRepositoryPort {
     }
 
     @Override
-    public List<Order> findDeliveredBefore(Instant deliveredBefore) {
-        List<OrderEntity> orders = orderJpaRepository.findByStatusAndUpdatedAtBeforeAndIsDeletedFalse(OrderStatus.DELIVERED, deliveredBefore);
+    public List<Order> findDeliveredBefore(Instant deliveredBefore, int limit) {
+        List<OrderEntity> orders = orderJpaRepository.findByStatusAndUpdatedAtBeforeAndIsDeletedFalse(
+                OrderStatus.DELIVERED, deliveredBefore, PageRequest.of(0, limit));
         return toDomainsWithLines(orders);
     }
 

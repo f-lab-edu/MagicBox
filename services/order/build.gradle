@@ -18,6 +18,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.grpc:spring-grpc-client-spring-boot-starter'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+    implementation 'net.javacrumbs.shedlock:shedlock-spring:6.9.2'
+    implementation 'net.javacrumbs.shedlock:shedlock-provider-redisson:6.9.2'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.45.1'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     testImplementation 'org.springframework.kafka:spring-kafka-test'

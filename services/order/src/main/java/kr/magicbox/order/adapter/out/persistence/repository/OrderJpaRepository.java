@@ -2,6 +2,7 @@ package kr.magicbox.order.adapter.out.persistence.repository;
 
 import kr.magicbox.order.adapter.out.persistence.entity.OrderEntity;
 import kr.magicbox.order.domain.enums.OrderStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,5 +23,5 @@ public interface OrderJpaRepository extends JpaRepository<OrderEntity, Long> {
     List<OrderEntity> findBySellerIdAndIsDeletedFalse(@Param("sellerId") Long sellerId);
 
     @Query("SELECT o FROM OrderEntity o WHERE o.status = :status AND o.updatedAt < :before AND o.isDeleted = false")
-    List<OrderEntity> findByStatusAndUpdatedAtBeforeAndIsDeletedFalse(@Param("status") OrderStatus status, @Param("before") Instant before);
+    List<OrderEntity> findByStatusAndUpdatedAtBeforeAndIsDeletedFalse(@Param("status") OrderStatus status, @Param("before") Instant before, Pageable pageable);
 }

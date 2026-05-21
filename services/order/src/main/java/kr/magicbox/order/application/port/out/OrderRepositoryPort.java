@@ -13,5 +13,5 @@ public interface OrderRepositoryPort {
     Order findByOrderLineId(Long orderLineId);
     List<Order> findByCustomerId(Long customerId);
     List<Order> findBySellerId(Long sellerId);
-    List<Order> findDeliveredBefore(Instant deliveredBefore);
+    List<Order> findDeliveredBefore(Instant deliveredBefore, int limit);
 }

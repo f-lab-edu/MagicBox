@@ -29,6 +29,12 @@ spring:
         backoff:
           delay: 1s
           max-delay: 3s
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      timeout: 2000ms
   datasource:
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
@@ -60,3 +66,8 @@ resilience4j:
 
 inbox:
   max-event-age-minutes: 5
+
+order:
+  auto-confirm:
+    days: 7
+    chunk-size: 100
