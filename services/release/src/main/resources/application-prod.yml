@@ -13,6 +13,26 @@ spring:
           negotiation-type: plaintext
           keep-alive-time: 30s
           keep-alive-timeout: 5s
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    listener:
+      ack-mode: record
+      missing-topics-fatal: true
+    consumer:
+      group-id: release-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+        spring.json.trusted.packages: "kr.magicbox.release.adapter.in.kafka.event"
+        spring.json.type.mapping: release-sold-quantity-increase:kr.magicbox.release.adapter.in.kafka.event.ReleaseSoldQuantityIncreaseEvent
+    retry:
+      topic:
+        attempts: 5
+        backoff:
+          delay: 1s
+          max-delay: 10s
   datasource:
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
@@ -43,3 +63,6 @@ resilience4j:
     instances:
       creatorService:
         timeout-duration: 2s
+
+inbox:
+  max-event-age-minutes: 60
