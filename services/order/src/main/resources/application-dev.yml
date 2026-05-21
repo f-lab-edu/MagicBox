@@ -9,9 +9,6 @@ spring:
         waiting-service:
           address: ${WAITING_SERVICE_URL}
           negotiation-type: plaintext
-        release-service:
-          address: ${RELEASE_SERVICE_URL}
-          negotiation-type: plaintext
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     listener:
@@ -50,12 +47,6 @@ security:
 resilience4j:
   circuitbreaker:
     instances:
-      releaseService:
-        slidingWindowType: COUNT_BASED
-        slidingWindowSize: 20
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10s
-        minimumNumberOfCalls: 10
       waitingService:
         slidingWindowType: COUNT_BASED
         slidingWindowSize: 20
@@ -64,8 +55,6 @@ resilience4j:
         minimumNumberOfCalls: 10
   timelimiter:
     instances:
-      releaseService:
-        timeoutDuration: 2s
       waitingService:
         timeoutDuration: 2s
 

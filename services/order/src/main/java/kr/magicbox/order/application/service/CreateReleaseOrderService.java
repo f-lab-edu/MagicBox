@@ -5,10 +5,10 @@ import kr.magicbox.order.application.port.in.CreateReleaseOrderUseCase;
 import kr.magicbox.order.application.port.out.OrderOutboxPort;
 import kr.magicbox.order.application.port.out.OrderRepositoryPort;
 import kr.magicbox.order.application.port.out.PurchaseTokenValidationPort;
-import kr.magicbox.order.application.port.out.ReleaseIncreaseSoldQuantityPort;
 import kr.magicbox.order.domain.aggregate.Order;
 import kr.magicbox.order.domain.aggregate.OrderLine;
 import kr.magicbox.order.domain.event.OrderPrepareEvent;
+import kr.magicbox.order.domain.event.ReleaseSoldQuantityIncreaseEvent;
 import kr.magicbox.order.domain.exception.InvalidPurchaseTokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,9 @@ import java.util.List;
 public class CreateReleaseOrderService implements CreateReleaseOrderUseCase {
 
     private final PurchaseTokenValidationPort purchaseTokenValidationPort;
-    private final ReleaseIncreaseSoldQuantityPort releaseIncreaseSoldQuantityPort;
     private final OrderRepositoryPort orderRepositoryPort;
     private final OrderOutboxPort orderOutboxPort;
 
-    @Transactional
     @Override
     public void createReleaseOrder(CreateReleaseOrderCommand command) {
         boolean valid = purchaseTokenValidationPort.validate(
@@ -34,6 +32,11 @@ public class CreateReleaseOrderService implements CreateReleaseOrderUseCase {
             throw new InvalidPurchaseTokenException();
         }
 
+        saveOrderWithOutbox(command);
+    }
+
+    @Transactional
+    protected void saveOrderWithOutbox(CreateReleaseOrderCommand command) {
         OrderLine orderLine = OrderLine.createBuilder()
                 .productId(command.releaseId())
                 .sellerId(command.sellerId())
@@ -52,7 +55,6 @@ public class CreateReleaseOrderService implements CreateReleaseOrderUseCase {
 
         Long savedOrderId = orderRepositoryPort.save(order);
         orderOutboxPort.save(OrderPrepareEvent.from(savedOrderId, order));
-
-        releaseIncreaseSoldQuantityPort.increaseSoldQuantity(command.releaseId());
+        orderOutboxPort.save(ReleaseSoldQuantityIncreaseEvent.of(command.releaseId()));
     }
 }

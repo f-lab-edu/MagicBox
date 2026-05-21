@@ -6,8 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ServiceHost {
-    WAITING("waiting-service"),
-    RELEASE("release-service");
+    WAITING("waiting-service");
 
     private final String hostName;
 }
