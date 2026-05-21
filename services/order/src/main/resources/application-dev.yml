@@ -1,11 +1,17 @@
 spring:
   application:
-    name: order-local
+    name: order-dev
   jackson:
     property-naming-strategy: SNAKE_CASE
-  config:
-    import:
-      - file:services/order/env/local.env[.properties]
+  grpc:
+    client:
+      channels:
+        waiting-service:
+          address: ${WAITING_SERVICE_URL}
+          negotiation-type: plaintext
+        release-service:
+          address: ${RELEASE_SERVICE_URL}
+          negotiation-type: plaintext
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     listener:
@@ -36,24 +42,10 @@ spring:
       ddl-auto: update
     open-in-view: false
 
-  grpc:
-    client:
-      channels:
-        waiting-service:
-          address: ${WAITING_SERVICE_URL}
-          negotiation-type: plaintext
-        release-service:
-          address: ${RELEASE_SERVICE_URL}
-          negotiation-type: plaintext
-
-server:
-  port: ${SERVER_PORT}
-
 security:
   trusted:
     ips:
-      - 127.0.0.1
-      - 0:0:0:0:0:0:0:1
+      - ${TRUSTED_IP_GATEWAY}
 
 resilience4j:
   circuitbreaker:
