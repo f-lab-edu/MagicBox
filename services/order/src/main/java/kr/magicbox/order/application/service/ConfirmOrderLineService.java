@@ -28,11 +28,12 @@ public class ConfirmOrderLineService implements ConfirmOrderLineUseCase {
             throw new OrderUnauthorizedException();
         }
 
+        OrderStatus previousStatus = order.getStatus();
         order.confirmOrderLine(orderLineId);
         orderRepositoryPort.update(order);
 
-        // 모든 라인 CONFIRMED → Order CONFIRMED 전환 시 이벤트 발행
-        if (order.getStatus() == OrderStatus.CONFIRMED) {
+        // PREPARING → CONFIRMED 전이 시에만 이벤트 1회 발행 (이미 CONFIRMED였던 경우 중복 발행 방지)
+        if (previousStatus != OrderStatus.CONFIRMED && order.getStatus() == OrderStatus.CONFIRMED) {
             orderOutboxPort.save(OrderConfirmedEvent.from(order));
         }
     }
