@@ -1,4 +1,4 @@
-package kr.magicbox.user.adapter.in.kafka.annotation;
+package kr.magicbox.generalgoods.adapter.in.kafka.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

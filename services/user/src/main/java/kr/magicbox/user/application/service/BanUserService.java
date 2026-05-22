@@ -31,7 +31,7 @@ public class BanUserService implements BanUserUseCase {
 
         UserBannedEvent event = UserBannedEvent.builder()
                 .userId(user.getId())
-                .bannedAt(Instant.now())
+                .occurredAt(Instant.now())
                 .build();
         userOutboxPort.save(event);
     }
