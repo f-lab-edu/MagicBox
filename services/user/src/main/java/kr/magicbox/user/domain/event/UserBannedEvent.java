@@ -1,5 +1,6 @@
 package kr.magicbox.user.domain.event;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.magicbox.user.domain.vo.UserId;
 import lombok.Builder;
 
@@ -8,7 +9,7 @@ import java.time.Instant;
 @Builder
 public record UserBannedEvent(
         UserId userId,
-        Instant bannedAt
+        Instant occurredAt
 ) implements UserDomainEvent {
 
     @Override
