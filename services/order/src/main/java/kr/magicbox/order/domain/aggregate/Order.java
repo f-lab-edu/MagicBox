@@ -107,9 +107,7 @@ public class Order {
      * 모든 라인이 CONFIRMED 이상이면 Order도 CONFIRMED로 전환한다.
      */
     public void confirmOrderLine(Long orderLineId) {
-        if (this.status != OrderStatus.PREPARING && this.status != OrderStatus.CONFIRMED) {
-            throw new OrderStatusConflictException("현재 상태에서 확정 처리할 수 없습니다. 현재: " + this.status);
-        }
+        validateStatus(OrderStatus.PREPARING);
         OrderLine orderLine = findOrderLine(orderLineId);
         orderLine.confirm();
         this.updatedAt = Instant.now();
