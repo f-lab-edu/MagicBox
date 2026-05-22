@@ -27,7 +27,6 @@ import kr.magicbox.release.grpc.release.ReleaseServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.grpc.server.service.GrpcService;
 
-import java.time.Instant;
 import java.util.List;
 
 @GrpcService
@@ -98,7 +97,6 @@ public class ReleaseGrpcService extends ReleaseServiceGrpc.ReleaseServiceImplBas
     }
 
     private Release toProtoRelease(ReleaseResult result) {
-        Instant scheduledAt = result.scheduledAt();
         return Release.newBuilder()
                 .setReleaseId(result.releaseId())
                 .setTitle(result.title())
@@ -106,9 +104,16 @@ public class ReleaseGrpcService extends ReleaseServiceGrpc.ReleaseServiceImplBas
                 .setLevel(toProtoLevel(result.level()))
                 .setPrice(result.price())
                 .setCreatedAt(Timestamp.newBuilder()
-                        .setSeconds(scheduledAt.getEpochSecond())
-                        .setNanos(scheduledAt.getNano())
+                        .setSeconds(result.createdAt().getEpochSecond())
+                        .setNanos(result.createdAt().getNano())
                         .build())
+                .setScheduledAt(Timestamp.newBuilder()
+                        .setSeconds(result.scheduledAt().getEpochSecond())
+                        .setNanos(result.scheduledAt().getNano())
+                        .build())
+                .setStatus(toProtoStatus(result.status()))
+                .setLimitedQuantity(result.limitedQuantity())
+                .setSoldQuantity(result.soldQuantity())
                 .build();
     }
 
@@ -117,6 +122,15 @@ public class ReleaseGrpcService extends ReleaseServiceGrpc.ReleaseServiceImplBas
             case BEGINNER -> ReleaseLevel.BEGINNER;
             case INTERMEDIATE -> ReleaseLevel.INTERMEDIATE;
             case ADVANCED -> ReleaseLevel.ADVANCED;
+        };
+    }
+
+    private kr.magicbox.release.grpc.release.ReleaseStatus toProtoStatus(kr.magicbox.release.domain.enums.ReleaseStatus status) {
+        return switch (status) {
+            case SCHEDULED -> kr.magicbox.release.grpc.release.ReleaseStatus.SCHEDULED;
+            case ON_SALE -> kr.magicbox.release.grpc.release.ReleaseStatus.ON_SALE;
+            case SOLD_OUT -> kr.magicbox.release.grpc.release.ReleaseStatus.SOLD_OUT;
+            case ENDED -> kr.magicbox.release.grpc.release.ReleaseStatus.ENDED;
         };
     }
 }
