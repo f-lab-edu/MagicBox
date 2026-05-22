@@ -13,7 +13,6 @@ service ReleaseService {
   rpc GetReleasesByCreatorId(GetReleasesByCreatorIdRequest) returns (GetReleasesByCreatorIdResponse);
   rpc IsReleaseOnSale(IsReleaseOnSaleRequest) returns (IsReleaseOnSaleResponse);
   rpc GetRemainingQuantity(GetRemainingQuantityRequest) returns (GetRemainingQuantityResponse);
-  rpc IncreaseSoldQuantity(IncreaseSoldQuantityRequest) returns (IncreaseSoldQuantityResponse);
 }
 
 message GetReleaseCountRequest {
@@ -54,13 +53,6 @@ message GetRemainingQuantityResponse {
   int32 remaining_quantity = 1;
 }
 
-message IncreaseSoldQuantityRequest {
-  int64 release_id = 1;
-}
-
-message IncreaseSoldQuantityResponse {
-  bool sold_out = 1;
-}
 
 enum ReleaseStatus {
   SCHEDULED = 0;

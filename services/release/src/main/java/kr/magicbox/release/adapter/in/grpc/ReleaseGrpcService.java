@@ -7,7 +7,6 @@ import kr.magicbox.release.application.dto.result.ReleaseResult;
 import kr.magicbox.release.application.port.in.GetReleaseCountByCreatorUseCase;
 import kr.magicbox.release.application.port.in.GetReleaseListByCreatorUseCase;
 import kr.magicbox.release.application.port.in.GetReleaseUseCase;
-import kr.magicbox.release.application.port.in.IncreaseSoldQuantityUseCase;
 import kr.magicbox.release.domain.enums.ReleaseStatus;
 import kr.magicbox.release.domain.vo.CreatorId;
 import kr.magicbox.release.domain.vo.ReleaseId;
@@ -17,8 +16,6 @@ import kr.magicbox.release.grpc.release.GetReleasesByCreatorIdRequest;
 import kr.magicbox.release.grpc.release.GetReleasesByCreatorIdResponse;
 import kr.magicbox.release.grpc.release.GetRemainingQuantityRequest;
 import kr.magicbox.release.grpc.release.GetRemainingQuantityResponse;
-import kr.magicbox.release.grpc.release.IncreaseSoldQuantityRequest;
-import kr.magicbox.release.grpc.release.IncreaseSoldQuantityResponse;
 import kr.magicbox.release.grpc.release.IsReleaseOnSaleRequest;
 import kr.magicbox.release.grpc.release.IsReleaseOnSaleResponse;
 import kr.magicbox.release.grpc.release.Release;
@@ -36,7 +33,6 @@ public class ReleaseGrpcService extends ReleaseServiceGrpc.ReleaseServiceImplBas
     private final GetReleaseCountByCreatorUseCase getReleaseCountByCreatorUseCase;
     private final GetReleaseListByCreatorUseCase getReleaseListByCreatorUseCase;
     private final GetReleaseUseCase getReleaseUseCase;
-    private final IncreaseSoldQuantityUseCase increaseSoldQuantityUseCase;
 
     @Override
     public void getReleaseCount(GetReleaseCountRequest request,
@@ -85,14 +81,6 @@ public class ReleaseGrpcService extends ReleaseServiceGrpc.ReleaseServiceImplBas
         responseObserver.onNext(GetRemainingQuantityResponse.newBuilder()
                 .setRemainingQuantity(remaining)
                 .build());
-        responseObserver.onCompleted();
-    }
-
-    @Override
-    public void increaseSoldQuantity(IncreaseSoldQuantityRequest request,
-                                     StreamObserver<IncreaseSoldQuantityResponse> responseObserver) {
-        increaseSoldQuantityUseCase.increaseSoldQuantity(ReleaseId.of(request.getReleaseId()));
-        responseObserver.onNext(IncreaseSoldQuantityResponse.newBuilder().build());
         responseObserver.onCompleted();
     }
 
