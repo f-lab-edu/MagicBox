@@ -53,7 +53,7 @@ public class LoginService implements LoadUserCredentialUseCase {
 
     private LoadUserCredentialResult handleNewUser(LoadUserCredentialCommand command) {
         String nickname = UUID.randomUUID().toString().replace("-", "").substring(0, 18);
-        User user = User.builder()
+        User user = User.createBuilder()
                 .nickname(Nickname.of(nickname))
                 .email(command.email())
                 .role(UserRole.USER)
@@ -66,7 +66,7 @@ public class LoginService implements LoadUserCredentialUseCase {
 
         UserSignupEvent userSignupEvent = UserSignupEvent.builder()
                 .userId(saved.getId())
-                .signupAt(Instant.now())
+                .occurredAt(Instant.now())
                 .build();
 
         userDomainEventRepository.save(userSignupEvent);

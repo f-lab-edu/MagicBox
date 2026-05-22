@@ -13,7 +13,15 @@ public class Subscription {
     private final SubscriberId subscriberId;
     private final CreatorId creatorId;
 
-    @Builder
+    @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
+    public Subscription(SubscriberId subscriberId, CreatorId creatorId) {
+        validateFields(subscriberId, creatorId);
+        this.id = null;
+        this.subscriberId = subscriberId;
+        this.creatorId = creatorId;
+    }
+
+    @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
     public Subscription(SubscriptionId id, SubscriberId subscriberId, CreatorId creatorId) {
         validateFields(subscriberId, creatorId);
         this.id = id;

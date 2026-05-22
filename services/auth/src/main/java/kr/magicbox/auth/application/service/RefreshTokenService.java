@@ -49,7 +49,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 
     private void rotateRefreshToken(UserId userId, RefreshTokenValue refreshTokenValue) {
         Instant expiresAt = Instant.now().plusMillis(tokenManager.getRefreshTokenExpiration());
-        RefreshToken newRefreshToken = RefreshToken.builder()
+        RefreshToken newRefreshToken = RefreshToken.createBuilder()
                 .refreshTokenValue(refreshTokenValue)
                 .userId(userId)
                 .expiresAt(expiresAt)

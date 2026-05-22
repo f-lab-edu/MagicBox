@@ -1,5 +1,6 @@
 package kr.magicbox.subscribe.adapter.in.kafka;
 
+import kr.magicbox.subscribe.adapter.in.kafka.annotation.Idempotent;
 import kr.magicbox.subscribe.adapter.in.kafka.event.CreatorRevokedEvent;
 import kr.magicbox.subscribe.application.dto.command.HandleCreatorRevokedCommand;
 import kr.magicbox.subscribe.adapter.out.persistence.repository.SubscribeInboxRepository;
