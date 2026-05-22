@@ -31,7 +31,27 @@ public class User {
     private final String oauth2Id;
     private final OAuth2Provider oauth2Provider;
 
-    @Builder
+    @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
+    public User(Nickname nickname, String email, UserStatus status,
+                UserRole role, String profile, String oauth2Id,
+                OAuth2Provider oauth2Provider) {
+        validateFields(email, status, oauth2Id, oauth2Provider);
+
+        this.id = null;
+        this.nickname = nickname;
+        this.email = email;
+        this.status = status;
+        this.role = role;
+        this.profile = profile;
+        this.oauth2Id = oauth2Id;
+        this.oauth2Provider = oauth2Provider;
+        this.isActive = false;
+        this.lastLoginAt = Instant.now();
+        this.totalUsageTime = Duration.ZERO;
+        this.isReviewVisible = true;
+    }
+
+    @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
     public User(UserId id, Nickname nickname, String email, UserStatus status,
                 UserRole role, String profile, String oauth2Id,
                 OAuth2Provider oauth2Provider, Boolean isReviewVisible, Boolean isActive,

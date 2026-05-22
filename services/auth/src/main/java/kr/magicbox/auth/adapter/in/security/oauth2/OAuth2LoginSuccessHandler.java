@@ -44,7 +44,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 2. 일회용 Code 생성 및 Redis 저장
         String codeValue = UUID.randomUUID().toString();
-        Code code = Code.builder()
+        Code code = Code.createBuilder()
                 .code(codeValue)
                 .userId(userResult.userId())
                 .role(userResult.userRole())

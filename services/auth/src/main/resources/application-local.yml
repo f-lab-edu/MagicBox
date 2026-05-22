@@ -32,8 +32,11 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
         spring.json.trusted.packages: "kr.magicbox.auth.adapter.in.kafka.event"
     retry:
-      interval-ms: 1000
-      max-attempts: 3
+      topic:
+        backoff:
+          multiplier: 2
+          delay: 1s
+        attempts: 5
   datasource:
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
@@ -128,10 +131,13 @@ code:
   ttl-seconds: ${OAUTH2_CODE_TTL_SECONDS}
 
 frontend:
-  uri: ${FRONTEND_URI}
+  uri: ${FRONTEND_URL}
 
 security:
   trusted:
     ips:
       - 127.0.0.1
       - 0:0:0:0:0:0:0:1
+
+inbox:
+  max-event-age-minutes: 5
