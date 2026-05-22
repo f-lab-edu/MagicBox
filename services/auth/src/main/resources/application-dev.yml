@@ -108,9 +108,5 @@ logging:
   level:
     org.springframework.web: INFO
     org.springframework.data.redis: INFO
-<<<<<<< HEAD
-
-=======
->>>>>>> feat/116
 inbox:
   max-event-age-minutes: 5
