@@ -2,7 +2,6 @@ package kr.magicbox.creator.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
-import kr.magicbox.creator.adapter.out.communication.ServiceHost;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.ReleaseServiceUnavailableException;
 import kr.magicbox.creator.application.dto.result.ReleaseId;
 import kr.magicbox.creator.application.dto.result.ReleaseLevel;
@@ -16,7 +15,7 @@ import kr.magicbox.creator.grpc.release.GetReleasesByCreatorIdResponse;
 import kr.magicbox.creator.grpc.release.ReleaseServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.grpc.client.GrpcChannelFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -24,10 +23,14 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
-    private final GrpcChannelFactory grpcChannelFactory;
+
+    private final ManagedChannel releaseManagedChannel;
+
+    public ReleaseQueryGrpcAdapter(@Qualifier("releaseManagedChannel") ManagedChannel releaseManagedChannel) {
+        this.releaseManagedChannel = releaseManagedChannel;
+    }
 
     @Override
     @CircuitBreaker(name = "releaseService", fallbackMethod = "getReleaseCountFallback")
@@ -36,9 +39,8 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .setCreatorId(creatorId)
                 .build();
 
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
         ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc
-                .newBlockingStub(channel)
+                .newBlockingStub(releaseManagedChannel)
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReleaseCountResponse response = stub.getReleaseCount(request);
 
@@ -52,9 +54,8 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .setCreatorId(creatorId)
                 .build();
 
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
         ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc
-                .newBlockingStub(channel)
+                .newBlockingStub(releaseManagedChannel)
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReleasesByCreatorIdResponse response = stub.getReleasesByCreatorId(request);
 
