@@ -10,6 +10,7 @@ import kr.magicbox.release.domain.exception.ReleaseNotFoundException;
 import kr.magicbox.release.domain.vo.CreatorId;
 import kr.magicbox.release.domain.vo.ReleaseId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -57,8 +58,8 @@ public class ReleaseJpaAdapter implements ReleaseRepositoryPort {
     }
 
     @Override
-    public List<Release> findScheduledBefore(Instant scheduledAt) {
-        return releaseJpaRepository.findByStatusAndScheduledAtBefore(ReleaseStatus.SCHEDULED, scheduledAt)
+    public List<Release> findScheduledBefore(Instant scheduledAt, int limit) {
+        return releaseJpaRepository.findByStatusAndScheduledAtBefore(ReleaseStatus.SCHEDULED, scheduledAt, PageRequest.of(0, limit))
                 .stream()
                 .map(releaseMapper::toDomain)
                 .toList();

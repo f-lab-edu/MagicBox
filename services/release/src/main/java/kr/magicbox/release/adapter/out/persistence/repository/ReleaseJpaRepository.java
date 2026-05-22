@@ -2,6 +2,7 @@ package kr.magicbox.release.adapter.out.persistence.repository;
 
 import kr.magicbox.release.adapter.out.persistence.entity.ReleaseEntity;
 import kr.magicbox.release.domain.enums.ReleaseStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.Instant;
@@ -16,5 +17,5 @@ public interface ReleaseJpaRepository extends JpaRepository<ReleaseEntity, Long>
 
     long countByCreatorId(Long creatorId);
 
-    List<ReleaseEntity> findByStatusAndScheduledAtBefore(ReleaseStatus status, Instant scheduledAt);
+    List<ReleaseEntity> findByStatusAndScheduledAtBefore(ReleaseStatus status, Instant scheduledAt, Pageable pageable);
 }

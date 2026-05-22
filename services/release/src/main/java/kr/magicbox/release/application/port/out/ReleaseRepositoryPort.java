@@ -19,5 +19,5 @@ public interface ReleaseRepositoryPort {
 
     long countByCreatorId(CreatorId creatorId);
 
-    List<Release> findScheduledBefore(Instant scheduledAt);
+    List<Release> findScheduledBefore(Instant scheduledAt, int limit);
 }
