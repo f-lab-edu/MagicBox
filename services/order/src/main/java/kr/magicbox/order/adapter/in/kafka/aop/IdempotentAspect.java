@@ -70,7 +70,7 @@ public class IdempotentAspect {
             } catch (RuntimeException e) {
                 status.setRollbackOnly();
                 throw e;
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 status.setRollbackOnly();
                 throw new IllegalStateException(e);
             }
