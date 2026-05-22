@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.stereotype.Component;
 import kr.magicbox.order.global.exception.BusinessException;
 
@@ -22,7 +23,7 @@ public class DeliveryEventKafkaListener {
     private final HandleDeliveryCompletedUseCase handleDeliveryCompletedUseCase;
 
     @Idempotent
-    @RetryableTopic(exclude = {BusinessException.class})
+    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {kr.magicbox.order.global.exception.BusinessException.class})
     @KafkaListener(topics = "outbox.event.delivery-started", groupId = "order-service")
     public void handleDeliveryStarted(ConsumerRecord<String, DeliveryStartedEvent> consumerRecord) {
         log.info("[Inbox] delivery.started 이벤트 수신. eventId={}", consumerRecord.key());
@@ -31,7 +32,7 @@ public class DeliveryEventKafkaListener {
     }
 
     @Idempotent
-    @RetryableTopic(exclude = {BusinessException.class})
+    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {kr.magicbox.order.global.exception.BusinessException.class})
     @KafkaListener(topics = "outbox.event.delivery-completed", groupId = "order-service")
     public void handleDeliveryCompleted(ConsumerRecord<String, DeliveryCompletedEvent> consumerRecord) {
         log.info("[Inbox] delivery.completed 이벤트 수신. eventId={}", consumerRecord.key());
