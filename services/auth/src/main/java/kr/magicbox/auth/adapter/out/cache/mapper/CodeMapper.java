@@ -20,11 +20,12 @@ public class CodeMapper {
     }
 
     public Code toDomain(CodeEntity entity) {
-        return Code.builder()
+        return Code.reconstructBuilder()
                 .code(entity.getCode())
                 .userId(UserId.of(entity.getUserId()))
                 .role(UserRole.of(entity.getRole()))
                 .expiresAt(entity.getExpiresAt())
+                .createdAt(entity.getCreatedAt())
                 .build();
     }
 }
