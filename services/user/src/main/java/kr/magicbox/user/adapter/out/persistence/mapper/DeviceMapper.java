@@ -17,7 +17,7 @@ public class DeviceMapper {
     }
 
     public Device toDomain(DeviceEntity entity) {
-        return Device.builder()
+        return Device.reconstructBuilder()
                 .id(DeviceId.of(entity.getId()))
                 .deviceIdentifier(entity.getDeviceIdentifier())
                 .deviceType(entity.getDeviceType())

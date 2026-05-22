@@ -17,7 +17,7 @@ public class Code {
     private final Instant expiresAt;
     private final Instant createdAt;
 
-    @Builder
+    @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
     public Code(String code, UserId userId, UserRole role, Instant expiresAt) {
         validateFields(code, userId, role, expiresAt);
 
@@ -26,6 +26,15 @@ public class Code {
         this.role = role;
         this.expiresAt = expiresAt;
         this.createdAt = Instant.now();
+    }
+
+    @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
+    public Code(String code, UserId userId, UserRole role, Instant expiresAt, Instant createdAt) {
+        this.code = code;
+        this.userId = userId;
+        this.role = role;
+        this.expiresAt = expiresAt;
+        this.createdAt = createdAt;
     }
 
     public boolean isExpired() {

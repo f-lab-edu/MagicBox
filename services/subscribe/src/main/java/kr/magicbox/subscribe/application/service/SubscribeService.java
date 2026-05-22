@@ -28,7 +28,7 @@ public class SubscribeService implements SubscribeUseCase {
             throw new AlreadySubscribedException();
         }
 
-        Subscription subscription = Subscription.builder()
+        Subscription subscription = Subscription.createBuilder()
                 .subscriberId(command.subscriberId())
                 .creatorId(command.creatorId())
                 .build();

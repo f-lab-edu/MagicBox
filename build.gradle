@@ -41,5 +41,10 @@ configure(subprojects.findAll { it.name != 'services' }) {
 
     tasks.named('test') {
         useJUnitPlatform()
+        workingDir = rootProject.projectDir
+    }
+
+    tasks.named('bootRun') {
+        workingDir = rootProject.projectDir
     }
 }
