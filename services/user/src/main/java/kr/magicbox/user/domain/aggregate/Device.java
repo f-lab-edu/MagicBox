@@ -16,7 +16,17 @@ public class Device {
     private Instant lastActiveAt;
     private Boolean isActive;
 
-    @Builder
+    @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
+    public Device(String deviceIdentifier, DeviceType deviceType, String version) {
+        this.id = null;
+        this.deviceIdentifier = deviceIdentifier;
+        this.deviceType = deviceType;
+        this.version = version;
+        this.isActive = false;
+        this.lastActiveAt = Instant.now();
+    }
+
+    @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
     public Device(DeviceId id, String deviceIdentifier, DeviceType deviceType, String version,
                   Boolean isActive, Instant lastActiveAt) {
         this.id = id;

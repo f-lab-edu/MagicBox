@@ -1,5 +1,7 @@
 package kr.magicbox.creator.adapter.in.kafka.aop;
 
+import kr.magicbox.creator.adapter.in.kafka.event.InboxEvent;
+import kr.magicbox.creator.adapter.in.kafka.properties.InboxProperties;
 import kr.magicbox.creator.adapter.out.persistence.entity.CreatorInboxEntity;
 import kr.magicbox.creator.adapter.out.persistence.entity.CreatorInboxStatus;
 import kr.magicbox.creator.adapter.out.persistence.repository.CreatorInboxRepository;
@@ -12,6 +14,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 @Slf4j
@@ -22,11 +26,29 @@ public class IdempotentAspect {
 
     private final CreatorInboxRepository creatorInboxRepository;
     private final TransactionTemplate transactionTemplate;
+    private final InboxProperties inboxProperties;
 
     @Around("@annotation(kr.magicbox.creator.adapter.in.kafka.annotation.Idempotent)")
     public Object around(ProceedingJoinPoint pjp) {
         ConsumerRecord<String, ?> consumerRecord = extractRecord(pjp);
-        Long eventId = Long.parseLong(consumerRecord.key());
+        InboxEvent event = (InboxEvent) consumerRecord.value();
+        Long eventId = event.eventId();
+        Instant occurredAt = event.occurredAt();
+
+        if (isTooOld(occurredAt)) {
+            log.warn("[Inbox] 만료된 메시지 DEAD_LETTERED 처리. eventId={}, occurredAt={}", eventId, occurredAt);
+            transactionTemplate.executeWithoutResult(status ->
+                creatorInboxRepository.save(CreatorInboxEntity.builder()
+                        .eventId(eventId)
+                        .topic(consumerRecord.topic())
+                        .partition(consumerRecord.partition())
+                        .offset(consumerRecord.offset())
+                        .status(CreatorInboxStatus.DEAD_LETTERED)
+                        .occurredAt(occurredAt)
+                        .build())
+            );
+            return null;
+        }
 
         return transactionTemplate.execute(status -> {
             if (creatorInboxRepository.existsByEventId(eventId)) {
@@ -39,6 +61,7 @@ public class IdempotentAspect {
                     .partition(consumerRecord.partition())
                     .offset(consumerRecord.offset())
                     .status(CreatorInboxStatus.PENDING)
+                    .occurredAt(occurredAt)
                     .build());
             try {
                 pjp.proceed();
@@ -49,6 +72,10 @@ public class IdempotentAspect {
             inbox.markProcessed();
             return null;
         });
+    }
+
+    private boolean isTooOld(Instant occurredAt) {
+        return occurredAt.isBefore(Instant.now().minus(inboxProperties.getMaxEventAgeMinutes(), ChronoUnit.MINUTES));
     }
 
     @SuppressWarnings("unchecked")
