@@ -26,7 +26,7 @@ public class GeneralGoods {
     private List<GeneralGoodsMedia> generalGoodsMediaList;
     private boolean isDeleted;
 
-    @Builder(builderMethodName = "createBuilder")
+    @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
     public GeneralGoods(CreatorId creatorId, String name, Long price, Long stock, String description, GeneralGoodsLevel level,
                         Set<MagicGenre> categories, List<GeneralGoodsMedia> generalGoodsMediaList) {
         validateCreate(creatorId, name, price, stock, categories, generalGoodsMediaList);
@@ -42,11 +42,11 @@ public class GeneralGoods {
         this.isDeleted = false;
     }
 
-    @Builder(builderMethodName = "reconstructBuilder")
+    @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
     public GeneralGoods(GeneralGoodsId id, CreatorId creatorId, String name, Long price, Long stock,
                         String description, GeneralGoodsLevel level, Set<MagicGenre> categories,
                         List<GeneralGoodsMedia> generalGoodsMediaList, boolean isDeleted) {
-        validateReconstruct(id, creatorId);
+        validateReconstruct(id, creatorId, name, price, stock, categories, generalGoodsMediaList);
         this.id = id;
         this.creatorId = creatorId;
         this.name = name;
@@ -83,9 +83,15 @@ public class GeneralGoods {
         }
     }
 
-    private void validateReconstruct(GeneralGoodsId id, CreatorId creatorId) {
+    private void validateReconstruct(GeneralGoodsId id, CreatorId creatorId, String name, Long price, Long stock,
+                                     Set<MagicGenre> categories, List<GeneralGoodsMedia> generalGoodsMediaList) {
         if (id == null) throw new InvalidFieldException("상품 ID는 필수입니다.");
         if (creatorId == null) throw new InvalidFieldException("크리에이터 ID는 필수입니다.");
+        if (name == null || name.isEmpty()) throw new InvalidFieldException("이름은 필수입니다.");
+        if (price == null || price <= 0) throw new InvalidFieldException("가격은 양수여야 합니다.");
+        if (stock == null || stock <= 0) throw new InvalidFieldException("재고는 양수여야 합니다.");
+        if (categories == null || categories.isEmpty()) throw new InvalidFieldException("카테고리는 하나 이상 필수입니다.");
+        if (generalGoodsMediaList == null || generalGoodsMediaList.isEmpty()) throw new InvalidFieldException("미디어는 하나 이상 필수입니다.");
     }
 
     public void update(String name, Long price, Long stock, String description, GeneralGoodsLevel level, Set<MagicGenre> categories, List<GeneralGoodsMedia> mediaList) {

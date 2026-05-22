@@ -17,7 +17,7 @@ public class SubscriptionMapper {
     }
 
     public Subscription toDomain(SubscriptionEntity entity) {
-        return Subscription.builder()
+        return Subscription.reconstructBuilder()
                 .id(SubscriptionId.of(entity.getId()))
                 .subscriberId(SubscriberId.of(entity.getSubscriberId()))
                 .creatorId(CreatorId.of(entity.getCreatorId()))
