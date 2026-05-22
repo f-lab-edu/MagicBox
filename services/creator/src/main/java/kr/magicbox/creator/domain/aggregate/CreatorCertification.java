@@ -21,19 +21,23 @@ public class CreatorCertification {
     private CreatorCertificationStatus status;
     private CreatorCertificationResult result;
 
-    public static CreatorCertification create(UserId userId, CreatorCertificationRequest request) {
-        return CreatorCertification.builder()
-                .request(request)
-                .userId(userId)
-                .status(CreatorCertificationStatus.PENDING)
-                .build();
-    }
-
-    @Builder
-    public CreatorCertification(CreatorCertificationId id, UserId userId, CreatorCertificationRequest request, CreatorCertificationStatus status, CreatorCertificationResult result) {
+    @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
+    public CreatorCertification(UserId userId, CreatorCertificationRequest request) {
         if (request == null) {
             throw new InvalidFieldException("심사 신청 정보는 필수 값입니다.");
         }
+        this.id = null;
+        this.userId = userId;
+        this.request = request;
+        this.status = CreatorCertificationStatus.PENDING;
+        this.result = null;
+    }
+
+    @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
+    public CreatorCertification(CreatorCertificationId id, UserId userId, CreatorCertificationRequest request,
+                                CreatorCertificationStatus status, CreatorCertificationResult result) {
+        if (id == null) throw new InvalidFieldException("인증 심사 ID는 필수 값입니다.");
+        if (request == null) throw new InvalidFieldException("심사 신청 정보는 필수 값입니다.");
         this.id = id;
         this.userId = userId;
         this.request = request;

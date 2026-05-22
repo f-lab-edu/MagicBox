@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
+import kr.magicbox.auth.global.exception.BusinessException;
+import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -24,6 +26,7 @@ public class UserEventKafkaListener {
     private final AuthInboxRepository authInboxRepository;
 
     @Idempotent
+    @RetryableTopic(exclude = {BusinessException.class})
     @KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "auth-service")
     public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> consumerRecord) {
         UserWithdrawnEvent event = consumerRecord.value();
@@ -31,6 +34,7 @@ public class UserEventKafkaListener {
     }
 
     @Idempotent
+    @RetryableTopic(exclude = {BusinessException.class})
     @KafkaListener(topics = "outbox.event.user-banned", groupId = "auth-service")
     public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> consumerRecord) {
         UserBannedEvent event = consumerRecord.value();

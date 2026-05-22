@@ -12,6 +12,7 @@ import kr.magicbox.subscribe.grpc.creator.IsCreatorOwnedByUserResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j

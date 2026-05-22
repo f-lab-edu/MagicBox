@@ -9,6 +9,8 @@ option java_multiple_files = true;
 service CreatorService {
   rpc IsCreatorOwnedByUser(IsCreatorOwnedByUserRequest)
       returns (IsCreatorOwnedByUserResponse);
+  rpc GetCreatorIdByUserId(GetCreatorIdByUserIdRequest)
+      returns (GetCreatorIdByUserIdResponse);
 }
 
 message IsCreatorOwnedByUserRequest {
@@ -18,4 +20,12 @@ message IsCreatorOwnedByUserRequest {
 
 message IsCreatorOwnedByUserResponse {
   bool owned_by_user = 1;
+}
+
+message GetCreatorIdByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message GetCreatorIdByUserIdResponse {
+  int64 creator_id = 1;
 }
