@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-
-
-inbox:
-  max-event-age-minutes: 5
-=======
 spring:
   application:
     name: general-goods-dev
@@ -70,4 +64,3 @@ resilience4j:
     instances:
       creatorService:
         timeout-duration: 2s
->>>>>>> feat/116
