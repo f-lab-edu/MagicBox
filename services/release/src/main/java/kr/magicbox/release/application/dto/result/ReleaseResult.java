@@ -23,6 +23,10 @@ public record ReleaseResult(
         Instant createdAt,
         Instant updatedAt
 ) {
+    public boolean isOnSale() {
+        return status == ReleaseStatus.ON_SALE;
+    }
+
     public static ReleaseResult from(Release release) {
         return ReleaseResult.builder()
                 .releaseId(release.getId().value())
