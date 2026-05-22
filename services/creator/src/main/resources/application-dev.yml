@@ -61,12 +61,20 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+<<<<<<< HEAD
     open-in-view: false
 security:
   trusted:
     ips:
       - 127.0.0.1
       - 0:0:0:0:0:0:0:1
+=======
+
+security:
+  trusted:
+    ips:
+      - ${TRUSTED_IP_GATEWAY}
+>>>>>>> feat/116
 
 inbox:
   max-event-age-minutes: 5
