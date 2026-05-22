@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package magicbox.release.v1;
 
-option java_package = "kr.magicbox.creator.grpc.release";
+option java_package = "kr.magicbox.release.grpc.release";
 option java_outer_classname = "ReleaseServiceProto";
 option java_multiple_files = true;
 
@@ -11,6 +11,8 @@ import "google/protobuf/timestamp.proto";
 service ReleaseService {
   rpc GetReleaseCount(GetReleaseCountRequest) returns (GetReleaseCountResponse);
   rpc GetReleasesByCreatorId(GetReleasesByCreatorIdRequest) returns (GetReleasesByCreatorIdResponse);
+  rpc IsReleaseOnSale(IsReleaseOnSaleRequest) returns (IsReleaseOnSaleResponse);
+  rpc GetRemainingQuantity(GetRemainingQuantityRequest) returns (GetRemainingQuantityResponse);
 }
 
 message GetReleaseCountRequest {
@@ -34,6 +36,23 @@ enum ReleaseLevel {
   INTERMEDIATE = 1;
   ADVANCED = 2;
 }
+
+message IsReleaseOnSaleRequest {
+  int64 release_id = 1;
+}
+
+message IsReleaseOnSaleResponse {
+  bool on_sale = 1;
+}
+
+message GetRemainingQuantityRequest {
+  int64 release_id = 1;
+}
+
+message GetRemainingQuantityResponse {
+  int32 remaining_quantity = 1;
+}
+
 
 enum ReleaseStatus {
   SCHEDULED = 0;

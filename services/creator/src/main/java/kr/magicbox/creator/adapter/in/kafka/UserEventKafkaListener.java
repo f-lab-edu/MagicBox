@@ -6,6 +6,7 @@ import kr.magicbox.creator.adapter.in.kafka.event.UserWithdrawnEvent;
 import kr.magicbox.creator.adapter.out.persistence.repository.CreatorInboxRepository;
 import kr.magicbox.creator.application.port.in.HandleUserBannedUseCase;
 import kr.magicbox.creator.application.port.in.HandleUserWithdrawnUseCase;
+import kr.magicbox.creator.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -14,7 +15,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.stereotype.Component;
-import kr.magicbox.creator.global.exception.BusinessException;
 
 @Slf4j
 @Component
