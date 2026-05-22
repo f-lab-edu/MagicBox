@@ -7,7 +7,6 @@ import kr.magicbox.release.application.dto.result.ReleaseResult;
 import kr.magicbox.release.application.port.in.GetReleaseCountByCreatorUseCase;
 import kr.magicbox.release.application.port.in.GetReleaseListByCreatorUseCase;
 import kr.magicbox.release.application.port.in.GetReleaseUseCase;
-import kr.magicbox.release.domain.enums.ReleaseStatus;
 import kr.magicbox.release.domain.vo.CreatorId;
 import kr.magicbox.release.domain.vo.ReleaseId;
 import kr.magicbox.release.grpc.release.GetReleaseCountRequest;
@@ -65,7 +64,7 @@ public class ReleaseGrpcService extends ReleaseServiceGrpc.ReleaseServiceImplBas
                                 StreamObserver<IsReleaseOnSaleResponse> responseObserver) {
         ReleaseResult result = getReleaseUseCase.getRelease(
                 GetReleaseQuery.builder().releaseId(request.getReleaseId()).build());
-        boolean onSale = result.status() == ReleaseStatus.ON_SALE;
+        boolean onSale = result.isOnSale();
         responseObserver.onNext(IsReleaseOnSaleResponse.newBuilder()
                 .setOnSale(onSale)
                 .build());
