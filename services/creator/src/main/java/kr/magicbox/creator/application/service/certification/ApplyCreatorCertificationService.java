@@ -29,7 +29,10 @@ public class ApplyCreatorCertificationService implements ApplyCreatorCertificati
                 .portfolioUrl(command.portfolioUrl())
                 .build();
 
-        CreatorCertification certification = CreatorCertification.create(command.userId(), request);
+        CreatorCertification certification = CreatorCertification.createBuilder()
+                .userId(command.userId())
+                .request(request)
+                .build();
 
         certificationRepositoryPort.save(certification);
     }

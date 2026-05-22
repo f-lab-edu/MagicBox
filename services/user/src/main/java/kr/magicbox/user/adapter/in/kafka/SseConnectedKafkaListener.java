@@ -11,6 +11,7 @@ import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import kr.magicbox.user.global.exception.BusinessException;
 
 @Slf4j
 @Component
@@ -19,7 +20,7 @@ public class SseConnectedKafkaListener {
 
     private final ManageUserSessionUseCase manageUserSessionUseCase;
 
-    @RetryableTopic
+    @RetryableTopic(exclude = {BusinessException.class})
     @KafkaListener(topics = "sse.connected", groupId = "user-service", containerFactory = "stringKafkaListenerContainerFactory")
     public void handleConnected(ConsumerRecord<String, String> record) {
         Long userId = Long.parseLong(record.key());

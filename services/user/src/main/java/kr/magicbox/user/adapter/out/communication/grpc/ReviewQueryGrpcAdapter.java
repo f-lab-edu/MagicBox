@@ -33,8 +33,12 @@ public class ReviewQueryGrpcAdapter implements ReviewQueryPort {
             .build();
 
         ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.REVIEW.getHostName());
+<<<<<<< HEAD
         ReviewServiceGrpc.ReviewServiceBlockingStub reviewStub = ReviewServiceGrpc
                 .newBlockingStub(channel)
+=======
+        ReviewServiceGrpc.ReviewServiceBlockingStub reviewStub = ReviewServiceGrpc.newBlockingStub(channel)
+>>>>>>> feat/116
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetAllReviewsByUserIdResponse response = reviewStub.getAllReviewsByUserId(request);
 

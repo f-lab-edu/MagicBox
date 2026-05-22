@@ -9,11 +9,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/creator")
+@RequestMapping("/creator")
 @RequiredArgsConstructor
+@Validated
 public class CreatorCommandController {
 
     private final UpdateCreatorProfileUseCase updateCreatorProfileUseCase;
