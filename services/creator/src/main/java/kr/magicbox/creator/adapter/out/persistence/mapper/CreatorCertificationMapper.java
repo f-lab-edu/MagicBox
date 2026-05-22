@@ -25,7 +25,7 @@ public class CreatorCertificationMapper {
                 .map(creatorCertificationResultMapper::toDomain)
                 .orElse(null);
 
-        return CreatorCertification.builder()
+        return CreatorCertification.reconstructBuilder()
                 .id(CreatorCertificationId.of(entity.getId()))
                 .userId(UserId.of(entity.getUserId()))
                 .request(request)

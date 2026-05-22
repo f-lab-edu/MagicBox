@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 public class CreatorCertificationResultMapper {
 
     public CreatorCertificationResult toDomain(CreatorCertificationResultVO vo) {
+        if (vo == null || vo.getReviewMessage() == null) {
+            return null;
+        }
         return CreatorCertificationResult.builder()
                 .reviewMessage(vo.getReviewMessage())
                 .reviewedAt(vo.getReviewedAt())

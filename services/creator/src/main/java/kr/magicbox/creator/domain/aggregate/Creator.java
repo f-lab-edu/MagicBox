@@ -26,11 +26,26 @@ public class Creator {
     private Set<MagicGenre> genres;
     private CreatorStatus status;
 
-    @Builder
+    @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
+    public Creator(UserId userId, Nickname nickname, String tagline,
+                   String profileImageUrl, String introduction, Set<MagicGenre> genres) {
+        validateFields(userId, nickname);
+        this.id = null;
+        this.userId = userId;
+        this.nickname = nickname;
+        this.tagline = tagline;
+        this.profileImageUrl = profileImageUrl;
+        this.introduction = introduction;
+        this.genres = genres;
+        this.status = CreatorStatus.ACTIVE;
+    }
+
+    @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
     public Creator(CreatorId id, UserId userId, Nickname nickname, String tagline,
                    String profileImageUrl, String introduction, Set<MagicGenre> genres,
                    CreatorStatus status) {
-        validateFields(userId, nickname);
+        if (id == null) throw new InvalidFieldException("크리에이터 ID는 필수 값입니다.");
+        if (status == null) throw new InvalidFieldException("상태는 필수 값입니다.");
         this.id = id;
         this.userId = userId;
         this.nickname = nickname;
@@ -38,7 +53,7 @@ public class Creator {
         this.profileImageUrl = profileImageUrl;
         this.introduction = introduction;
         this.genres = genres;
-        this.status = status != null ? status : CreatorStatus.ACTIVE;
+        this.status = status;
     }
 
     public Long getUserIdValue() {

@@ -9,9 +9,6 @@ spring:
         waiting-service:
           address: ${WAITING_SERVICE_URL}
           negotiation-type: plaintext
-        release-service:
-          address: ${RELEASE_SERVICE_URL}
-          negotiation-type: plaintext
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     listener:
@@ -32,6 +29,12 @@ spring:
         backoff:
           delay: 1s
           max-delay: 10s
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      timeout: 2000ms
   datasource:
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
@@ -50,12 +53,6 @@ security:
 resilience4j:
   circuitbreaker:
     instances:
-      releaseService:
-        slidingWindowType: COUNT_BASED
-        slidingWindowSize: 20
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10s
-        minimumNumberOfCalls: 10
       waitingService:
         slidingWindowType: COUNT_BASED
         slidingWindowSize: 20
@@ -64,10 +61,13 @@ resilience4j:
         minimumNumberOfCalls: 10
   timelimiter:
     instances:
-      releaseService:
-        timeoutDuration: 2s
       waitingService:
         timeoutDuration: 2s
 
 inbox:
   max-event-age-minutes: 60
+
+order:
+  auto-confirm:
+    days: 7
+    chunk-size: 100
