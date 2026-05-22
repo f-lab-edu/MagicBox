@@ -49,7 +49,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         return CreatorCertificationApprovedEvent.builder()
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
-                .reviewedAt(certification.getResult().reviewedAt())
+                .occurredAt(certification.getResult().reviewedAt())
                 .build();
     }
 
@@ -58,7 +58,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
                 .reviewMessage(certification.getResult().reviewMessage())
-                .reviewedAt(certification.getResult().reviewedAt())
+                .occurredAt(certification.getResult().reviewedAt())
                 .build();
     }
 
@@ -68,7 +68,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         }
         String nickname = userNicknameQueryPort.getNickname(certification.getUserId());
 
-        Creator creator = Creator.builder()
+        Creator creator = Creator.createBuilder()
                 .userId(certification.getUserId())
                 .nickname(Nickname.of(nickname))
                 .genres(certification.getRequest().genres())

@@ -9,9 +9,6 @@ public record CreatorCertificationResult(UserId reviewerId, String reviewMessage
 
     @Builder
     public CreatorCertificationResult {
-        if (reviewerId == null) {
-            throw new InvalidFieldException("심사자는 필수 값입니다.");
-        }
         if (reviewMessage == null || reviewMessage.trim().isEmpty()) {
             throw new InvalidFieldException("심사 메시지는 필수 값입니다.");
         }

@@ -5,6 +5,7 @@ import kr.magicbox.generalgoods.adapter.in.kafka.event.CreatorRevokedEvent;
 import kr.magicbox.generalgoods.application.dto.command.HandleCreatorRevokedCommand;
 import kr.magicbox.generalgoods.adapter.out.persistence.repository.GeneralGoodsInboxRepository;
 import kr.magicbox.generalgoods.application.port.in.HandleCreatorRevokedUseCase;
+import kr.magicbox.generalgoods.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -20,8 +21,7 @@ public class CreatorEventKafkaListener {
     private final HandleCreatorRevokedUseCase handleCreatorRevokedUseCase;
     private final GeneralGoodsInboxRepository generalGoodsInboxRepository;
 
-    @Idempotent
-    @RetryableTopic
+    @RetryableTopic(exclude = {BusinessException.class})
     @KafkaListener(topics = "outbox.event.creator-revoked", groupId = "general-goods-service")
     public void handleCreatorRevokedEvent(ConsumerRecord<String, CreatorRevokedEvent> consumerRecord) {
         CreatorRevokedEvent event = consumerRecord.value();
