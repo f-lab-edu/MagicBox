@@ -7,6 +7,7 @@ import kr.magicbox.creator.adapter.out.communication.grpc.exception.ReleaseServi
 import kr.magicbox.creator.application.dto.result.ReleaseId;
 import kr.magicbox.creator.application.dto.result.ReleaseLevel;
 import kr.magicbox.creator.application.dto.result.ReleaseResult;
+import kr.magicbox.creator.application.dto.result.ReleaseStatus;
 import kr.magicbox.creator.application.port.out.ReleaseQueryPort;
 import kr.magicbox.creator.grpc.release.GetReleaseCountRequest;
 import kr.magicbox.creator.grpc.release.GetReleaseCountResponse;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -65,6 +67,10 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                         .creatorNickname(release.getCreatorNickname())
                         .price(release.getPrice())
                         .limitedQuantity(release.getLimitedQuantity())
+                        .soldQuantity(release.getSoldQuantity())
+                        .status(ReleaseStatus.valueOf(release.getStatus().name()))
+                        .scheduledAt(Instant.ofEpochSecond(release.getScheduledAt().getSeconds(), release.getScheduledAt().getNanos()))
+                        .createdAt(Instant.ofEpochSecond(release.getCreatedAt().getSeconds(), release.getCreatedAt().getNanos()))
                         .build())
                 .toList();
     }
