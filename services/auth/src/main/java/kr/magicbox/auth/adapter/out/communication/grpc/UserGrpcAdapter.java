@@ -18,6 +18,8 @@ import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -34,8 +36,9 @@ public class UserGrpcAdapter implements UserCredentialPort {
                 .setProfileImage(profileImage != null ? profileImage : "")
                 .build();
 
-        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc.newBlockingStub(
-                grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()));
+        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc
+                .newBlockingStub(grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()))
+                .withDeadlineAfter(2, TimeUnit.SECONDS);
         LoadUserCredentialResponse response = stub.loadUserCredential(request);
 
         return new UserResult(UserId.of(response.getUserId()), toUserRole(response.getUserRole()));

@@ -1,5 +1,6 @@
 package kr.magicbox.generalgoods.adapter.in.kafka;
 
+import kr.magicbox.generalgoods.adapter.in.kafka.annotation.Idempotent;
 import kr.magicbox.generalgoods.adapter.in.kafka.event.CreatorRevokedEvent;
 import kr.magicbox.generalgoods.application.dto.command.HandleCreatorRevokedCommand;
 import kr.magicbox.generalgoods.adapter.out.persistence.repository.GeneralGoodsInboxRepository;

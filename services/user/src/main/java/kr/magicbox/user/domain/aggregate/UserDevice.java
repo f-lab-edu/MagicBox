@@ -13,7 +13,15 @@ public class UserDevice {
     private final DeviceId deviceId;
     private Boolean isActive;
 
-    @Builder
+    @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
+    public UserDevice(UserId userId, DeviceId deviceId) {
+        this.id = null;
+        this.userId = userId;
+        this.deviceId = deviceId;
+        this.isActive = false;
+    }
+
+    @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
     public UserDevice(Long id, UserId userId, DeviceId deviceId, Boolean isActive) {
         this.id = id;
         this.userId = userId;
