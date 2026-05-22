@@ -15,6 +15,7 @@ import kr.magicbox.generalgoods.grpc.creator.GetCreatorIdByUserIdResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.TimeUnit;
 
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +32,8 @@ public class CreatorGrpcAdapter implements CreatorIdQueryPort {
                 .setUserId(userId.value())
                 .build();
 
-        CreatorServiceGrpc.CreatorServiceBlockingStub stub = CreatorServiceGrpc.newBlockingStub(creatorManagedChannel)
+        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.CREATOR.getHostName());
+        GeneralGoodsServiceGrpc.GeneralGoodsServiceBlockingStub stub = GeneralGoodsServiceGrpc.newBlockingStub(channel)
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetCreatorIdByUserIdResponse response = stub.getCreatorIdByUserId(request);
 

@@ -5,12 +5,14 @@ import kr.magicbox.subscribe.adapter.in.kafka.event.CreatorRevokedEvent;
 import kr.magicbox.subscribe.application.dto.command.HandleCreatorRevokedCommand;
 import kr.magicbox.subscribe.adapter.out.persistence.repository.SubscribeInboxRepository;
 import kr.magicbox.subscribe.application.port.in.HandleCreatorRevokedUseCase;
+import kr.magicbox.subscribe.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -20,8 +22,7 @@ public class CreatorEventKafkaListener {
     private final HandleCreatorRevokedUseCase handleCreatorRevokedUseCase;
     private final SubscribeInboxRepository subscribeInboxRepository;
 
-    @Idempotent
-    @RetryableTopic
+    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {BusinessException.class})
     @KafkaListener(topics = "outbox.event.creator-revoked", groupId = "subscribe-service")
     public void handleCreatorRevokedEvent(ConsumerRecord<String, CreatorRevokedEvent> consumerRecord) {
         CreatorRevokedEvent event = consumerRecord.value();

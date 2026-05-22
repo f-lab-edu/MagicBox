@@ -26,6 +26,12 @@ spring:
         backoff:
           delay: 1s
           max-delay: 3s
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      timeout: 2000ms
   datasource:
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
@@ -42,9 +48,6 @@ spring:
         waiting-service:
           address: ${WAITING_SERVICE_URL}
           negotiation-type: plaintext
-        release-service:
-          address: ${RELEASE_SERVICE_URL}
-          negotiation-type: plaintext
 
 server:
   port: ${SERVER_PORT}
@@ -55,5 +58,24 @@ security:
       - 127.0.0.1
       - 0:0:0:0:0:0:0:1
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      waitingService:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        minimumNumberOfCalls: 10
+  timelimiter:
+    instances:
+      waitingService:
+        timeoutDuration: 2s
+
 inbox:
   max-event-age-minutes: 5
+
+order:
+  auto-confirm:
+    days: 7
+    chunk-size: 100
