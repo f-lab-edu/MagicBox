@@ -12,6 +12,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -21,7 +22,7 @@ public class CreatorEventKafkaListener {
     private final HandleCreatorRevokedUseCase handleCreatorRevokedUseCase;
     private final SubscribeInboxRepository subscribeInboxRepository;
 
-    @RetryableTopic(exclude = {BusinessException.class})
+    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {BusinessException.class})
     @KafkaListener(topics = "outbox.event.creator-revoked", groupId = "subscribe-service")
     public void handleCreatorRevokedEvent(ConsumerRecord<String, CreatorRevokedEvent> consumerRecord) {
         CreatorRevokedEvent event = consumerRecord.value();
