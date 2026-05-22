@@ -31,7 +31,7 @@ public class UnbanUserService implements UnbanUserUseCase {
 
         UserUnbannedEvent event = UserUnbannedEvent.builder()
                 .userId(user.getId())
-                .unbannedAt(Instant.now())
+                .occurredAt(Instant.now())
                 .build();
         userOutboxPort.save(event);
     }

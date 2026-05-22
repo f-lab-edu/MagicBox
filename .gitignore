@@ -2,6 +2,13 @@ local-infra
 dev-infra
 env
 
+# Claude Code
+.claude/
+CLAUDE.md
+
+# Docs
+docs/
+
 # Gradle
 .gradle/
 build/
@@ -20,6 +27,9 @@ out/
 
 # VS Code
 .vscode/
+
+# GitHub Actions (deploy workflow)
+.github/workflows/deploy.yml
 
 # macOS
 .DS_Store

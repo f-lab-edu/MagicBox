@@ -25,10 +25,11 @@ public class UserDeviceMapper {
     }
 
     public UserDevice toDomain(UserDeviceEntity entity) {
-        return UserDevice.builder()
+        return UserDevice.reconstructBuilder()
                 .id(entity.getId())
                 .userId(UserId.of(entity.getUser().getId()))
                 .deviceId(DeviceId.of(entity.getDevice().getId()))
+                .isActive(entity.getIsActive())
                 .build();
     }
 
