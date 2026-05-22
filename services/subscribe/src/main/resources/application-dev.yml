@@ -50,8 +50,6 @@ security:
 
 inbox:
   max-event-age-minutes: 5
-<<<<<<< HEAD
-=======
 
 resilience4j:
   circuitbreaker:
@@ -68,4 +66,3 @@ resilience4j:
     instances:
       creatorService:
         timeout-duration: 2s
->>>>>>> feat/116
