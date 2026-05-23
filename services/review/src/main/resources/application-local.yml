@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: review-local
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  config:
+    import:
+      - file:services/review/env/local.env[.properties]
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/review}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  grpc:
+    server:
+      port: ${GRPC_SERVER_PORT:9098}
+
+server:
+  port: ${SERVER_PORT:8098}

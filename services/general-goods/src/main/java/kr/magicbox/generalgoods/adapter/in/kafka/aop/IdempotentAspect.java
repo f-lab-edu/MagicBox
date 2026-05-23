@@ -65,9 +65,14 @@ public class IdempotentAspect {
                     .build());
             try {
                 pjp.proceed();
+            } catch (Error e) {
+                throw e;
+            } catch (RuntimeException e) {
+                status.setRollbackOnly();
+                throw e;
             } catch (Throwable e) {
                 status.setRollbackOnly();
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
             inbox.markProcessed();
             return null;
