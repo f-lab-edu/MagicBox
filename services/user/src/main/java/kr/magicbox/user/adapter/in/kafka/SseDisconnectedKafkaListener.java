@@ -8,9 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import kr.magicbox.user.global.exception.BusinessException;
 
 @Slf4j
 @Component
@@ -19,7 +21,7 @@ public class SseDisconnectedKafkaListener {
 
     private final ManageUserSessionUseCase manageUserSessionUseCase;
 
-    @RetryableTopic
+    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {kr.magicbox.user.global.exception.BusinessException.class})
     @KafkaListener(topics = "sse.disconnected", groupId = "user-service", containerFactory = "stringKafkaListenerContainerFactory")
     public void handleDisconnected(ConsumerRecord<String, String> record) {
         Long userId = Long.parseLong(record.key());
