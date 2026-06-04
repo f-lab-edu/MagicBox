@@ -1,0 +1,44 @@
+waiting:
+  avg-purchase-seconds: ${WAITING_AVG_PURCHASE_SECONDS:30}
+  purchase-token-ttl-seconds: ${WAITING_PURCHASE_TOKEN_TTL_SECONDS:300}
+  polling-interval-seconds: ${WAITING_POLLING_INTERVAL_SECONDS:10}
+  queue-key-prefix: ${WAITING_QUEUE_KEY_PREFIX:waiting:}
+  user-release-key-prefix: ${WAITING_USER_RELEASE_KEY_PREFIX:user_release:}
+  token-key-prefix: ${WAITING_TOKEN_KEY_PREFIX:purchase_token:}
+  admission-decrease-ratio: ${WAITING_ADMISSION_DECREASE_RATIO:0.9}
+  admission-max-batch-ratio: ${WAITING_ADMISSION_MAX_BATCH_RATIO:0.2}
+  admission-initial-batch-ratio-percent: ${WAITING_ADMISSION_INITIAL_BATCH_RATIO_PERCENT:10}
+
+spring:
+  application:
+    name: waiting-prod
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  grpc:
+    server:
+      port: ${GRPC_SERVER_PORT}
+    client:
+      channels:
+        release-service:
+          address: ${RELEASE_SERVICE_URL}
+          negotiation-type: plaintext
+          keep-alive-time: 30s
+          keep-alive-timeout: 5s
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+security:
+  trusted:
+    ips:
+      - ${TRUSTED_IP_GATEWAY}
