@@ -14,6 +14,7 @@ import kr.magicbox.search.application.port.in.SearchReleasesUseCase;
 import kr.magicbox.search.application.port.out.CreatorIndexPort;
 import kr.magicbox.search.application.port.out.GeneralGoodsIndexPort;
 import kr.magicbox.search.application.port.out.ReleaseIndexPort;
+import kr.magicbox.search.application.port.out.SearchCachePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +27,11 @@ public class SearchService implements SearchCreatorsUseCase, SearchReleasesUseCa
     private final CreatorIndexPort creatorIndexPort;
     private final ReleaseIndexPort releaseIndexPort;
     private final GeneralGoodsIndexPort generalGoodsIndexPort;
+    private final SearchCachePort searchCachePort;
 
     @Override
     public List<CreatorSearchResult> searchCreators(SearchCreatorsQuery query) {
+        searchCachePort.addSearchQuery(query.userId(), query.keyword());
         return creatorIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream()
                 .map(CreatorSearchResult::from)
                 .toList();
@@ -36,6 +39,7 @@ public class SearchService implements SearchCreatorsUseCase, SearchReleasesUseCa
 
     @Override
     public List<ReleaseSearchResult> searchReleases(SearchReleasesQuery query) {
+        searchCachePort.addSearchQuery(query.userId(), query.keyword());
         return releaseIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream()
                 .map(ReleaseSearchResult::from)
                 .toList();
@@ -43,6 +47,7 @@ public class SearchService implements SearchCreatorsUseCase, SearchReleasesUseCa
 
     @Override
     public List<GeneralGoodsSearchResult> searchGeneralGoods(SearchGeneralGoodsQuery query) {
+        searchCachePort.addSearchQuery(query.userId(), query.keyword());
         return generalGoodsIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream()
                 .map(GeneralGoodsSearchResult::from)
                 .toList();
@@ -50,10 +55,11 @@ public class SearchService implements SearchCreatorsUseCase, SearchReleasesUseCa
 
     @Override
     public SearchAllResult searchAll(SearchCreatorsQuery query) {
+        searchCachePort.addSearchQuery(query.userId(), query.keyword());
         return new SearchAllResult(
-                searchCreators(query),
-                searchReleases(SearchReleasesQuery.of(query.keyword(), query.page(), query.size())),
-                searchGeneralGoods(SearchGeneralGoodsQuery.of(query.keyword(), query.page(), query.size()))
+                creatorIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream().map(CreatorSearchResult::from).toList(),
+                releaseIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream().map(ReleaseSearchResult::from).toList(),
+                generalGoodsIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream().map(GeneralGoodsSearchResult::from).toList()
         );
     }
 }
