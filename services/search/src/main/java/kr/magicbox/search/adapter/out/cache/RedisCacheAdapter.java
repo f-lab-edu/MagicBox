@@ -1,7 +1,7 @@
 package kr.magicbox.search.adapter.out.cache;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import kr.magicbox.search.adapter.out.elasticsearch.document.CreatorDocument;
 import kr.magicbox.search.adapter.out.elasticsearch.document.GeneralGoodsDocument;
 import kr.magicbox.search.adapter.out.elasticsearch.document.ReleaseDocument;
