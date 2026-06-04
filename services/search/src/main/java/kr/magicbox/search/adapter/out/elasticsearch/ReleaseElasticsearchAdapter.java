@@ -54,26 +54,28 @@ public class ReleaseElasticsearchAdapter implements ReleaseIndexPort {
 
     @Override
     public Flux<ReleaseDocument> search(String keyword, int page, int size) {
-        Criteria criteria = new Criteria("title").matches(keyword)
-                .or(new Criteria("description").matches(keyword));
-        Query query = new CriteriaQuery(criteria)
-                .setPageable(PageRequest.of(page, size));
+        Query query = CriteriaQuery.builder(
+                new Criteria("title").matches(keyword).or(new Criteria("description").matches(keyword)))
+                .withPageable(PageRequest.of(page, size))
+                .build();
         return elasticsearchOperations.search(query, ReleaseDocument.class)
                 .map(SearchHit::getContent);
     }
 
     @Override
     public Flux<ReleaseDocument> findPopular(int size) {
-        Query query = new CriteriaQuery(new Criteria())
-                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "likeCount")));
+        Query query = CriteriaQuery.builder(new Criteria())
+                .withPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "likeCount")))
+                .build();
         return elasticsearchOperations.search(query, ReleaseDocument.class)
                 .map(SearchHit::getContent);
     }
 
     @Override
     public Flux<ReleaseDocument> findRecent(int size) {
-        Query query = new CriteriaQuery(new Criteria())
-                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
+        Query query = CriteriaQuery.builder(new Criteria())
+                .withPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")))
+                .build();
         return elasticsearchOperations.search(query, ReleaseDocument.class)
                 .map(SearchHit::getContent);
     }

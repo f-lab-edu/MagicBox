@@ -51,25 +51,27 @@ public class GeneralGoodsElasticsearchAdapter implements GeneralGoodsIndexPort {
 
     @Override
     public Flux<GeneralGoodsDocument> search(String keyword, int page, int size) {
-        Criteria criteria = new Criteria("name").matches(keyword);
-        Query query = new CriteriaQuery(criteria)
-                .setPageable(PageRequest.of(page, size));
+        Query query = CriteriaQuery.builder(new Criteria("name").matches(keyword))
+                .withPageable(PageRequest.of(page, size))
+                .build();
         return elasticsearchOperations.search(query, GeneralGoodsDocument.class)
                 .map(SearchHit::getContent);
     }
 
     @Override
     public Flux<GeneralGoodsDocument> findPopular(int size) {
-        Query query = new CriteriaQuery(new Criteria())
-                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "likeCount")));
+        Query query = CriteriaQuery.builder(new Criteria())
+                .withPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "likeCount")))
+                .build();
         return elasticsearchOperations.search(query, GeneralGoodsDocument.class)
                 .map(SearchHit::getContent);
     }
 
     @Override
     public Flux<GeneralGoodsDocument> findRecent(int size) {
-        Query query = new CriteriaQuery(new Criteria())
-                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
+        Query query = CriteriaQuery.builder(new Criteria())
+                .withPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")))
+                .build();
         return elasticsearchOperations.search(query, GeneralGoodsDocument.class)
                 .map(SearchHit::getContent);
     }

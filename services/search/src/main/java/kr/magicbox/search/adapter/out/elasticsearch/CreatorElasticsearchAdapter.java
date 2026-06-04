@@ -53,26 +53,28 @@ public class CreatorElasticsearchAdapter implements CreatorIndexPort {
 
     @Override
     public Flux<CreatorDocument> search(String keyword, int page, int size) {
-        Criteria criteria = new Criteria("nickname").matches(keyword)
-                .or(new Criteria("tagline").matches(keyword));
-        Query query = new CriteriaQuery(criteria)
-                .setPageable(PageRequest.of(page, size));
+        Query query = CriteriaQuery.builder(
+                new Criteria("nickname").matches(keyword).or(new Criteria("tagline").matches(keyword)))
+                .withPageable(PageRequest.of(page, size))
+                .build();
         return elasticsearchOperations.search(query, CreatorDocument.class)
                 .map(SearchHit::getContent);
     }
 
     @Override
     public Flux<CreatorDocument> findPopular(int size) {
-        Query query = new CriteriaQuery(new Criteria())
-                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "followerCount")));
+        Query query = CriteriaQuery.builder(new Criteria())
+                .withPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "followerCount")))
+                .build();
         return elasticsearchOperations.search(query, CreatorDocument.class)
                 .map(SearchHit::getContent);
     }
 
     @Override
     public Flux<CreatorDocument> findRecent(int size) {
-        Query query = new CriteriaQuery(new Criteria())
-                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
+        Query query = CriteriaQuery.builder(new Criteria())
+                .withPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")))
+                .build();
         return elasticsearchOperations.search(query, CreatorDocument.class)
                 .map(SearchHit::getContent);
     }
