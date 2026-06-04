@@ -1,12 +1,16 @@
 package kr.magicbox.search.adapter.out.elasticsearch;
 
-import co.elastic.clients.elasticsearch.ElasticsearchAsyncClient;
-import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch.core.search.Hit;
 import kr.magicbox.search.adapter.out.elasticsearch.document.GeneralGoodsDocument;
 import kr.magicbox.search.adapter.out.elasticsearch.repository.GeneralGoodsElasticsearchRepository;
 import kr.magicbox.search.application.port.out.GeneralGoodsIndexPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.core.ReactiveElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.query.Criteria;
+import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,10 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GeneralGoodsElasticsearchAdapter implements GeneralGoodsIndexPort {
 
-    private static final String INDEX = "general-goods-index";
-
     private final GeneralGoodsElasticsearchRepository generalGoodsElasticsearchRepository;
-    private final ElasticsearchAsyncClient elasticsearchAsyncClient;
+    private final ReactiveElasticsearchOperations elasticsearchOperations;
 
     @Override
     public Mono<Void> save(GeneralGoodsDocument document) {
@@ -49,19 +51,11 @@ public class GeneralGoodsElasticsearchAdapter implements GeneralGoodsIndexPort {
 
     @Override
     public Flux<GeneralGoodsDocument> search(String keyword, int page, int size) {
-        return Mono.fromFuture(() -> elasticsearchAsyncClient.search(s -> s
-                        .index(INDEX)
-                        .from(page * size)
-                        .size(size)
-                        .query(q -> q
-                                .multiMatch(m -> m
-                                        .query(keyword)
-                                        .fields("name")
-                                        .analyzer("nori")
-                                )
-                        ),
-                GeneralGoodsDocument.class
-        )).flatMapMany(response -> Flux.fromIterable(response.hits().hits()).mapNotNull(Hit::source));
+        Criteria criteria = new Criteria("name").matches(keyword);
+        Query query = new CriteriaQuery(criteria)
+                .setPageable(PageRequest.of(page, size));
+        return elasticsearchOperations.search(query, GeneralGoodsDocument.class)
+                .map(SearchHit::getContent);
     }
 
     @Override
@@ -75,11 +69,9 @@ public class GeneralGoodsElasticsearchAdapter implements GeneralGoodsIndexPort {
     }
 
     private Flux<GeneralGoodsDocument> findSortedByCreatedAt(int size) {
-        return Mono.fromFuture(() -> elasticsearchAsyncClient.search(s -> s
-                        .index(INDEX)
-                        .size(size)
-                        .sort(sort -> sort.field(f -> f.field("created_at").order(SortOrder.Desc))),
-                GeneralGoodsDocument.class
-        )).flatMapMany(response -> Flux.fromIterable(response.hits().hits()).mapNotNull(Hit::source));
+        Query query = new CriteriaQuery(new Criteria())
+                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
+        return elasticsearchOperations.search(query, GeneralGoodsDocument.class)
+                .map(SearchHit::getContent);
     }
 }
