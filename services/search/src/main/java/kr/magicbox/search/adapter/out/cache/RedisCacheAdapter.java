@@ -41,76 +41,130 @@ public class RedisCacheAdapter implements SearchCachePort {
 
     @Override
     public Mono<List<CreatorSearchResult>> getPopularCreators() {
-        return getList(POPULAR_CREATORS_KEY, new TypeReference<>() {});
+        return redisTemplate.opsForValue().get(POPULAR_CREATORS_KEY)
+                .flatMap(value -> Mono.fromCallable(() -> objectMapper.readValue(value, new TypeReference<List<CreatorSearchResult>>() {})))
+                .doOnError(e -> log.error("[Cache] 인기 크리에이터 조회 실패", e))
+                .onErrorResume(e -> Mono.empty());
     }
 
     @Override
     public Mono<Void> setPopularCreators(List<CreatorSearchResult> creators) {
-        return setWithTtl(POPULAR_CREATORS_KEY, creators, cacheProperties.getPopularTtlSeconds());
+        return Mono.fromCallable(() -> objectMapper.writeValueAsString(creators))
+                .flatMap(json -> redisTemplate.opsForValue().set(POPULAR_CREATORS_KEY, json, Duration.ofSeconds(cacheProperties.getPopularTtlSeconds())))
+                .then()
+                .doOnError(e -> log.error("[Cache] 인기 크리에이터 저장 실패", e))
+                .onErrorComplete();
     }
 
     @Override
     public Mono<List<ReleaseSearchResult>> getPopularReleases() {
-        return getList(POPULAR_RELEASES_KEY, new TypeReference<>() {});
+        return redisTemplate.opsForValue().get(POPULAR_RELEASES_KEY)
+                .flatMap(value -> Mono.fromCallable(() -> objectMapper.readValue(value, new TypeReference<List<ReleaseSearchResult>>() {})))
+                .doOnError(e -> log.error("[Cache] 인기 릴리즈 조회 실패", e))
+                .onErrorResume(e -> Mono.empty());
     }
 
     @Override
     public Mono<Void> setPopularReleases(List<ReleaseSearchResult> releases) {
-        return setWithTtl(POPULAR_RELEASES_KEY, releases, cacheProperties.getPopularTtlSeconds());
+        return Mono.fromCallable(() -> objectMapper.writeValueAsString(releases))
+                .flatMap(json -> redisTemplate.opsForValue().set(POPULAR_RELEASES_KEY, json, Duration.ofSeconds(cacheProperties.getPopularTtlSeconds())))
+                .then()
+                .doOnError(e -> log.error("[Cache] 인기 릴리즈 저장 실패", e))
+                .onErrorComplete();
     }
 
     @Override
     public Mono<List<GeneralGoodsSearchResult>> getPopularGeneralGoods() {
-        return getList(POPULAR_GENERAL_GOODS_KEY, new TypeReference<>() {});
+        return redisTemplate.opsForValue().get(POPULAR_GENERAL_GOODS_KEY)
+                .flatMap(value -> Mono.fromCallable(() -> objectMapper.readValue(value, new TypeReference<List<GeneralGoodsSearchResult>>() {})))
+                .doOnError(e -> log.error("[Cache] 인기 일반상품 조회 실패", e))
+                .onErrorResume(e -> Mono.empty());
     }
 
     @Override
     public Mono<Void> setPopularGeneralGoods(List<GeneralGoodsSearchResult> goods) {
-        return setWithTtl(POPULAR_GENERAL_GOODS_KEY, goods, cacheProperties.getPopularTtlSeconds());
+        return Mono.fromCallable(() -> objectMapper.writeValueAsString(goods))
+                .flatMap(json -> redisTemplate.opsForValue().set(POPULAR_GENERAL_GOODS_KEY, json, Duration.ofSeconds(cacheProperties.getPopularTtlSeconds())))
+                .then()
+                .doOnError(e -> log.error("[Cache] 인기 일반상품 저장 실패", e))
+                .onErrorComplete();
     }
 
     // ===== Write Through: 최신 목록 =====
 
     @Override
     public Mono<Void> addRecentCreator(CreatorDocument document) {
-        return addToList(RECENT_CREATORS_KEY, document, cacheProperties.getRecentListSize());
+        return Mono.fromCallable(() -> objectMapper.writeValueAsString(document))
+                .flatMap(json -> redisTemplate.opsForList().leftPush(RECENT_CREATORS_KEY, json))
+                .then(redisTemplate.opsForList().trim(RECENT_CREATORS_KEY, 0, cacheProperties.getRecentListSize() - 1))
+                .then()
+                .doOnError(e -> log.error("[Cache] 최신 크리에이터 추가 실패", e))
+                .onErrorComplete();
     }
 
     @Override
     public Flux<CreatorDocument> getRecentCreators() {
-        return getListItems(RECENT_CREATORS_KEY, new TypeReference<>() {});
+        return redisTemplate.opsForList().range(RECENT_CREATORS_KEY, 0, -1)
+                .flatMap(s -> Mono.fromCallable(() -> objectMapper.readValue(s, CreatorDocument.class)))
+                .doOnError(e -> log.error("[Cache] 최신 크리에이터 조회 실패", e))
+                .onErrorResume(e -> Flux.empty());
     }
 
     @Override
     public Mono<Void> addRecentRelease(ReleaseDocument document) {
-        return addToList(RECENT_RELEASES_KEY, document, cacheProperties.getRecentListSize());
+        return Mono.fromCallable(() -> objectMapper.writeValueAsString(document))
+                .flatMap(json -> redisTemplate.opsForList().leftPush(RECENT_RELEASES_KEY, json))
+                .then(redisTemplate.opsForList().trim(RECENT_RELEASES_KEY, 0, cacheProperties.getRecentListSize() - 1))
+                .then()
+                .doOnError(e -> log.error("[Cache] 최신 릴리즈 추가 실패", e))
+                .onErrorComplete();
     }
 
     @Override
     public Flux<ReleaseDocument> getRecentReleases() {
-        return getListItems(RECENT_RELEASES_KEY, new TypeReference<>() {});
+        return redisTemplate.opsForList().range(RECENT_RELEASES_KEY, 0, -1)
+                .flatMap(s -> Mono.fromCallable(() -> objectMapper.readValue(s, ReleaseDocument.class)))
+                .doOnError(e -> log.error("[Cache] 최신 릴리즈 조회 실패", e))
+                .onErrorResume(e -> Flux.empty());
     }
 
     @Override
     public Mono<Void> addRecentGeneralGoods(GeneralGoodsDocument document) {
-        return addToList(RECENT_GENERAL_GOODS_KEY, document, cacheProperties.getRecentListSize());
+        return Mono.fromCallable(() -> objectMapper.writeValueAsString(document))
+                .flatMap(json -> redisTemplate.opsForList().leftPush(RECENT_GENERAL_GOODS_KEY, json))
+                .then(redisTemplate.opsForList().trim(RECENT_GENERAL_GOODS_KEY, 0, cacheProperties.getRecentListSize() - 1))
+                .then()
+                .doOnError(e -> log.error("[Cache] 최신 일반상품 추가 실패", e))
+                .onErrorComplete();
     }
 
     @Override
     public Flux<GeneralGoodsDocument> getRecentGeneralGoods() {
-        return getListItems(RECENT_GENERAL_GOODS_KEY, new TypeReference<>() {});
+        return redisTemplate.opsForList().range(RECENT_GENERAL_GOODS_KEY, 0, -1)
+                .flatMap(s -> Mono.fromCallable(() -> objectMapper.readValue(s, GeneralGoodsDocument.class)))
+                .doOnError(e -> log.error("[Cache] 최신 일반상품 조회 실패", e))
+                .onErrorResume(e -> Flux.empty());
     }
 
     // ===== Write Through: 개인화 이력 =====
 
     @Override
     public Mono<Void> addViewedCreator(Long userId, CreatorDocument document) {
-        return addToList(VIEWED_CREATORS_KEY_PREFIX + userId, document, cacheProperties.getHistoryListSize());
+        String key = VIEWED_CREATORS_KEY_PREFIX + userId;
+        return Mono.fromCallable(() -> objectMapper.writeValueAsString(document))
+                .flatMap(json -> redisTemplate.opsForList().leftPush(key, json))
+                .then(redisTemplate.opsForList().trim(key, 0, cacheProperties.getHistoryListSize() - 1))
+                .then()
+                .doOnError(e -> log.error("[Cache] 조회 크리에이터 추가 실패. userId={}", userId, e))
+                .onErrorComplete();
     }
 
     @Override
     public Flux<CreatorDocument> getViewedCreators(Long userId) {
-        return getListItems(VIEWED_CREATORS_KEY_PREFIX + userId, new TypeReference<>() {});
+        return redisTemplate.opsForList().range(VIEWED_CREATORS_KEY_PREFIX + userId, 0, -1)
+                .flatMap(s -> Mono.fromCallable(() -> objectMapper.readValue(s, CreatorDocument.class)))
+                .doOnError(e -> log.error("[Cache] 조회 크리에이터 조회 실패. userId={}", userId, e))
+                .onErrorResume(e -> Flux.empty());
     }
 
     @Override
@@ -127,39 +181,6 @@ public class RedisCacheAdapter implements SearchCachePort {
     public Flux<String> getSearchQueries(Long userId) {
         return redisTemplate.opsForList().range(SEARCH_QUERIES_KEY_PREFIX + userId, 0, -1)
                 .doOnError(e -> log.error("[Cache] 검색어 조회 실패. userId={}", userId, e))
-                .onErrorResume(e -> Flux.empty());
-    }
-
-    // ===== 내부 헬퍼 =====
-
-    private <T> Mono<List<T>> getList(String key, TypeReference<List<T>> typeRef) {
-        return redisTemplate.opsForValue().get(key)
-                .flatMap(value -> Mono.fromCallable(() -> objectMapper.readValue(value, typeRef)))
-                .doOnError(e -> log.error("[Cache] 캐시 조회 실패. key={}", key, e))
-                .onErrorResume(e -> Mono.empty());
-    }
-
-    private Mono<Void> setWithTtl(String key, Object value, long ttlSeconds) {
-        return Mono.fromCallable(() -> objectMapper.writeValueAsString(value))
-                .flatMap(json -> redisTemplate.opsForValue().set(key, json, Duration.ofSeconds(ttlSeconds)))
-                .then()
-                .doOnError(e -> log.error("[Cache] 캐시 저장 실패. key={}", key, e))
-                .onErrorComplete();
-    }
-
-    private <T> Mono<Void> addToList(String key, T item, int maxSize) {
-        return Mono.fromCallable(() -> objectMapper.writeValueAsString(item))
-                .flatMap(json -> redisTemplate.opsForList().leftPush(key, json))
-                .then(redisTemplate.opsForList().trim(key, 0, maxSize - 1))
-                .then()
-                .doOnError(e -> log.error("[Cache] 리스트 추가 실패. key={}", key, e))
-                .onErrorComplete();
-    }
-
-    private <T> Flux<T> getListItems(String key, TypeReference<T> typeRef) {
-        return redisTemplate.opsForList().range(key, 0, -1)
-                .flatMap(s -> Mono.fromCallable(() -> objectMapper.readValue(s, typeRef)))
-                .doOnError(e -> log.error("[Cache] 리스트 조회 실패. key={}", key, e))
                 .onErrorResume(e -> Flux.empty());
     }
 }
