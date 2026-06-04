@@ -134,52 +134,31 @@ public class RedisCacheAdapter implements SearchCachePort {
 
     private <T> Mono<List<T>> getList(String key, TypeReference<List<T>> typeRef) {
         return redisTemplate.opsForValue().get(key)
-                .mapNotNull(value -> {
-                    try {
-                        return objectMapper.<List<T>>readValue(value, typeRef);
-                    } catch (Exception e) {
-                        log.error("[Cache] 캐시 조회 실패. key={}", key, e);
-                        return null;
-                    }
-                });
+                .flatMap(value -> Mono.fromCallable(() -> objectMapper.readValue(value, typeRef)))
+                .doOnError(e -> log.error("[Cache] 캐시 조회 실패. key={}", key, e))
+                .onErrorResume(e -> Mono.empty());
     }
 
     private Mono<Void> setWithTtl(String key, Object value, long ttlSeconds) {
-        try {
-            String json = objectMapper.writeValueAsString(value);
-            return redisTemplate.opsForValue().set(key, json, Duration.ofSeconds(ttlSeconds))
-                    .then()
-                    .doOnError(e -> log.error("[Cache] 캐시 저장 실패. key={}", key, e))
-                    .onErrorComplete();
-        } catch (Exception e) {
-            log.error("[Cache] 캐시 직렬화 실패. key={}", key, e);
-            return Mono.empty();
-        }
+        return Mono.fromCallable(() -> objectMapper.writeValueAsString(value))
+                .flatMap(json -> redisTemplate.opsForValue().set(key, json, Duration.ofSeconds(ttlSeconds)))
+                .then()
+                .doOnError(e -> log.error("[Cache] 캐시 저장 실패. key={}", key, e))
+                .onErrorComplete();
     }
 
     private <T> Mono<Void> addToList(String key, T item, int maxSize) {
-        try {
-            String json = objectMapper.writeValueAsString(item);
-            return redisTemplate.opsForList().leftPush(key, json)
-                    .then(redisTemplate.opsForList().trim(key, 0, maxSize - 1))
-                    .then()
-                    .doOnError(e -> log.error("[Cache] 리스트 추가 실패. key={}", key, e))
-                    .onErrorComplete();
-        } catch (Exception e) {
-            log.error("[Cache] 리스트 직렬화 실패. key={}", key, e);
-            return Mono.empty();
-        }
+        return Mono.fromCallable(() -> objectMapper.writeValueAsString(item))
+                .flatMap(json -> redisTemplate.opsForList().leftPush(key, json))
+                .then(redisTemplate.opsForList().trim(key, 0, maxSize - 1))
+                .then()
+                .doOnError(e -> log.error("[Cache] 리스트 추가 실패. key={}", key, e))
+                .onErrorComplete();
     }
 
     private <T> Flux<T> getListItems(String key, TypeReference<T> typeRef) {
         return redisTemplate.opsForList().range(key, 0, -1)
-                .mapNotNull(s -> {
-                    try {
-                        return objectMapper.<T>readValue(s, typeRef);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                })
+                .flatMap(s -> Mono.fromCallable(() -> objectMapper.readValue(s, typeRef)))
                 .doOnError(e -> log.error("[Cache] 리스트 조회 실패. key={}", key, e))
                 .onErrorResume(e -> Flux.empty());
     }
