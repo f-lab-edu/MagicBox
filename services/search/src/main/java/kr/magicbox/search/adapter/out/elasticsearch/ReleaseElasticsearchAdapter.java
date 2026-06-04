@@ -64,15 +64,14 @@ public class ReleaseElasticsearchAdapter implements ReleaseIndexPort {
 
     @Override
     public Flux<ReleaseDocument> findPopular(int size) {
-        return findSortedByCreatedAt(size);
+        Query query = new CriteriaQuery(new Criteria())
+                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "likeCount")));
+        return elasticsearchOperations.search(query, ReleaseDocument.class)
+                .map(SearchHit::getContent);
     }
 
     @Override
     public Flux<ReleaseDocument> findRecent(int size) {
-        return findSortedByCreatedAt(size);
-    }
-
-    private Flux<ReleaseDocument> findSortedByCreatedAt(int size) {
         Query query = new CriteriaQuery(new Criteria())
                 .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
         return elasticsearchOperations.search(query, ReleaseDocument.class)

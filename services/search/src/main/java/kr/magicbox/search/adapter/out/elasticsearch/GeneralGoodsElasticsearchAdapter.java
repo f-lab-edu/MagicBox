@@ -60,15 +60,14 @@ public class GeneralGoodsElasticsearchAdapter implements GeneralGoodsIndexPort {
 
     @Override
     public Flux<GeneralGoodsDocument> findPopular(int size) {
-        return findSortedByCreatedAt(size);
+        Query query = new CriteriaQuery(new Criteria())
+                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "likeCount")));
+        return elasticsearchOperations.search(query, GeneralGoodsDocument.class)
+                .map(SearchHit::getContent);
     }
 
     @Override
     public Flux<GeneralGoodsDocument> findRecent(int size) {
-        return findSortedByCreatedAt(size);
-    }
-
-    private Flux<GeneralGoodsDocument> findSortedByCreatedAt(int size) {
         Query query = new CriteriaQuery(new Criteria())
                 .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
         return elasticsearchOperations.search(query, GeneralGoodsDocument.class)

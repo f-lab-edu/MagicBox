@@ -44,6 +44,9 @@ public class ReleaseDocument {
     @Field(type = FieldType.Date, name = "scheduled_at")
     private Instant scheduledAt;
 
+    @Field(type = FieldType.Long, name = "like_count")
+    private Long likeCount;
+
     @Field(type = FieldType.Date, name = "created_at")
     private Instant createdAt;
 }

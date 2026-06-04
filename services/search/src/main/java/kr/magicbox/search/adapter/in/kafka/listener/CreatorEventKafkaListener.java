@@ -27,6 +27,7 @@ public class CreatorEventKafkaListener {
         CreatorCertificationApprovedEvent event = consumerRecord.value();
         CreatorDocument document = CreatorDocument.builder()
                 .creatorId(event.userId())
+                .followerCount(0L)
                 .createdAt(event.occurredAt())
                 .build();
         creatorIndexPort.save(document)

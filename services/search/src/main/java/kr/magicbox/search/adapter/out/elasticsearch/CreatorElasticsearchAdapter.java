@@ -63,15 +63,14 @@ public class CreatorElasticsearchAdapter implements CreatorIndexPort {
 
     @Override
     public Flux<CreatorDocument> findPopular(int size) {
-        return findSortedByCreatedAt(size);
+        Query query = new CriteriaQuery(new Criteria())
+                .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "followerCount")));
+        return elasticsearchOperations.search(query, CreatorDocument.class)
+                .map(SearchHit::getContent);
     }
 
     @Override
     public Flux<CreatorDocument> findRecent(int size) {
-        return findSortedByCreatedAt(size);
-    }
-
-    private Flux<CreatorDocument> findSortedByCreatedAt(int size) {
         Query query = new CriteriaQuery(new Criteria())
                 .setPageable(PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt")));
         return elasticsearchOperations.search(query, CreatorDocument.class)

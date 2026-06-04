@@ -35,6 +35,9 @@ public class GeneralGoodsDocument {
     @Field(type = FieldType.Keyword, name = "media_urls")
     private List<String> mediaUrls;
 
+    @Field(type = FieldType.Long, name = "like_count")
+    private Long likeCount;
+
     @Field(type = FieldType.Date, name = "created_at")
     private Instant createdAt;
 }

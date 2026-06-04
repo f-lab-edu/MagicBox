@@ -35,6 +35,7 @@ public class ReleaseEventKafkaListener {
                 .limitedQuantity(event.limitedQuantity())
                 .mediaUrls(event.mediaUrls())
                 .scheduledAt(event.scheduledAt())
+                .likeCount(0L)
                 .createdAt(event.occurredAt())
                 .build();
         releaseIndexPort.save(document)

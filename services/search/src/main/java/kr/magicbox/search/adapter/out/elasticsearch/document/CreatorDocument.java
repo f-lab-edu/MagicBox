@@ -32,6 +32,9 @@ public class CreatorDocument {
     @Field(type = FieldType.Keyword, name = "genres")
     private List<String> genres;
 
+    @Field(type = FieldType.Long, name = "follower_count")
+    private Long followerCount;
+
     @Field(type = FieldType.Date, name = "created_at")
     private Instant createdAt;
 }

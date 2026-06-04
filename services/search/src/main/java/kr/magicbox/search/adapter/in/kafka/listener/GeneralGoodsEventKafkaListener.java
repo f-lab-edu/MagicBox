@@ -32,6 +32,7 @@ public class GeneralGoodsEventKafkaListener {
                 .price(event.price())
                 .stock(event.stock())
                 .mediaUrls(event.mediaUrls())
+                .likeCount(0L)
                 .createdAt(event.occurredAt())
                 .build();
         generalGoodsIndexPort.save(document)
