@@ -1,41 +1,28 @@
 package kr.magicbox.search.adapter.in.security.filter;
 
-import kr.magicbox.search.adapter.in.security.properties.TrustedIpProperties;
 import kr.magicbox.search.domain.vo.UserId;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.net.InetSocketAddress;
-import java.util.Optional;
-
-@RequiredArgsConstructor
+@Component
 public class UserInfoExtractFilter implements WebFilter {
 
-    private final TrustedIpProperties trustedIpProperties;
-
+    @NonNull
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        String clientIp = Optional.ofNullable(request.getRemoteAddress())
-                .map(InetSocketAddress::getHostString)
-                .orElse("");
-
-        if (!trustedIpProperties.getIps().contains(clientIp)) {
-            return chain.filter(exchange);
-        }
 
         String userIdHeader = request.getHeaders().getFirst("X-User-Id");
-        if (!isValidUserId(userIdHeader)) {
-            return chain.filter(exchange);
-        }
+        if (userIdHeader == null || !isValidUserId(userIdHeader)) return chain.filter(exchange);
 
-        UserId userId = UserId.of(Long.valueOf(userIdHeader));
+        UserId userId = UserId.of(Long.parseLong(userIdHeader));
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userId, null);
 
@@ -46,7 +33,7 @@ public class UserInfoExtractFilter implements WebFilter {
     private boolean isValidUserId(String value) {
         try {
             return Long.parseLong(value) > 0;
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }
