@@ -118,27 +118,26 @@ public class SearchController {
         return ResponseEntity.ok(PageResponse.of(content, 0, content.size()));
     }
 
-    // ===== 최신 =====
-
     @GetMapping("/recent/creators")
-    public ResponseEntity<List<CreatorSearchResponse>> getRecentCreators() {
-        return ResponseEntity.ok(recentQueryUseCase.getRecentCreators().stream()
-                .map(CreatorSearchResponse::from).toList());
+    public ResponseEntity<PageResponse<CreatorSearchResponse>> getRecentCreators() {
+        List<CreatorSearchResponse> content = recentQueryUseCase.getRecentCreators().stream()
+                .map(CreatorSearchResponse::from).toList();
+        return ResponseEntity.ok(PageResponse.of(content, 0, content.size()));
     }
 
     @GetMapping("/recent/releases")
-    public ResponseEntity<List<ReleaseSearchResponse>> getRecentReleases() {
-        return ResponseEntity.ok(recentQueryUseCase.getRecentReleases().stream()
-                .map(ReleaseSearchResponse::from).toList());
+    public ResponseEntity<PageResponse<ReleaseSearchResponse>> getRecentReleases() {
+        List<ReleaseSearchResponse> content = recentQueryUseCase.getRecentReleases().stream()
+                .map(ReleaseSearchResponse::from).toList();
+        return ResponseEntity.ok(PageResponse.of(content, 0, content.size()));
     }
 
     @GetMapping("/recent/general-goods")
-    public ResponseEntity<List<GeneralGoodsSearchResponse>> getRecentGeneralGoods() {
-        return ResponseEntity.ok(recentQueryUseCase.getRecentGeneralGoods().stream()
-                .map(GeneralGoodsSearchResponse::from).toList());
+    public ResponseEntity<PageResponse<GeneralGoodsSearchResponse>> getRecentGeneralGoods() {
+        List<GeneralGoodsSearchResponse> content = recentQueryUseCase.getRecentGeneralGoods().stream()
+                .map(GeneralGoodsSearchResponse::from).toList();
+        return ResponseEntity.ok(PageResponse.of(content, 0, content.size()));
     }
-
-    // ===== 이력 =====
 
     @PostMapping("/history/creators/{creatorId}")
     public ResponseEntity<Void> recordViewedCreator(
