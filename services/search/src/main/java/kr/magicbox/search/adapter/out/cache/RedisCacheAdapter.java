@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.magicbox.search.adapter.out.elasticsearch.document.CreatorDocument;
 import kr.magicbox.search.adapter.out.elasticsearch.document.GeneralGoodsDocument;
 import kr.magicbox.search.adapter.out.elasticsearch.document.ReleaseDocument;
+import kr.magicbox.search.application.dto.result.CreatorSearchResult;
+import kr.magicbox.search.application.dto.result.GeneralGoodsSearchResult;
+import kr.magicbox.search.application.dto.result.ReleaseSearchResult;
 import kr.magicbox.search.application.port.out.SearchCachePort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,32 +39,32 @@ public class RedisCacheAdapter implements SearchCachePort {
     // ===== Cache Aside: 인기 목록 =====
 
     @Override
-    public Optional<List<CreatorDocument>> getPopularCreators() {
+    public Optional<List<CreatorSearchResult>> getPopularCreators() {
         return getList(POPULAR_CREATORS_KEY, new TypeReference<>() {});
     }
 
     @Override
-    public void setPopularCreators(List<CreatorDocument> creators) {
+    public void setPopularCreators(List<CreatorSearchResult> creators) {
         setWithTtl(POPULAR_CREATORS_KEY, creators, cacheProperties.getPopularTtlSeconds());
     }
 
     @Override
-    public Optional<List<ReleaseDocument>> getPopularReleases() {
+    public Optional<List<ReleaseSearchResult>> getPopularReleases() {
         return getList(POPULAR_RELEASES_KEY, new TypeReference<>() {});
     }
 
     @Override
-    public void setPopularReleases(List<ReleaseDocument> releases) {
+    public void setPopularReleases(List<ReleaseSearchResult> releases) {
         setWithTtl(POPULAR_RELEASES_KEY, releases, cacheProperties.getPopularTtlSeconds());
     }
 
     @Override
-    public Optional<List<GeneralGoodsDocument>> getPopularGeneralGoods() {
+    public Optional<List<GeneralGoodsSearchResult>> getPopularGeneralGoods() {
         return getList(POPULAR_GENERAL_GOODS_KEY, new TypeReference<>() {});
     }
 
     @Override
-    public void setPopularGeneralGoods(List<GeneralGoodsDocument> goods) {
+    public void setPopularGeneralGoods(List<GeneralGoodsSearchResult> goods) {
         setWithTtl(POPULAR_GENERAL_GOODS_KEY, goods, cacheProperties.getPopularTtlSeconds());
     }
 

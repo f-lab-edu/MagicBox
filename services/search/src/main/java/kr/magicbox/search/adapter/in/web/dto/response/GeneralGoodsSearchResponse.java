@@ -1,6 +1,6 @@
 package kr.magicbox.search.adapter.in.web.dto.response;
 
-import kr.magicbox.search.adapter.out.elasticsearch.document.GeneralGoodsDocument;
+import kr.magicbox.search.application.dto.result.GeneralGoodsSearchResult;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -16,15 +16,15 @@ public record GeneralGoodsSearchResponse(
         List<String> mediaUrls,
         Instant createdAt
 ) {
-    public static GeneralGoodsSearchResponse from(GeneralGoodsDocument doc) {
+    public static GeneralGoodsSearchResponse from(GeneralGoodsSearchResult result) {
         return GeneralGoodsSearchResponse.builder()
-                .generalGoodsId(doc.getGeneralGoodsId())
-                .creatorId(doc.getCreatorId())
-                .name(doc.getName())
-                .price(doc.getPrice())
-                .stock(doc.getStock())
-                .mediaUrls(doc.getMediaUrls())
-                .createdAt(doc.getCreatedAt())
+                .generalGoodsId(result.generalGoodsId())
+                .creatorId(result.creatorId())
+                .name(result.name())
+                .price(result.price())
+                .stock(result.stock())
+                .mediaUrls(result.mediaUrls())
+                .createdAt(result.createdAt())
                 .build();
     }
 }

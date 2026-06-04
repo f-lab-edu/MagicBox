@@ -1,6 +1,6 @@
 package kr.magicbox.search.adapter.in.web.dto.response;
 
-import kr.magicbox.search.adapter.out.elasticsearch.document.ReleaseDocument;
+import kr.magicbox.search.application.dto.result.ReleaseSearchResult;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -19,18 +19,18 @@ public record ReleaseSearchResponse(
         Instant scheduledAt,
         Instant createdAt
 ) {
-    public static ReleaseSearchResponse from(ReleaseDocument doc) {
+    public static ReleaseSearchResponse from(ReleaseSearchResult result) {
         return ReleaseSearchResponse.builder()
-                .releaseId(doc.getReleaseId())
-                .creatorId(doc.getCreatorId())
-                .title(doc.getTitle())
-                .description(doc.getDescription())
-                .level(doc.getLevel())
-                .price(doc.getPrice())
-                .limitedQuantity(doc.getLimitedQuantity())
-                .mediaUrls(doc.getMediaUrls())
-                .scheduledAt(doc.getScheduledAt())
-                .createdAt(doc.getCreatedAt())
+                .releaseId(result.releaseId())
+                .creatorId(result.creatorId())
+                .title(result.title())
+                .description(result.description())
+                .level(result.level())
+                .price(result.price())
+                .limitedQuantity(result.limitedQuantity())
+                .mediaUrls(result.mediaUrls())
+                .scheduledAt(result.scheduledAt())
+                .createdAt(result.createdAt())
                 .build();
     }
 }

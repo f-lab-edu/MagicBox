@@ -1,6 +1,6 @@
 package kr.magicbox.search.application.service;
 
-import kr.magicbox.search.adapter.out.elasticsearch.document.CreatorDocument;
+import kr.magicbox.search.application.dto.result.CreatorSearchResult;
 import kr.magicbox.search.application.port.in.HistoryUseCase;
 import kr.magicbox.search.application.port.out.CreatorIndexPort;
 import kr.magicbox.search.application.port.out.SearchCachePort;
@@ -24,8 +24,8 @@ public class HistoryService implements HistoryUseCase {
     }
 
     @Override
-    public List<CreatorDocument> getViewedCreators(Long userId) {
-        return searchCachePort.getViewedCreators(userId);
+    public List<CreatorSearchResult> getViewedCreators(Long userId) {
+        return searchCachePort.getViewedCreators(userId).stream().map(CreatorSearchResult::from).toList();
     }
 
     @Override

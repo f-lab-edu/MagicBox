@@ -1,11 +1,11 @@
 package kr.magicbox.search.application.port.in;
 
-import kr.magicbox.search.adapter.out.elasticsearch.document.CreatorDocument;
+import kr.magicbox.search.application.dto.result.CreatorSearchResult;
 
 import java.util.List;
 
 public interface HistoryUseCase {
     void recordViewedCreator(Long userId, Long creatorId);
-    List<CreatorDocument> getViewedCreators(Long userId);
+    List<CreatorSearchResult> getViewedCreators(Long userId);
     List<String> getSearchQueries(Long userId);
 }

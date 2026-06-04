@@ -1,6 +1,6 @@
 package kr.magicbox.search.adapter.in.web.dto.response;
 
-import kr.magicbox.search.adapter.out.elasticsearch.document.CreatorDocument;
+import kr.magicbox.search.application.dto.result.CreatorSearchResult;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -15,14 +15,14 @@ public record CreatorSearchResponse(
         List<String> genres,
         Instant createdAt
 ) {
-    public static CreatorSearchResponse from(CreatorDocument doc) {
+    public static CreatorSearchResponse from(CreatorSearchResult result) {
         return CreatorSearchResponse.builder()
-                .creatorId(doc.getCreatorId())
-                .nickname(doc.getNickname())
-                .tagline(doc.getTagline())
-                .profileImageUrl(doc.getProfileImageUrl())
-                .genres(doc.getGenres())
-                .createdAt(doc.getCreatedAt())
+                .creatorId(result.creatorId())
+                .nickname(result.nickname())
+                .tagline(result.tagline())
+                .profileImageUrl(result.profileImageUrl())
+                .genres(result.genres())
+                .createdAt(result.createdAt())
                 .build();
     }
 }

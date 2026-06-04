@@ -3,6 +3,9 @@ package kr.magicbox.search.application.port.out;
 import kr.magicbox.search.adapter.out.elasticsearch.document.CreatorDocument;
 import kr.magicbox.search.adapter.out.elasticsearch.document.GeneralGoodsDocument;
 import kr.magicbox.search.adapter.out.elasticsearch.document.ReleaseDocument;
+import kr.magicbox.search.application.dto.result.CreatorSearchResult;
+import kr.magicbox.search.application.dto.result.GeneralGoodsSearchResult;
+import kr.magicbox.search.application.dto.result.ReleaseSearchResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,14 +13,14 @@ import java.util.Optional;
 public interface SearchCachePort {
 
     // Cache Aside - 인기 목록
-    Optional<List<CreatorDocument>> getPopularCreators();
-    void setPopularCreators(List<CreatorDocument> creators);
+    Optional<List<CreatorSearchResult>> getPopularCreators();
+    void setPopularCreators(List<CreatorSearchResult> creators);
 
-    Optional<List<ReleaseDocument>> getPopularReleases();
-    void setPopularReleases(List<ReleaseDocument> releases);
+    Optional<List<ReleaseSearchResult>> getPopularReleases();
+    void setPopularReleases(List<ReleaseSearchResult> releases);
 
-    Optional<List<GeneralGoodsDocument>> getPopularGeneralGoods();
-    void setPopularGeneralGoods(List<GeneralGoodsDocument> goods);
+    Optional<List<GeneralGoodsSearchResult>> getPopularGeneralGoods();
+    void setPopularGeneralGoods(List<GeneralGoodsSearchResult> goods);
 
     // Write Through - 최신 목록
     void addRecentCreator(CreatorDocument document);
