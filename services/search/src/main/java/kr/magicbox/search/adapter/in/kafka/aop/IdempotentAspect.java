@@ -3,6 +3,7 @@ package kr.magicbox.search.adapter.in.kafka.aop;
 import kr.magicbox.search.adapter.in.kafka.event.InboxEvent;
 import kr.magicbox.search.adapter.in.kafka.properties.InboxProperties;
 import kr.magicbox.search.adapter.out.persistence.entity.SearchInboxEntity;
+import kr.magicbox.search.adapter.out.persistence.entity.SearchInboxStatus;
 import kr.magicbox.search.adapter.out.persistence.repository.SearchInboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 
 @Slf4j
 @Aspect
@@ -27,7 +29,7 @@ public class IdempotentAspect {
     private final InboxProperties inboxProperties;
 
     @Around("@annotation(kr.magicbox.search.adapter.in.kafka.annotation.Idempotent)")
-    public Object around(ProceedingJoinPoint pjp) throws Throwable {
+    public Object around(ProceedingJoinPoint pjp) {
         ConsumerRecord<String, ?> consumerRecord = extractRecord(pjp);
         InboxEvent event = (InboxEvent) consumerRecord.value();
         Long eventId = Long.parseLong(consumerRecord.key());
@@ -44,31 +46,33 @@ public class IdempotentAspect {
                 return null;
             }
 
-            searchInboxRepository.save(SearchInboxEntity.builder()
+            SearchInboxEntity inbox = searchInboxRepository.save(SearchInboxEntity.builder()
                     .eventId(eventId)
                     .topic(consumerRecord.topic())
                     .partition(consumerRecord.partition())
                     .offset(consumerRecord.offset())
-                    .occurredAt(occurredAt)
+                    .status(SearchInboxStatus.PENDING)
                     .build());
 
             try {
-                return pjp.proceed();
+                pjp.proceed();
             } catch (Throwable e) {
                 status.setRollbackOnly();
                 throw new RuntimeException(e);
             }
+
+            inbox.markProcessed();
+            return null;
         });
     }
 
     @SuppressWarnings("unchecked")
     private ConsumerRecord<String, ?> extractRecord(ProceedingJoinPoint pjp) {
-        for (Object arg : pjp.getArgs()) {
-            if (arg instanceof ConsumerRecord<?, ?> record) {
-                return (ConsumerRecord<String, ?>) record;
-            }
-        }
-        throw new IllegalArgumentException("ConsumerRecord not found in method arguments");
+        return Arrays.stream(pjp.getArgs())
+                .filter(ConsumerRecord.class::isInstance)
+                .map(arg -> (ConsumerRecord<String, ?>) arg)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("@Idempotent 메서드에 ConsumerRecord 파라미터가 없습니다."));
     }
 
     private boolean isTooOld(Instant occurredAt) {
