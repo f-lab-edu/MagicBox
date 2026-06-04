@@ -37,9 +37,10 @@ public class ReleaseEventKafkaListener {
                 .scheduledAt(event.scheduledAt())
                 .createdAt(event.occurredAt())
                 .build();
-        releaseIndexPort.save(document);
-        searchCachePort.addRecentRelease(document);
-        log.info("[Kafka] Release 색인 완료. id={}", event.releaseId());
+        releaseIndexPort.save(document)
+                .then(searchCachePort.addRecentRelease(document))
+                .doOnSuccess(v -> log.info("[Kafka] Release 색인 완료. id={}", event.releaseId()))
+                .subscribe();
     }
 
     @Idempotent
@@ -47,15 +48,17 @@ public class ReleaseEventKafkaListener {
     public void onUpdated(ConsumerRecord<String, ReleaseUpdatedEvent> consumerRecord) {
         ReleaseUpdatedEvent event = consumerRecord.value();
         ReleaseUpdatedEvent.ReleaseSnapshot after = event.after();
-        releaseIndexPort.update(event.releaseId(), after.title(), after.description(), after.mediaUrls());
-        log.info("[Kafka] Release 업데이트 완료. id={}", event.releaseId());
+        releaseIndexPort.update(event.releaseId(), after.title(), after.description(), after.mediaUrls())
+                .doOnSuccess(v -> log.info("[Kafka] Release 업데이트 완료. id={}", event.releaseId()))
+                .subscribe();
     }
 
     @Idempotent
     @KafkaListener(topics = "outbox.event.release-deleted", groupId = "${spring.kafka.consumer.group-id}")
     public void onDeleted(ConsumerRecord<String, ReleaseDeletedEvent> consumerRecord) {
         ReleaseDeletedEvent event = consumerRecord.value();
-        releaseIndexPort.delete(event.releaseId());
-        log.info("[Kafka] Release 삭제 완료. id={}", event.releaseId());
+        releaseIndexPort.delete(event.releaseId())
+                .doOnSuccess(v -> log.info("[Kafka] Release 삭제 완료. id={}", event.releaseId()))
+                .subscribe();
     }
 }

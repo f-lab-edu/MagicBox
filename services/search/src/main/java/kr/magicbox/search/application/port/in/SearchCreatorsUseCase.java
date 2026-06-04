@@ -2,9 +2,8 @@ package kr.magicbox.search.application.port.in;
 
 import kr.magicbox.search.application.dto.query.SearchCreatorsQuery;
 import kr.magicbox.search.application.dto.result.CreatorSearchResult;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface SearchCreatorsUseCase {
-    List<CreatorSearchResult> searchCreators(SearchCreatorsQuery query);
+    Flux<CreatorSearchResult> searchCreators(SearchCreatorsQuery query);
 }

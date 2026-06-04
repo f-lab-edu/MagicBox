@@ -34,9 +34,10 @@ public class GeneralGoodsEventKafkaListener {
                 .mediaUrls(event.mediaUrls())
                 .createdAt(event.occurredAt())
                 .build();
-        generalGoodsIndexPort.save(document);
-        searchCachePort.addRecentGeneralGoods(document);
-        log.info("[Kafka] GeneralGoods 색인 완료. id={}", event.generalGoodsId());
+        generalGoodsIndexPort.save(document)
+                .then(searchCachePort.addRecentGeneralGoods(document))
+                .doOnSuccess(v -> log.info("[Kafka] GeneralGoods 색인 완료. id={}", event.generalGoodsId()))
+                .subscribe();
     }
 
     @Idempotent
@@ -44,15 +45,17 @@ public class GeneralGoodsEventKafkaListener {
     public void onUpdated(ConsumerRecord<String, GeneralGoodsUpdatedEvent> consumerRecord) {
         GeneralGoodsUpdatedEvent event = consumerRecord.value();
         GeneralGoodsUpdatedEvent.GoodsSnapshot after = event.after();
-        generalGoodsIndexPort.update(event.generalGoodsId(), after.name(), after.price(), after.stock(), after.mediaUrls());
-        log.info("[Kafka] GeneralGoods 업데이트 완료. id={}", event.generalGoodsId());
+        generalGoodsIndexPort.update(event.generalGoodsId(), after.name(), after.price(), after.stock(), after.mediaUrls())
+                .doOnSuccess(v -> log.info("[Kafka] GeneralGoods 업데이트 완료. id={}", event.generalGoodsId()))
+                .subscribe();
     }
 
     @Idempotent
     @KafkaListener(topics = "outbox.event.general-goods-deleted", groupId = "${spring.kafka.consumer.group-id}")
     public void onDeleted(ConsumerRecord<String, GeneralGoodsDeletedEvent> consumerRecord) {
         GeneralGoodsDeletedEvent event = consumerRecord.value();
-        generalGoodsIndexPort.delete(event.generalGoodsId());
-        log.info("[Kafka] GeneralGoods 삭제 완료. id={}", event.generalGoodsId());
+        generalGoodsIndexPort.delete(event.generalGoodsId())
+                .doOnSuccess(v -> log.info("[Kafka] GeneralGoods 삭제 완료. id={}", event.generalGoodsId()))
+                .subscribe();
     }
 }

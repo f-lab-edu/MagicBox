@@ -11,8 +11,7 @@ import kr.magicbox.search.application.port.out.ReleaseIndexPort;
 import kr.magicbox.search.application.port.out.SearchCachePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 @Service
 @RequiredArgsConstructor
@@ -25,32 +24,35 @@ public class PopularQueryService implements PopularQueryUseCase {
     private final CacheProperties cacheProperties;
 
     @Override
-    public List<CreatorSearchResult> getPopularCreators() {
-        return searchCachePort.getPopularCreators().orElseGet(() -> {
-            List<CreatorSearchResult> result = creatorIndexPort.findPopular(cacheProperties.getPopularSize()).stream()
-                    .map(CreatorSearchResult::from).toList();
-            searchCachePort.setPopularCreators(result);
-            return result;
-        });
+    public Flux<CreatorSearchResult> getPopularCreators() {
+        return searchCachePort.getPopularCreators()
+                .flatMapMany(Flux::fromIterable)
+                .switchIfEmpty(creatorIndexPort.findPopular(cacheProperties.getPopularSize())
+                        .map(CreatorSearchResult::from)
+                        .collectList()
+                        .flatMap(list -> searchCachePort.setPopularCreators(list).thenReturn(list))
+                        .flatMapMany(Flux::fromIterable));
     }
 
     @Override
-    public List<ReleaseSearchResult> getPopularReleases() {
-        return searchCachePort.getPopularReleases().orElseGet(() -> {
-            List<ReleaseSearchResult> result = releaseIndexPort.findPopular(cacheProperties.getPopularSize()).stream()
-                    .map(ReleaseSearchResult::from).toList();
-            searchCachePort.setPopularReleases(result);
-            return result;
-        });
+    public Flux<ReleaseSearchResult> getPopularReleases() {
+        return searchCachePort.getPopularReleases()
+                .flatMapMany(Flux::fromIterable)
+                .switchIfEmpty(releaseIndexPort.findPopular(cacheProperties.getPopularSize())
+                        .map(ReleaseSearchResult::from)
+                        .collectList()
+                        .flatMap(list -> searchCachePort.setPopularReleases(list).thenReturn(list))
+                        .flatMapMany(Flux::fromIterable));
     }
 
     @Override
-    public List<GeneralGoodsSearchResult> getPopularGeneralGoods() {
-        return searchCachePort.getPopularGeneralGoods().orElseGet(() -> {
-            List<GeneralGoodsSearchResult> result = generalGoodsIndexPort.findPopular(cacheProperties.getPopularSize()).stream()
-                    .map(GeneralGoodsSearchResult::from).toList();
-            searchCachePort.setPopularGeneralGoods(result);
-            return result;
-        });
+    public Flux<GeneralGoodsSearchResult> getPopularGeneralGoods() {
+        return searchCachePort.getPopularGeneralGoods()
+                .flatMapMany(Flux::fromIterable)
+                .switchIfEmpty(generalGoodsIndexPort.findPopular(cacheProperties.getPopularSize())
+                        .map(GeneralGoodsSearchResult::from)
+                        .collectList()
+                        .flatMap(list -> searchCachePort.setPopularGeneralGoods(list).thenReturn(list))
+                        .flatMapMany(Flux::fromIterable));
     }
 }

@@ -11,12 +11,13 @@ import kr.magicbox.search.application.dto.result.ReleaseSearchResult;
 import kr.magicbox.search.application.port.out.SearchCachePort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -32,158 +33,154 @@ public class RedisCacheAdapter implements SearchCachePort {
     private static final String VIEWED_CREATORS_KEY_PREFIX = "search:history:creators:";
     private static final String SEARCH_QUERIES_KEY_PREFIX = "search:history:queries:";
 
-    private final StringRedisTemplate redisTemplate;
+    private final ReactiveStringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
     private final CacheProperties cacheProperties;
 
     // ===== Cache Aside: 인기 목록 =====
 
     @Override
-    public Optional<List<CreatorSearchResult>> getPopularCreators() {
+    public Mono<List<CreatorSearchResult>> getPopularCreators() {
         return getList(POPULAR_CREATORS_KEY, new TypeReference<>() {});
     }
 
     @Override
-    public void setPopularCreators(List<CreatorSearchResult> creators) {
-        setWithTtl(POPULAR_CREATORS_KEY, creators, cacheProperties.getPopularTtlSeconds());
+    public Mono<Void> setPopularCreators(List<CreatorSearchResult> creators) {
+        return setWithTtl(POPULAR_CREATORS_KEY, creators, cacheProperties.getPopularTtlSeconds());
     }
 
     @Override
-    public Optional<List<ReleaseSearchResult>> getPopularReleases() {
+    public Mono<List<ReleaseSearchResult>> getPopularReleases() {
         return getList(POPULAR_RELEASES_KEY, new TypeReference<>() {});
     }
 
     @Override
-    public void setPopularReleases(List<ReleaseSearchResult> releases) {
-        setWithTtl(POPULAR_RELEASES_KEY, releases, cacheProperties.getPopularTtlSeconds());
+    public Mono<Void> setPopularReleases(List<ReleaseSearchResult> releases) {
+        return setWithTtl(POPULAR_RELEASES_KEY, releases, cacheProperties.getPopularTtlSeconds());
     }
 
     @Override
-    public Optional<List<GeneralGoodsSearchResult>> getPopularGeneralGoods() {
+    public Mono<List<GeneralGoodsSearchResult>> getPopularGeneralGoods() {
         return getList(POPULAR_GENERAL_GOODS_KEY, new TypeReference<>() {});
     }
 
     @Override
-    public void setPopularGeneralGoods(List<GeneralGoodsSearchResult> goods) {
-        setWithTtl(POPULAR_GENERAL_GOODS_KEY, goods, cacheProperties.getPopularTtlSeconds());
+    public Mono<Void> setPopularGeneralGoods(List<GeneralGoodsSearchResult> goods) {
+        return setWithTtl(POPULAR_GENERAL_GOODS_KEY, goods, cacheProperties.getPopularTtlSeconds());
     }
 
     // ===== Write Through: 최신 목록 =====
 
     @Override
-    public void addRecentCreator(CreatorDocument document) {
-        addToList(RECENT_CREATORS_KEY, document, cacheProperties.getRecentListSize());
+    public Mono<Void> addRecentCreator(CreatorDocument document) {
+        return addToList(RECENT_CREATORS_KEY, document, cacheProperties.getRecentListSize());
     }
 
     @Override
-    public List<CreatorDocument> getRecentCreators() {
+    public Flux<CreatorDocument> getRecentCreators() {
         return getListItems(RECENT_CREATORS_KEY, new TypeReference<>() {});
     }
 
     @Override
-    public void addRecentRelease(ReleaseDocument document) {
-        addToList(RECENT_RELEASES_KEY, document, cacheProperties.getRecentListSize());
+    public Mono<Void> addRecentRelease(ReleaseDocument document) {
+        return addToList(RECENT_RELEASES_KEY, document, cacheProperties.getRecentListSize());
     }
 
     @Override
-    public List<ReleaseDocument> getRecentReleases() {
+    public Flux<ReleaseDocument> getRecentReleases() {
         return getListItems(RECENT_RELEASES_KEY, new TypeReference<>() {});
     }
 
     @Override
-    public void addRecentGeneralGoods(GeneralGoodsDocument document) {
-        addToList(RECENT_GENERAL_GOODS_KEY, document, cacheProperties.getRecentListSize());
+    public Mono<Void> addRecentGeneralGoods(GeneralGoodsDocument document) {
+        return addToList(RECENT_GENERAL_GOODS_KEY, document, cacheProperties.getRecentListSize());
     }
 
     @Override
-    public List<GeneralGoodsDocument> getRecentGeneralGoods() {
+    public Flux<GeneralGoodsDocument> getRecentGeneralGoods() {
         return getListItems(RECENT_GENERAL_GOODS_KEY, new TypeReference<>() {});
     }
 
     // ===== Write Through: 개인화 이력 =====
 
     @Override
-    public void addViewedCreator(Long userId, CreatorDocument document) {
-        String key = VIEWED_CREATORS_KEY_PREFIX + userId;
-        addToList(key, document, cacheProperties.getHistoryListSize());
+    public Mono<Void> addViewedCreator(Long userId, CreatorDocument document) {
+        return addToList(VIEWED_CREATORS_KEY_PREFIX + userId, document, cacheProperties.getHistoryListSize());
     }
 
     @Override
-    public List<CreatorDocument> getViewedCreators(Long userId) {
+    public Flux<CreatorDocument> getViewedCreators(Long userId) {
         return getListItems(VIEWED_CREATORS_KEY_PREFIX + userId, new TypeReference<>() {});
     }
 
     @Override
-    public void addSearchQuery(Long userId, String query) {
+    public Mono<Void> addSearchQuery(Long userId, String query) {
         String key = SEARCH_QUERIES_KEY_PREFIX + userId;
-        try {
-            redisTemplate.opsForList().leftPush(key, query);
-            redisTemplate.opsForList().trim(key, 0, cacheProperties.getQueryHistorySize() - 1);
-        } catch (Exception e) {
-            log.error("[Cache] 검색어 저장 실패. userId={}, query={}", userId, query, e);
-        }
+        return redisTemplate.opsForList().leftPush(key, query)
+                .then(redisTemplate.opsForList().trim(key, 0, cacheProperties.getQueryHistorySize() - 1))
+                .then()
+                .doOnError(e -> log.error("[Cache] 검색어 저장 실패. userId={}, query={}", userId, query, e))
+                .onErrorComplete();
     }
 
     @Override
-    public List<String> getSearchQueries(Long userId) {
-        try {
-            List<String> result = redisTemplate.opsForList()
-                    .range(SEARCH_QUERIES_KEY_PREFIX + userId, 0, -1);
-            return result != null ? result : List.of();
-        } catch (Exception e) {
-            log.error("[Cache] 검색어 조회 실패. userId={}", userId, e);
-            return List.of();
-        }
+    public Flux<String> getSearchQueries(Long userId) {
+        return redisTemplate.opsForList().range(SEARCH_QUERIES_KEY_PREFIX + userId, 0, -1)
+                .doOnError(e -> log.error("[Cache] 검색어 조회 실패. userId={}", userId, e))
+                .onErrorResume(e -> Flux.empty());
     }
 
     // ===== 내부 헬퍼 =====
 
-    private <T> Optional<List<T>> getList(String key, TypeReference<List<T>> typeRef) {
+    private <T> Mono<List<T>> getList(String key, TypeReference<List<T>> typeRef) {
+        return redisTemplate.opsForValue().get(key)
+                .mapNotNull(value -> {
+                    try {
+                        return objectMapper.<List<T>>readValue(value, typeRef);
+                    } catch (Exception e) {
+                        log.error("[Cache] 캐시 조회 실패. key={}", key, e);
+                        return null;
+                    }
+                });
+    }
+
+    private Mono<Void> setWithTtl(String key, Object value, long ttlSeconds) {
         try {
-            String value = redisTemplate.opsForValue().get(key);
-            if (value == null) return Optional.empty();
-            return Optional.of(objectMapper.readValue(value, typeRef));
+            String json = objectMapper.writeValueAsString(value);
+            return redisTemplate.opsForValue().set(key, json, Duration.ofSeconds(ttlSeconds))
+                    .then()
+                    .doOnError(e -> log.error("[Cache] 캐시 저장 실패. key={}", key, e))
+                    .onErrorComplete();
         } catch (Exception e) {
-            log.error("[Cache] 캐시 조회 실패. key={}", key, e);
-            return Optional.empty();
+            log.error("[Cache] 캐시 직렬화 실패. key={}", key, e);
+            return Mono.empty();
         }
     }
 
-    private void setWithTtl(String key, Object value, long ttlSeconds) {
+    private <T> Mono<Void> addToList(String key, T item, int maxSize) {
         try {
-            redisTemplate.opsForValue().set(key, objectMapper.writeValueAsString(value),
-                    Duration.ofSeconds(ttlSeconds));
+            String json = objectMapper.writeValueAsString(item);
+            return redisTemplate.opsForList().leftPush(key, json)
+                    .then(redisTemplate.opsForList().trim(key, 0, maxSize - 1))
+                    .then()
+                    .doOnError(e -> log.error("[Cache] 리스트 추가 실패. key={}", key, e))
+                    .onErrorComplete();
         } catch (Exception e) {
-            log.error("[Cache] 캐시 저장 실패. key={}", key, e);
+            log.error("[Cache] 리스트 직렬화 실패. key={}", key, e);
+            return Mono.empty();
         }
     }
 
-    private <T> void addToList(String key, T item, int maxSize) {
-        try {
-            redisTemplate.opsForList().leftPush(key, objectMapper.writeValueAsString(item));
-            redisTemplate.opsForList().trim(key, 0, maxSize - 1);
-        } catch (Exception e) {
-            log.error("[Cache] 리스트 추가 실패. key={}", key, e);
-        }
-    }
-
-    private <T> List<T> getListItems(String key, TypeReference<T> typeRef) {
-        try {
-            List<String> raw = redisTemplate.opsForList().range(key, 0, -1);
-            if (raw == null || raw.isEmpty()) return List.of();
-            return raw.stream()
-                    .map(s -> {
-                        try {
-                            return objectMapper.<T>readValue(s, typeRef);
-                        } catch (Exception e) {
-                            return null;
-                        }
-                    })
-                    .filter(item -> item != null)
-                    .toList();
-        } catch (Exception e) {
-            log.error("[Cache] 리스트 조회 실패. key={}", key, e);
-            return List.of();
-        }
+    private <T> Flux<T> getListItems(String key, TypeReference<T> typeRef) {
+        return redisTemplate.opsForList().range(key, 0, -1)
+                .mapNotNull(s -> {
+                    try {
+                        return objectMapper.<T>readValue(s, typeRef);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .doOnError(e -> log.error("[Cache] 리스트 조회 실패. key={}", key, e))
+                .onErrorResume(e -> Flux.empty());
     }
 }

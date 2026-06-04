@@ -7,8 +7,7 @@ import kr.magicbox.search.application.port.in.RecentQueryUseCase;
 import kr.magicbox.search.application.port.out.SearchCachePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 @Service
 @RequiredArgsConstructor
@@ -17,17 +16,17 @@ public class RecentQueryService implements RecentQueryUseCase {
     private final SearchCachePort searchCachePort;
 
     @Override
-    public List<CreatorSearchResult> getRecentCreators() {
-        return searchCachePort.getRecentCreators().stream().map(CreatorSearchResult::from).toList();
+    public Flux<CreatorSearchResult> getRecentCreators() {
+        return searchCachePort.getRecentCreators().map(CreatorSearchResult::from);
     }
 
     @Override
-    public List<ReleaseSearchResult> getRecentReleases() {
-        return searchCachePort.getRecentReleases().stream().map(ReleaseSearchResult::from).toList();
+    public Flux<ReleaseSearchResult> getRecentReleases() {
+        return searchCachePort.getRecentReleases().map(ReleaseSearchResult::from);
     }
 
     @Override
-    public List<GeneralGoodsSearchResult> getRecentGeneralGoods() {
-        return searchCachePort.getRecentGeneralGoods().stream().map(GeneralGoodsSearchResult::from).toList();
+    public Flux<GeneralGoodsSearchResult> getRecentGeneralGoods() {
+        return searchCachePort.getRecentGeneralGoods().map(GeneralGoodsSearchResult::from);
     }
 }

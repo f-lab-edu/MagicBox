@@ -6,8 +6,8 @@ import kr.magicbox.search.application.port.out.CreatorIndexPort;
 import kr.magicbox.search.application.port.out.SearchCachePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -17,19 +17,18 @@ public class HistoryService implements HistoryUseCase {
     private final SearchCachePort searchCachePort;
 
     @Override
-    public void recordViewedCreator(Long userId, Long creatorId) {
-        creatorIndexPort.findByCreatorId(creatorId).ifPresent(doc ->
-                searchCachePort.addViewedCreator(userId, doc)
-        );
+    public Mono<Void> recordViewedCreator(Long userId, Long creatorId) {
+        return creatorIndexPort.findByCreatorId(creatorId)
+                .flatMap(doc -> searchCachePort.addViewedCreator(userId, doc));
     }
 
     @Override
-    public List<CreatorSearchResult> getViewedCreators(Long userId) {
-        return searchCachePort.getViewedCreators(userId).stream().map(CreatorSearchResult::from).toList();
+    public Flux<CreatorSearchResult> getViewedCreators(Long userId) {
+        return searchCachePort.getViewedCreators(userId).map(CreatorSearchResult::from);
     }
 
     @Override
-    public List<String> getSearchQueries(Long userId) {
+    public Flux<String> getSearchQueries(Long userId) {
         return searchCachePort.getSearchQueries(userId);
     }
 }

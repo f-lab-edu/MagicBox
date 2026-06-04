@@ -3,8 +3,8 @@ package kr.magicbox.search.application.port.in;
 import kr.magicbox.search.application.dto.query.SearchReleasesQuery;
 import kr.magicbox.search.application.dto.result.ReleaseSearchResult;
 
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface SearchReleasesUseCase {
-    List<ReleaseSearchResult> searchReleases(SearchReleasesQuery query);
+    Flux<ReleaseSearchResult> searchReleases(SearchReleasesQuery query);
 }

@@ -29,9 +29,10 @@ public class CreatorEventKafkaListener {
                 .creatorId(event.userId())
                 .createdAt(event.occurredAt())
                 .build();
-        creatorIndexPort.save(document);
-        searchCachePort.addRecentCreator(document);
-        log.info("[Kafka] Creator 색인 완료. userId={}", event.userId());
+        creatorIndexPort.save(document)
+                .then(searchCachePort.addRecentCreator(document))
+                .doOnSuccess(v -> log.info("[Kafka] Creator 색인 완료. userId={}", event.userId()))
+                .subscribe();
     }
 
     @Idempotent
@@ -39,15 +40,17 @@ public class CreatorEventKafkaListener {
     public void onProfileUpdated(ConsumerRecord<String, CreatorProfileUpdatedEvent> consumerRecord) {
         CreatorProfileUpdatedEvent event = consumerRecord.value();
         CreatorProfileUpdatedEvent.ProfileSnapshot after = event.after();
-        creatorIndexPort.update(event.creatorId(), after.nickname(), after.tagline(), after.profileImageUrl());
-        log.info("[Kafka] Creator 프로필 업데이트 완료. id={}", event.creatorId());
+        creatorIndexPort.update(event.creatorId(), after.nickname(), after.tagline(), after.profileImageUrl())
+                .doOnSuccess(v -> log.info("[Kafka] Creator 프로필 업데이트 완료. id={}", event.creatorId()))
+                .subscribe();
     }
 
     @Idempotent
     @KafkaListener(topics = "outbox.event.creator-revoked", groupId = "${spring.kafka.consumer.group-id}")
     public void onRevoked(ConsumerRecord<String, CreatorRevokedEvent> consumerRecord) {
         CreatorRevokedEvent event = consumerRecord.value();
-        creatorIndexPort.delete(event.creatorId());
-        log.info("[Kafka] Creator 삭제 완료. id={}", event.creatorId());
+        creatorIndexPort.delete(event.creatorId())
+                .doOnSuccess(v -> log.info("[Kafka] Creator 삭제 완료. id={}", event.creatorId()))
+                .subscribe();
     }
 }

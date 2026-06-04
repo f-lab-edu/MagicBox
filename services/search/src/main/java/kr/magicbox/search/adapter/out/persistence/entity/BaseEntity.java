@@ -1,31 +1,24 @@
 package kr.magicbox.search.adapter.out.persistence.entity;
 
-import com.github.lian2945.sonyflake.annotation.SonyflakeId;
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.relational.core.mapping.Column;
 
 import java.time.Instant;
 
 @Getter
-@MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
-public class BaseEntity {
+public abstract class BaseEntity {
 
     @Id
-    @SonyflakeId
     private Long id;
 
     @CreatedDate
-    @Column(name = "created_at", updatable = false, nullable = false)
+    @Column("created_at")
     private Instant createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
+    @Column("updated_at")
     private Instant updatedAt;
 }

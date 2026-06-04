@@ -17,8 +17,8 @@ import kr.magicbox.search.application.port.out.ReleaseIndexPort;
 import kr.magicbox.search.application.port.out.SearchCachePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -30,36 +30,33 @@ public class SearchService implements SearchCreatorsUseCase, SearchReleasesUseCa
     private final SearchCachePort searchCachePort;
 
     @Override
-    public List<CreatorSearchResult> searchCreators(SearchCreatorsQuery query) {
-        searchCachePort.addSearchQuery(query.userId(), query.keyword());
-        return creatorIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream()
-                .map(CreatorSearchResult::from)
-                .toList();
+    public Flux<CreatorSearchResult> searchCreators(SearchCreatorsQuery query) {
+        return searchCachePort.addSearchQuery(query.userId(), query.keyword())
+                .thenMany(creatorIndexPort.search(query.keyword(), query.page(), query.size() + 1)
+                        .map(CreatorSearchResult::from));
     }
 
     @Override
-    public List<ReleaseSearchResult> searchReleases(SearchReleasesQuery query) {
-        searchCachePort.addSearchQuery(query.userId(), query.keyword());
-        return releaseIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream()
-                .map(ReleaseSearchResult::from)
-                .toList();
+    public Flux<ReleaseSearchResult> searchReleases(SearchReleasesQuery query) {
+        return searchCachePort.addSearchQuery(query.userId(), query.keyword())
+                .thenMany(releaseIndexPort.search(query.keyword(), query.page(), query.size() + 1)
+                        .map(ReleaseSearchResult::from));
     }
 
     @Override
-    public List<GeneralGoodsSearchResult> searchGeneralGoods(SearchGeneralGoodsQuery query) {
-        searchCachePort.addSearchQuery(query.userId(), query.keyword());
-        return generalGoodsIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream()
-                .map(GeneralGoodsSearchResult::from)
-                .toList();
+    public Flux<GeneralGoodsSearchResult> searchGeneralGoods(SearchGeneralGoodsQuery query) {
+        return searchCachePort.addSearchQuery(query.userId(), query.keyword())
+                .thenMany(generalGoodsIndexPort.search(query.keyword(), query.page(), query.size() + 1)
+                        .map(GeneralGoodsSearchResult::from));
     }
 
     @Override
-    public SearchAllResult searchAll(SearchCreatorsQuery query) {
-        searchCachePort.addSearchQuery(query.userId(), query.keyword());
-        return new SearchAllResult(
-                creatorIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream().map(CreatorSearchResult::from).toList(),
-                releaseIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream().map(ReleaseSearchResult::from).toList(),
-                generalGoodsIndexPort.search(query.keyword(), query.page(), query.size() + 1).stream().map(GeneralGoodsSearchResult::from).toList()
-        );
+    public Mono<SearchAllResult> searchAll(SearchCreatorsQuery query) {
+        return searchCachePort.addSearchQuery(query.userId(), query.keyword())
+                .then(Mono.zip(
+                        creatorIndexPort.search(query.keyword(), query.page(), query.size() + 1).map(CreatorSearchResult::from).collectList(),
+                        releaseIndexPort.search(query.keyword(), query.page(), query.size() + 1).map(ReleaseSearchResult::from).collectList(),
+                        generalGoodsIndexPort.search(query.keyword(), query.page(), query.size() + 1).map(GeneralGoodsSearchResult::from).collectList()
+                ).map(tuple -> new SearchAllResult(tuple.getT1(), tuple.getT2(), tuple.getT3())));
     }
 }

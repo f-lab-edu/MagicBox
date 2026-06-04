@@ -3,11 +3,10 @@ package kr.magicbox.search.application.port.in;
 import kr.magicbox.search.application.dto.result.CreatorSearchResult;
 import kr.magicbox.search.application.dto.result.GeneralGoodsSearchResult;
 import kr.magicbox.search.application.dto.result.ReleaseSearchResult;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface PopularQueryUseCase {
-    List<CreatorSearchResult> getPopularCreators();
-    List<ReleaseSearchResult> getPopularReleases();
-    List<GeneralGoodsSearchResult> getPopularGeneralGoods();
+    Flux<CreatorSearchResult> getPopularCreators();
+    Flux<ReleaseSearchResult> getPopularReleases();
+    Flux<GeneralGoodsSearchResult> getPopularGeneralGoods();
 }

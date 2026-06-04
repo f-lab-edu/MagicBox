@@ -12,7 +12,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.reactive.TransactionalOperator;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 public class IdempotentAspect {
 
     private final SearchInboxRepository searchInboxRepository;
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionalOperator transactionalOperator;
     private final InboxProperties inboxProperties;
 
     @Around("@annotation(kr.magicbox.search.adapter.in.kafka.annotation.Idempotent)")
@@ -40,30 +40,32 @@ public class IdempotentAspect {
             return null;
         }
 
-        return transactionTemplate.execute(status -> {
-            if (searchInboxRepository.existsByEventId(eventId)) {
-                log.warn("[Inbox] 중복 메시지 폐기. eventId={}", eventId);
-                return null;
-            }
+        searchInboxRepository.existsByEventId(eventId)
+                .flatMap(exists -> {
+                    if (exists) {
+                        log.warn("[Inbox] 중복 메시지 폐기. eventId={}", eventId);
+                        return reactor.core.publisher.Mono.empty();
+                    }
+                    return searchInboxRepository.save(SearchInboxEntity.builder()
+                                    .eventId(eventId)
+                                    .topic(consumerRecord.topic())
+                                    .partition(consumerRecord.partition())
+                                    .offset(consumerRecord.offset())
+                                    .status(SearchInboxStatus.PENDING)
+                                    .build())
+                            .flatMap(inbox -> {
+                                try {
+                                    pjp.proceed();
+                                } catch (Throwable e) {
+                                    return reactor.core.publisher.Mono.error(e);
+                                }
+                                return searchInboxRepository.save(inbox.markProcessed()).then();
+                            });
+                })
+                .as(transactionalOperator::transactional)
+                .subscribe();
 
-            SearchInboxEntity inbox = searchInboxRepository.save(SearchInboxEntity.builder()
-                    .eventId(eventId)
-                    .topic(consumerRecord.topic())
-                    .partition(consumerRecord.partition())
-                    .offset(consumerRecord.offset())
-                    .status(SearchInboxStatus.PENDING)
-                    .build());
-
-            try {
-                pjp.proceed();
-            } catch (Throwable e) {
-                status.setRollbackOnly();
-                throw new RuntimeException(e);
-            }
-
-            inbox.markProcessed();
-            return null;
-        });
+        return null;
     }
 
     @SuppressWarnings("unchecked")
