@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface SubscribeInboxRepository extends JpaRepository<SubscribeInboxEntity, Long> {
 
-    boolean existsByEventId(Long eventId);
+    boolean existsByKey(String key);
 
     Optional<SubscribeInboxEntity> findByTopicAndPartitionAndOffset(String topic, Integer partition, Long offset);
 }
