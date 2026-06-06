@@ -20,6 +20,9 @@ public interface GeneralGoodsJpaRepository extends JpaRepository<GeneralGoodsEnt
     @Query("SELECT g FROM GeneralGoodsEntity g WHERE (g.name LIKE %:keyword% OR g.description LIKE %:keyword%) AND g.isDeleted = false")
     List<GeneralGoodsEntity> findByNameOrDescriptionContaining(@Param("keyword") String keyword);
 
+    @Query("SELECT g FROM GeneralGoodsEntity g WHERE g.isDeleted = false AND (:cursorId IS NULL OR g.id < :cursorId) ORDER BY g.id DESC LIMIT :size")
+    List<GeneralGoodsEntity> findAllByCursor(@Param("cursorId") Long cursorId, @Param("size") int size);
+
     @Modifying
     @Query("UPDATE GeneralGoodsEntity g SET g.isDeleted = true WHERE g.creatorId = :creatorId AND g.isDeleted = false")
     void softDeleteByCreatorId(@Param("creatorId") Long creatorId);
