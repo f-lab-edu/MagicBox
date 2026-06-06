@@ -1,0 +1,11 @@
+.gradle
+build
+!**/src/main/**/build/
+!**/src/test/**/build/
+*.class
+*.log
+*.jar
+*.war
+*.ear
+!gradle/wrapper/gradle-wrapper.jar
+env

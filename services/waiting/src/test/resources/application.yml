@@ -1,0 +1,37 @@
+waiting:
+  avg-purchase-seconds: 30
+  purchase-token-ttl-seconds: 300
+  polling-interval-seconds: 10
+  queue-key-prefix: "waiting:"
+  user-release-key-prefix: "user_release:"
+  token-key-prefix: "purchase_token:"
+  admission-decrease-ratio: 0.9
+  admission-max-batch-ratio: 0.2
+  admission-initial-batch-ratio-percent: 10
+
+spring:
+  application:
+    name: waiting-test
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  grpc:
+    server:
+      port: 9090
+    client:
+      channels:
+        release-service:
+          address: "static://localhost:9091"
+          negotiation-type: plaintext
