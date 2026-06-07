@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: media-prod
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    listener:
+      ack-mode: record
+      missing-topics-fatal: true
+    consumer:
+      group-id: media-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+        spring.json.trusted.packages: "kr.magicbox.media.adapter.in.kafka.event"
+        spring.json.type.mapping: >
+          release-created:kr.magicbox.media.adapter.in.kafka.event.ReleaseCreatedEvent,
+          release-updated:kr.magicbox.media.adapter.in.kafka.event.ReleaseUpdatedEvent,
+          release-deleted:kr.magicbox.media.adapter.in.kafka.event.ReleaseDeletedEvent,
+          general-goods-created:kr.magicbox.media.adapter.in.kafka.event.GeneralGoodsCreatedEvent,
+          general-goods-updated:kr.magicbox.media.adapter.in.kafka.event.GeneralGoodsUpdatedEvent,
+          general-goods-deleted:kr.magicbox.media.adapter.in.kafka.event.GeneralGoodsDeletedEvent,
+          creator-profile-updated:kr.magicbox.media.adapter.in.kafka.event.CreatorProfileUpdatedEvent,
+          user-profile-updated:kr.magicbox.media.adapter.in.kafka.event.UserProfileUpdatedEvent
+    retry:
+      topic:
+        attempts: 5
+        backoff:
+          delay: 1s
+          max-delay: 10s
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+server:
+  port: ${SERVER_PORT}
+
+security:
+  trusted:
+    ips:
+      - ${TRUSTED_IP_GATEWAY}
+
+minio:
+  endpoint: ${MINIO_ENDPOINT}
+  public-endpoint: ${MINIO_PUBLIC_ENDPOINT}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket: ${MINIO_BUCKET}
+  presigned-url-ttl-seconds: 600
+
+redisson:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+  password: ${REDIS_PASSWORD}
+
+inbox:
+  max-event-age-minutes: 60
+
+cleanup:
+  inactive-media-age-hours: 24
+
+scheduler:
+  cleanup-inactive-media-lock-key: lock:cleanupInactiveMedia

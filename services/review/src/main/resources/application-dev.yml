@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: review-dev
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  grpc:
+    server:
+      port: ${GRPC_SERVER_PORT}
+

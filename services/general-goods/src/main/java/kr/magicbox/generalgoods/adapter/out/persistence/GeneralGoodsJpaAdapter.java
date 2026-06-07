@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
 @Component
 @RequiredArgsConstructor
 public class GeneralGoodsJpaAdapter implements GeneralGoodsRepositoryPort {
@@ -23,8 +24,9 @@ public class GeneralGoodsJpaAdapter implements GeneralGoodsRepositoryPort {
     private final GeneralGoodsMapper generalGoodsMapper;
 
     @Override
-    public void save(GeneralGoods generalGoods) {
-        generalGoodsJpaRepository.save(generalGoodsMapper.toEntity(generalGoods));
+    public Long save(GeneralGoods generalGoods) {
+        GeneralGoodsEntity saved = generalGoodsJpaRepository.save(generalGoodsMapper.toEntity(generalGoods));
+        return saved.getId();
     }
 
     @Override
@@ -64,5 +66,12 @@ public class GeneralGoodsJpaAdapter implements GeneralGoodsRepositoryPort {
         return generalGoodsJpaRepository.findByIdAndIsDeletedFalse(id.value())
                 .map(generalGoodsMapper::toDomain)
                 .orElseThrow(GeneralGoodsNotFoundException::new);
+    }
+
+    @Override
+    public List<GeneralGoods> findAllByCursor(Long cursorId, int size) {
+        return generalGoodsJpaRepository.findAllByCursor(cursorId, size).stream()
+                .map(generalGoodsMapper::toDomain)
+                .toList();
     }
 }

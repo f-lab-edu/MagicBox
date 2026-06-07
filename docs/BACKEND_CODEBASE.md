@@ -57,7 +57,6 @@ domain/
   service/                  ← 도메인 서비스 (필요 시)
 global/
   exception/                ← BaseException, BusinessException, SystemError
-  configuration/            ← Properties 등록
 ```
 
 ### 2.2 CQRS 분리
@@ -381,6 +380,65 @@ OAuth2 소셜 로그인, JWT 발급/갱신, 세션 관리를 담당한다.
 
 ---
 
+## 4.4 Git 워크플로우
+
+### 브랜치 전략
+
+모든 변경은 반드시 **Jira 이슈 → 브랜치 → 커밋 → PR** 순서를 따른다. `main` 직접 push는 절대 금지.
+
+```
+main
+ └── feat/<jira-issue-number>   예: feat/177
+ └── fix/<jira-issue-number>    예: fix/143
+ └── refactor/<jira-issue-number>
+```
+
+- 브랜치명은 `<type>/<jira-issue-number>` 형식
+- 각 서비스는 독립 레포(`MagicBoxLian0408/<service>`)에서 관리
+- monorepo(`f-lab-edu/MagicBox`)는 전체 코드베이스 참조용이며, PR은 반드시 **서비스 레포**에 생성
+
+### 커밋 컨벤션
+
+```
+<jira-issue-number> :: <변경 내용 요약>
+```
+
+예시:
+```
+feat/177 :: 상품 생성/수정 이벤트 필드 확장 및 Outbox 발행 추가
+fix/143 :: ForwardedHeaderFilter 제거로 userId null NPE 수정
+refactor/167 :: InboxEvent event_id 제거 및 IdempotentAspect Kafka key 기반으로 변경
+```
+
+- 커밋은 작은 논리 단위로 분리 (계층별 / 파일 성격별 / 서비스별)
+- push 전 반드시 로컬 빌드 성공 확인: `./gradlew compileJava`
+
+### PR 템플릿
+
+PR 설명에는 반드시 3개 섹션이 포함되어야 한다 (CI 검사 항목):
+
+```markdown
+## 관련 이슈
+KAN-<number>
+
+## 변경 사항 요약
+- 변경 내용 bullet
+
+## 테스트 체크리스트
+- [ ] 항목 1
+- [ ] 항목 2
+```
+
+### PR 제목 컨벤션
+
+```
+<type>/<issue-number> :: <요약>
+```
+
+- type: `feat`, `fix`, `refactor`, `test`, `docs`
+
+---
+
 ## 5. 공통 패턴 및 설계 원칙
 
 ### 5.1 예외 계층
@@ -396,14 +454,31 @@ BaseException (abstract, RuntimeException)
         └── *ServiceUnavailableException (503, gRPC fallback)
 ```
 
-- `BusinessException` 생성 시 4xx가 아닌 HttpStatus를 넣으면 `SystemError`를 던지는 방어 로직
+- `BusinessException`은 `super(message, status)` 단순 위임만 한다. 4xx 검증 방어 로직(`validateStatus`)은 사용하지 않는다 — 호출자가 올바른 HttpStatus를 넘길 책임이 있으며, Kafka `@RetryableTopic(exclude = {BusinessException.class})`와의 충돌을 방지한다.
 - `GlobalExceptionHandler`에서 `ErrorResponse`로 통일된 에러 응답
+- `BusinessException extends RuntimeException` 직접 상속 방식은 사용하지 않는다.
 
 ### 5.2 보안 체인
 
 모든 서비스에 동일한 보안 필터 체인이 적용된다:
 - `UserInfoExtractFilter`: API Gateway에서 헤더로 전달된 userId, userRole을 추출하여 `SecurityContext`에 `UserId`로 저장
-- `TrustedIpProperties`: gRPC 서버 포트에 대한 IP 화이트리스트
+- `TrustedIpProperties`는 사용하지 않는다.
+
+### 5.2.1 ConfigurationProperties 등록 방식
+
+`PropertiesConfiguration` 같은 별도 스캔 클래스를 만들지 않는다. 각 Properties는 사용되는 Configuration 클래스에서 `@EnableConfigurationProperties`로 직접 등록한다.
+
+```java
+// ✅ 올바른 방식
+@Configuration
+@EnableConfigurationProperties({JwtProperties.class, CookieProperties.class})
+public class SecurityConfiguration { ... }
+
+// ❌ 잘못된 방식 — PropertiesConfiguration 별도 클래스 금지
+@Configuration
+@ConfigurationPropertiesScan(basePackages = "kr.magicbox.auth")
+public class PropertiesConfiguration { }
+```
 
 ### 5.3 Value Object 패턴
 
@@ -412,7 +487,24 @@ BaseException (abstract, RuntimeException)
 - VO 생성 시 유효성 검증 (null, 음수 방지)
 - Primitive Obsession 방지, 타입 안전성 확보
 
-### 5.4 Repository Port 네이밍 컨벤션
+### 5.4 Port 네이밍 컨벤션
+
+#### Out Port 인터페이스 네이밍
+
+- **Repository Port**: `xxxRepositoryPort` (DB 저장소 접근)
+- **Outbox Port**: `xxxOutboxPort` (Outbox 이벤트 발행)
+- 그 외 외부 시스템 접근: `xxxPort`
+
+```java
+// 올바른 예시
+CreatorRepositoryPort       // DB 저장소
+CreatorOutboxPort           // Outbox 발행
+UserNicknameQueryPort       // gRPC 등 외부 조회
+```
+
+`CreatorOutboxRepositoryPort` 처럼 Outbox에 Repository를 붙이는 방식은 사용하지 않는다.
+
+#### Repository Port 메서드 네이밍
 
 모든 서비스의 `*RepositoryPort`에서 조회 메서드는 `find*` 접두사를 사용한다.
 
@@ -426,6 +518,22 @@ BaseException (abstract, RuntimeException)
 - `find*WithLock` 네이밍 금지: 비관적 락이 필요한 쿼리만 별도 메서드로 분리 (현재 미사용)
 - `get*` 접두사는 사용하지 않는다.
 - 락 필요 시 JPA `@Version` 기반 낙관적 락 사용 (엔터티 차원)
+
+### 5.5 @Transactional 위치
+
+`@Override` 를 먼저 선언하고 `@Transactional` 을 그 아래에 선언한다.
+
+```java
+// 올바른 방식
+@Override
+@Transactional
+public void updateCreatorProfile(UpdateCreatorProfileCommand command) { ... }
+
+// 잘못된 방식
+@Transactional
+@Override
+public void updateCreatorProfile(UpdateCreatorProfileCommand command) { ... }
+```
 
 ### 5.6 Mapper 패턴
 
@@ -469,9 +577,43 @@ return Creator.reconstructBuilder()
 
 ID 생성에 `com.github.lian2945:sonyflake`를 사용한다. Twitter Snowflake의 변형으로, 분산 환경에서 유일한 Long ID를 생성한다.
 
-### 5.8 Kafka 멱등성
+### 5.8 Kafka 컨벤션
 
-Kafka 리스너에서 이벤트 처리 시 멱등성을 보장하는 패턴을 적용하여 중복 이벤트로 인한 사이드 이펙트를 방지한다.
+#### Kafka Consumer 파라미터 타입
+
+모든 `@KafkaListener` 메서드는 `ConsumerRecord<String, DomainType>` 을 파라미터로 받는다. `ConsumerRecord<String, String>` + 수동 역직렬화 방식은 사용하지 않는다.
+
+```java
+// 올바른 방식
+@KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "creator-service")
+public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> record) {
+    handleUserWithdrawnUseCase.handleUserWithdrawn(record.value().userId());
+}
+```
+
+#### InboxEvent 인터페이스
+
+Kafka 이벤트 DTO가 구현하는 `InboxEvent` 인터페이스는 `occurredAt()` 필드만 포함한다. `eventId()` 필드는 사용하지 않는다.
+
+```java
+public interface InboxEvent {
+    Instant occurredAt();
+}
+```
+
+#### 멱등성 처리
+
+멱등성은 `ConsumerRecord.key()` (= Outbox 엔티티의 PK) 기반으로 처리한다. `InboxEvent.eventId()` 기반 처리는 사용하지 않는다.
+
+#### Outbox 엔티티 필드
+
+모든 서비스의 Outbox 엔티티는 `eventType` + `payload` 두 필드만 포함한다. `key`, `aggregateKey` 등 별도 key 필드는 사용하지 않는다. Kafka message key는 Outbox 엔티티의 PK(Sonyflake)가 자동으로 사용된다.
+
+```java
+// 모든 서비스 공통 Outbox 엔티티 구조
+private String eventType;
+private String payload;
+```
 
 ### 5.9 환경별 설정 전략
 

@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: delivery-prod
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  cloud:
+    openfeign:
+      client:
+        config:
+          sweetTracker:
+            connect-timeout: 3000
+            read-timeout: 5000
+
+security:
+  trusted:
+    ips:
+      - ${TRUSTED_IP_GATEWAY}
+
+sweet-tracker:
+  api-key: ${SWEET_TRACKER_API_KEY}
+  base-url: ${SWEET_TRACKER_BASE_URL}
+  delivery-complete-level: 6
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      sweetTrackerService:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
