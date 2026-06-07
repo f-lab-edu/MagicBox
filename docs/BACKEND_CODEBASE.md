@@ -57,7 +57,6 @@ domain/
   service/                  ← 도메인 서비스 (필요 시)
 global/
   exception/                ← BaseException, BusinessException, SystemError
-  configuration/            ← Properties 등록
 ```
 
 ### 2.2 CQRS 분리
@@ -455,7 +454,7 @@ BaseException (abstract, RuntimeException)
         └── *ServiceUnavailableException (503, gRPC fallback)
 ```
 
-- `BusinessException` 생성 시 4xx가 아닌 HttpStatus를 넣으면 `SystemError`를 던지는 방어 로직 (모든 서비스 공통 적용)
+- `BusinessException`은 `super(message, status)` 단순 위임만 한다. 4xx 검증 방어 로직(`validateStatus`)은 사용하지 않는다 — 호출자가 올바른 HttpStatus를 넘길 책임이 있으며, Kafka `@RetryableTopic(exclude = {BusinessException.class})`와의 충돌을 방지한다.
 - `GlobalExceptionHandler`에서 `ErrorResponse`로 통일된 에러 응답
 - `BusinessException extends RuntimeException` 직접 상속 방식은 사용하지 않는다.
 
@@ -464,6 +463,22 @@ BaseException (abstract, RuntimeException)
 모든 서비스에 동일한 보안 필터 체인이 적용된다:
 - `UserInfoExtractFilter`: API Gateway에서 헤더로 전달된 userId, userRole을 추출하여 `SecurityContext`에 `UserId`로 저장
 - `TrustedIpProperties`는 사용하지 않는다.
+
+### 5.2.1 ConfigurationProperties 등록 방식
+
+`PropertiesConfiguration` 같은 별도 스캔 클래스를 만들지 않는다. 각 Properties는 사용되는 Configuration 클래스에서 `@EnableConfigurationProperties`로 직접 등록한다.
+
+```java
+// ✅ 올바른 방식
+@Configuration
+@EnableConfigurationProperties({JwtProperties.class, CookieProperties.class})
+public class SecurityConfiguration { ... }
+
+// ❌ 잘못된 방식 — PropertiesConfiguration 별도 클래스 금지
+@Configuration
+@ConfigurationPropertiesScan(basePackages = "kr.magicbox.auth")
+public class PropertiesConfiguration { }
+```
 
 ### 5.3 Value Object 패턴
 

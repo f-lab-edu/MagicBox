@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.exception;
+package kr.magicbox.search.global.exception;
 
 import org.springframework.http.HttpStatus;
 

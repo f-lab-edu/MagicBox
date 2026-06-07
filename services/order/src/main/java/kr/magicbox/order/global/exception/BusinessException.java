@@ -1,4 +1,4 @@
-package kr.magicbox.user.global.exception;
+package kr.magicbox.order.global.exception;
 
 import org.springframework.http.HttpStatus;
 
