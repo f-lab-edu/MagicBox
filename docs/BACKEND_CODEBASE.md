@@ -688,5 +688,36 @@ private String payload;
 | Debezium | 3.1 |
 | Resilience4j | Spring Cloud 번들 |
 | JWT (jjwt) | 0.13.0 |
+
+---
+
+## 8. Istio VirtualService & 컨트롤러 @RequestMapping 규칙
+
+Kubernetes 환경에서 Istio VirtualService가 서비스별 prefix(`/release`, `/payment`, `/media` 등)를 `/`로 rewrite하여 서비스에 전달한다.
+
+**규칙**: 클래스 레벨 `@RequestMapping`에 서비스 prefix를 포함하면 안 된다.
+
+```java
+// ❌ 잘못된 예 — Istio가 /release를 strip하므로 서비스엔 /{id}로 도착 → 404
+@RestController
+@RequestMapping("/release")
+public class ReleaseCommandController { ... }
+
+// ✅ 올바른 예 — prefix 없이 메서드 레벨 경로만 사용
+@RestController
+public class ReleaseCommandController { ... }
+```
+
+**Admin 경로**: `/admin/{service}` prefix도 동일하게 `/admin`까지만 사용한다.
+
+```java
+// ❌
+@RequestMapping("/admin/release")
+
+// ✅
+@RequestMapping("/admin")
+```
+
+적용 서비스: `release`, `payment`, `media` (그 외 서비스 추가 시 동일 규칙 적용)
 | Lombok | Spring Boot 관리 |
 | SonarCloud | GitHub Actions 통합 |
