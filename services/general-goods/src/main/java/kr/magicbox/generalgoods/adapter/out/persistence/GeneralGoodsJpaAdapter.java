@@ -74,4 +74,9 @@ public class GeneralGoodsJpaAdapter implements GeneralGoodsRepositoryPort {
                 .map(generalGoodsMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public boolean decreaseStock(Long productId, long quantity) {
+        return generalGoodsJpaRepository.decreaseStock(productId, quantity) > 0;
+    }
 }
