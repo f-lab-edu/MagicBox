@@ -20,6 +20,7 @@ public record OrderPrepareEvent(
     public record ItemPayload(
             @JsonProperty("product_id") Long productId,
             @JsonProperty("quantity") int quantity,
-            @JsonProperty("unit_price") long unitPrice
+            @JsonProperty("unit_price") long unitPrice,
+            @JsonProperty("product_type") String productType
     ) {}
 }
