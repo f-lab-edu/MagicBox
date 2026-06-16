@@ -3,7 +3,7 @@ package kr.magicbox.ssegateway.adapter.in.kafka;
 import tools.jackson.databind.ObjectMapper;
 import kr.magicbox.ssegateway.adapter.in.kafka.event.PurchaseTokenIssuedKafkaEvent;
 import kr.magicbox.ssegateway.adapter.in.web.dto.response.SseNotificationResponse;
-import kr.magicbox.ssegateway.adapter.out.redis.RedisPubSubAdapter;
+import kr.magicbox.ssegateway.adapter.out.redis.RedisStreamAdapter;
 import kr.magicbox.ssegateway.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PurchaseTokenKafkaListener {
 
-    private final RedisPubSubAdapter redisPubSubAdapter;
+    private final RedisStreamAdapter redisStreamAdapter;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "sse.purchase-token-issued", groupId = "sse-gateway-service")
@@ -35,6 +35,6 @@ public class PurchaseTokenKafkaListener {
                 .purchaseToken(event.purchaseToken())
                 .build();
 
-        redisPubSubAdapter.publishNotification(UserId.of(event.userId()), payload).subscribe();
+        redisStreamAdapter.appendNotification(UserId.of(event.userId()), payload).subscribe();
     }
 }

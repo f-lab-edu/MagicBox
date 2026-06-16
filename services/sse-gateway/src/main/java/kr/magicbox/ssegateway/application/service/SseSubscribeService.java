@@ -3,7 +3,7 @@ package kr.magicbox.ssegateway.application.service;
 import kr.magicbox.ssegateway.adapter.in.web.dto.response.SseNotificationResponse;
 import kr.magicbox.ssegateway.adapter.out.cache.SseSinkRegistry;
 import kr.magicbox.ssegateway.adapter.out.kafka.SseEventKafkaAdapter;
-import kr.magicbox.ssegateway.adapter.out.redis.RedisPubSubAdapter;
+import kr.magicbox.ssegateway.adapter.out.redis.RedisStreamAdapter;
 import kr.magicbox.ssegateway.application.port.in.SubscribeSseUseCase;
 import kr.magicbox.ssegateway.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +24,12 @@ public class SseSubscribeService implements SubscribeSseUseCase {
 
     private final SseSinkRegistry sinkRegistry;
     private final SseEventKafkaAdapter sseEventKafkaAdapter;
-    private final RedisPubSubAdapter redisPubSubAdapter;
+    private final RedisStreamAdapter redisStreamAdapter;
 
     @Override
     public Flux<ServerSentEvent<SseNotificationResponse>> subscribe(UserId userId) {
         Sinks.One<SseNotificationResponse> sink = sinkRegistry.register(userId);
-        redisPubSubAdapter.subscribe(userId);
+        redisStreamAdapter.subscribe(userId);
         sseEventKafkaAdapter.publishConnected(userId);
 
         Flux<ServerSentEvent<SseNotificationResponse>> notificationStream = sink.asMono()
@@ -39,7 +39,7 @@ public class SseSubscribeService implements SubscribeSseUseCase {
                         .build())
                 .flux()
                 .doFinally(signal -> {
-                    redisPubSubAdapter.unsubscribe(userId);
+                    redisStreamAdapter.unsubscribe(userId);
                     sinkRegistry.remove(userId);
                     sseEventKafkaAdapter.publishDisconnected(userId);
                 });
