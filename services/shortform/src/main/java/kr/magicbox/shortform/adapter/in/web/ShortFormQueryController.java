@@ -13,6 +13,7 @@ import kr.magicbox.shortform.application.port.in.GetShortFormUseCase;
 import kr.magicbox.shortform.application.port.in.GetShortFormsByCreatorUseCase;
 import kr.magicbox.shortform.domain.vo.CreatorId;
 import kr.magicbox.shortform.domain.vo.ShortFormId;
+import kr.magicbox.shortform.domain.vo.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -34,13 +35,17 @@ public class ShortFormQueryController {
     private final GetShortFormsByCreatorUseCase getShortFormsByCreatorUseCase;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShortFormResponse> getShortForm(@PathVariable Long id) {
-        ShortFormResult result = getShortFormUseCase.getShortForm(GetShortFormQuery.of(ShortFormId.of(id)));
+    public ResponseEntity<ShortFormResponse> getShortForm(
+            @AuthenticationPrincipal UserId userId,
+            @PathVariable Long id
+    ) {
+        ShortFormResult result = getShortFormUseCase.getShortForm(GetShortFormQuery.of(ShortFormId.of(id), userId));
         return ResponseEntity.ok(ShortFormResponse.from(result));
     }
 
     @GetMapping
     public ResponseEntity<CursorResponse<ShortFormResponse>> getShortForms(
+            @AuthenticationPrincipal UserId userId,
             @RequestParam(required = false) Long creatorId,
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size
@@ -48,12 +53,12 @@ public class ShortFormQueryController {
         List<ShortFormResponse> contents;
         if (creatorId != null) {
             contents = getShortFormsByCreatorUseCase.getShortFormsByCreator(
-                            GetShortFormsByCreatorQuery.of(CreatorId.of(creatorId), cursor, size))
+                            GetShortFormsByCreatorQuery.of(CreatorId.of(creatorId), cursor, size, userId))
                     .stream()
                     .map(ShortFormResponse::from)
                     .toList();
         } else {
-            contents = getAllShortFormsUseCase.getAllShortForms(GetAllShortFormsQuery.of(cursor, size))
+            contents = getAllShortFormsUseCase.getAllShortForms(GetAllShortFormsQuery.of(cursor, size, userId))
                     .stream()
                     .map(ShortFormResponse::from)
                     .toList();

@@ -11,6 +11,7 @@ import java.time.Instant;
 public record ShortFormResponse(
         Long id,
         Long creatorId,
+        String creatorNickname,
         String title,
         String description,
         String videoUuid,
@@ -20,12 +21,14 @@ public record ShortFormResponse(
         Long likeCount,
         Long commentCount,
         Long viewCount,
+        boolean isLiked,
         Instant createdAt
 ) {
     public static ShortFormResponse from(ShortFormResult result) {
         return ShortFormResponse.builder()
                 .id(result.id().value())
                 .creatorId(result.creatorId().value())
+                .creatorNickname(result.creatorNickname())
                 .title(result.title())
                 .description(result.description())
                 .videoUuid(result.videoUuid())
@@ -35,6 +38,7 @@ public record ShortFormResponse(
                 .likeCount(result.likeCount())
                 .commentCount(result.commentCount())
                 .viewCount(result.viewCount())
+                .isLiked(result.isLiked())
                 .createdAt(result.createdAt())
                 .build();
     }
