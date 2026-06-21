@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 @Component
 @RequiredArgsConstructor
@@ -36,20 +35,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 (OAuth2UserInfo) authentication.getPrincipal(), "OAuth2 인증 정보가 존재하지 않습니다.");
 
         // 1. gRPC로 user 서비스 호출
-        UserResult userResult;
-        try {
-            userResult = userCredentialPort.loadCredential(
-                    userInfo.oauth2Id(),
-                    userInfo.providerType().getProvider(),
-                    userInfo.email(),
-                    userInfo.profileImage()
-            ).get();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e.getCause());
-        }
+        UserResult userResult = userCredentialPort.loadCredential(
+                userInfo.oauth2Id(),
+                userInfo.providerType().getProvider(),
+                userInfo.email(),
+                userInfo.profileImage()
+        ).join();
 
         // 2. 일회용 Code 생성 및 Redis 저장
         String codeValue = UUID.randomUUID().toString();
