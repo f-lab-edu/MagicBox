@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.ExecutionException;
+
 @Service
 @RequiredArgsConstructor
 public class SubscribeService implements SubscribeUseCase {
@@ -19,8 +21,8 @@ public class SubscribeService implements SubscribeUseCase {
 
     @Transactional
     @Override
-    public void subscribe(SubscribeCommand command) {
-        if (creatorIdentityQueryPort.isCreatorOwnedByUser(command.creatorId(), command.subscriberId())) {
+    public void subscribe(SubscribeCommand command) throws ExecutionException, InterruptedException {
+        if (creatorIdentityQueryPort.isCreatorOwnedByUser(command.creatorId(), command.subscriberId()).get()) {
             throw new SelfSubscriptionNotAllowedException();
         }
 

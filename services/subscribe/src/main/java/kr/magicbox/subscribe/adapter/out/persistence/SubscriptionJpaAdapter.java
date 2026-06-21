@@ -23,7 +23,7 @@ public class SubscriptionJpaAdapter implements SubscriptionRepositoryPort {
     public void save(Subscription subscription) {
         try {
             subscriptionJpaRepository.save(subscriptionMapper.toEntity(subscription));
-        } 
+        }
         catch (DataIntegrityViolationException e) {
             throw new AlreadySubscribedException();
         }
@@ -58,6 +58,19 @@ public class SubscriptionJpaAdapter implements SubscriptionRepositoryPort {
                 .stream()
                 .map(subscriptionMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<Subscription> findBySubscriberIdWithCursor(SubscriberId subscriberId, Long cursorId, int size) {
+        return subscriptionJpaRepository.findBySubscriberIdWithCursor(subscriberId.value(), cursorId, size)
+                .stream()
+                .map(subscriptionMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Long> findCreatorIdsBySubscriberId(SubscriberId subscriberId) {
+        return subscriptionJpaRepository.findCreatorIdsBySubscriberId(subscriberId.value());
     }
 
     @Override
