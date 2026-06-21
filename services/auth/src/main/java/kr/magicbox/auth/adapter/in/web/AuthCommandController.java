@@ -18,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class AuthCommandController {
     private final CookieManager cookieManager;
 
     @PostMapping("/login")
-    public ResponseEntity<AccessTokenResponse> login(@RequestBody @Valid LoginRequest request) {
+    public ResponseEntity<AccessTokenResponse> login(@RequestBody @Valid LoginRequest request) throws ExecutionException, InterruptedException {
         TokenResult result = loginUseCase.login(request.toCommand());
         ResponseCookie cookie = cookieManager.createRefreshTokenCookie(result.refreshToken().refreshTokenValue());
 
