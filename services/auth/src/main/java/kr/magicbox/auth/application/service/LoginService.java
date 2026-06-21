@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -61,15 +60,7 @@ public class LoginService implements LoginUseCase {
 
     private void saveLoginEvent(UserId userId) {
         Instant now = Instant.now();
-        boolean isDuplicate;
-        try {
-            isDuplicate = userStatusPort.isActive(userId.value()).get();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e.getCause());
-        }
+        boolean isDuplicate = userStatusPort.isActive(userId.value()).join();
 
         AuthDomainEvent event = isDuplicate
                 ? DuplicateLoginEvent.builder().userId(userId).occurredAt(now).build()
