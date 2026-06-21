@@ -1,6 +1,9 @@
 package kr.magicbox.auth.adapter.out.communication.grpc;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Futures;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import kr.magicbox.auth.adapter.out.communication.grpc.exception.UnsupportedUserRoleException;
 import kr.magicbox.auth.adapter.out.communication.grpc.exception.UserServiceUnavailableException;
 import kr.magicbox.auth.application.dto.result.UserResult;
@@ -17,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
@@ -27,7 +30,8 @@ public class UserGrpcAdapter implements UserCredentialPort {
 
     @Override
     @CircuitBreaker(name = "userService", fallbackMethod = "loadCredentialFallback")
-    public UserResult loadCredential(String oauth2Id, GrpcOAuth2Provider provider, String email, String profileImage) {
+    @TimeLimiter(name = "userService", fallbackMethod = "loadCredentialFallback")
+    public CompletableFuture<UserResult> loadCredential(String oauth2Id, GrpcOAuth2Provider provider, String email, String profileImage) {
         LoadUserCredentialRequest request = LoadUserCredentialRequest.newBuilder()
                 .setOauth2Id(oauth2Id)
                 .setProvider(provider)
@@ -35,12 +39,13 @@ public class UserGrpcAdapter implements UserCredentialPort {
                 .setProfileImage(profileImage != null ? profileImage : "")
                 .build();
 
-        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc
-                .newBlockingStub(grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()))
-                .withDeadlineAfter(2, TimeUnit.SECONDS);
-        LoadUserCredentialResponse response = stub.loadUserCredential(request);
+        UserServiceGrpc.UserServiceFutureStub stub = UserServiceGrpc.newFutureStub(
+                grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()));
+        ListenableFuture<LoadUserCredentialResponse> future = stub.loadUserCredential(request);
+        LoadUserCredentialResponse response = Futures.getUnchecked(future);
 
-        return new UserResult(UserId.of(response.getUserId()), toUserRole(response.getUserRole()));
+        return CompletableFuture.completedFuture(
+                new UserResult(UserId.of(response.getUserId()), toUserRole(response.getUserRole())));
     }
 
     private UserRole toUserRole(GrpcUserRole grpcUserRole) {
@@ -53,7 +58,7 @@ public class UserGrpcAdapter implements UserCredentialPort {
     }
 
     @SuppressWarnings("unused")
-    private UserResult loadCredentialFallback(String oauth2Id, GrpcOAuth2Provider provider, String email, String profileImage, Throwable throwable) {
+    private CompletableFuture<UserResult> loadCredentialFallback(String oauth2Id, GrpcOAuth2Provider provider, String email, String profileImage, Throwable throwable) {
         log.warn("User 서비스 연결 실패: {}", throwable.getMessage());
         throw new UserServiceUnavailableException(throwable);
     }
