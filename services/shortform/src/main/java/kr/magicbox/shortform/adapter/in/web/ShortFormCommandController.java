@@ -34,7 +34,7 @@ public class ShortFormCommandController {
     public ResponseEntity<Void> register(
             @AuthenticationPrincipal UserId userId,
             @Valid @RequestBody RegisterShortFormRequest request
-    ) {
+    ) throws Exception {
         registerShortFormUseCase.registerShortForm(request.toCommand(userId));
         return ResponseEntity.noContent().build();
     }

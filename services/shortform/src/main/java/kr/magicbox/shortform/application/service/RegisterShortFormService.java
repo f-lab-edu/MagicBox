@@ -25,8 +25,8 @@ public class RegisterShortFormService implements RegisterShortFormUseCase {
 
     @Transactional
     @Override
-    public void registerShortForm(RegisterShortFormCommand command) {
-        CreatorId creatorId = creatorIdQueryPort.getCreatorId(command.userId());
+    public void registerShortForm(RegisterShortFormCommand command) throws Exception {
+        CreatorId creatorId = creatorIdQueryPort.getCreatorId(command.userId()).get();
 
         ShortForm shortForm = ShortForm.createBuilder()
                 .creatorId(creatorId)
