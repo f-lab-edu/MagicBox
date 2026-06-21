@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 
 @Component
@@ -89,5 +90,9 @@ public class JwtTokenManager implements TokenManager {
 
         String role = claims.get(JwtConstants.CLAIM_ROLE, String.class);
         return UserRole.of(role);
+    }
+
+    public RSAPublicKey getPublicKey() {
+        throw new UnsupportedOperationException("이 서비스는 RSA 공개키를 사용하지 않습니다.");
     }
 }

@@ -1,6 +1,9 @@
 package kr.magicbox.auth.adapter.out.communication.grpc;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import kr.magicbox.auth.adapter.out.communication.grpc.exception.UserServiceUnavailableException;
 import kr.magicbox.auth.application.port.out.UserStatusPort;
 import kr.magicbox.auth.grpc.user.CheckUserActiveRequest;
@@ -11,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
@@ -22,21 +25,22 @@ public class UserStatusGrpcAdapter implements UserStatusPort {
 
     @Override
     @CircuitBreaker(name = "userService", fallbackMethod = "checkUserActiveFallback")
-    public boolean isActive(Long userId) {
+    @TimeLimiter(name = "userService", fallbackMethod = "checkUserActiveFallback")
+    public CompletableFuture<Boolean> isActive(Long userId) {
         CheckUserActiveRequest request = CheckUserActiveRequest.newBuilder()
                 .setUserId(userId)
                 .build();
 
-        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc
-                .newBlockingStub(grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()))
-                .withDeadlineAfter(2, TimeUnit.SECONDS);
-        CheckUserActiveResponse response = stub.checkUserActive(request);
+        UserServiceGrpc.UserServiceFutureStub stub = UserServiceGrpc.newFutureStub(
+                grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()));
+        ListenableFuture<CheckUserActiveResponse> future = stub.checkUserActive(request);
+        CheckUserActiveResponse response = Futures.getUnchecked(future);
 
-        return response.getActive();
+        return CompletableFuture.completedFuture(response.getActive());
     }
 
     @SuppressWarnings("unused")
-    private boolean checkUserActiveFallback(Long userId, Throwable throwable) {
+    private CompletableFuture<Boolean> checkUserActiveFallback(Long userId, Throwable throwable) {
         log.warn("User 서비스 연결 실패: {}", throwable.getMessage());
         throw new UserServiceUnavailableException(throwable);
     }

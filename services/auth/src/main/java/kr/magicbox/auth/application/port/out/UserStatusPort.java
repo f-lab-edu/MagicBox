@@ -1,5 +1,7 @@
 package kr.magicbox.auth.application.port.out;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface UserStatusPort {
-    boolean isActive(Long userId);
+    CompletableFuture<Boolean> isActive(Long userId);
 }
