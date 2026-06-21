@@ -1,11 +1,16 @@
 spring:
   application:
-    name: waiting-local
+    name: waiting-prod
   jackson:
     property-naming-strategy: SNAKE_CASE
-  config:
-    import:
-      - file:services/waiting/env/local.env[.properties]
+  grpc:
+    client:
+      channels:
+        release-service:
+          address: ${RELEASE_SERVICE_URL}
+          negotiation-type: plaintext
+          keep-alive-time: 30s
+          keep-alive-timeout: 5s
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     producer:
@@ -19,16 +24,11 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
-  grpc:
-    server:
-      port: ${GRPC_SERVER_PORT}
-    client:
-      channels:
-        release-service:
-          address: ${RELEASE_SERVICE_URL}
-          negotiation-type: plaintext
-          keep-alive-time: 30s
-          keep-alive-timeout: 5s
+
+security:
+  trusted:
+    ips:
+      - ${TRUSTED_IP_GATEWAY}
 
 resilience4j:
   circuitbreaker:
@@ -39,18 +39,9 @@ resilience4j:
         sliding-window-size: 20
         minimum-number-of-calls: 10
         failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-        permitted-number-of-calls-in-half-open-state: 3
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 5
   timelimiter:
     instances:
       releaseService:
         timeout-duration: 2s
-
-server:
-  port: ${SERVER_PORT}
-
-security:
-  trusted:
-    ips:
-      - 127.0.0.1
-      - 0:0:0:0:0:0:0:1

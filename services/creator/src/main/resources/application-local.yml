@@ -50,7 +50,9 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
         spring.json.trusted.packages: "kr.magicbox.creator.adapter.in.kafka.event"
         spring.json.type.mapping: user-withdrawn:kr.magicbox.creator.adapter.in.kafka.event.UserWithdrawnEvent,user-banned:kr.magicbox.creator.adapter.in.kafka.event.UserBannedEvent
-    retry:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       topic:
         backoff:
           multiplier: 2
@@ -77,3 +79,49 @@ security:
 
 inbox:
   max-event-age-minutes: 5
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userService:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 5
+      subscribeService:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 5
+      reviewService:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 5
+      releaseService:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 5
+      shortformService:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 5
+  timelimiter:
+    instances:
+      userService:
+        timeout-duration: 2s
+      subscribeService:
+        timeout-duration: 2s
+      reviewService:
+        timeout-duration: 2s
+      releaseService:
+        timeout-duration: 2s
+      shortformService:
+        timeout-duration: 2s
