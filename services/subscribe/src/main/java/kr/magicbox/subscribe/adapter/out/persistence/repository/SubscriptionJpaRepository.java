@@ -17,6 +17,12 @@ public interface SubscriptionJpaRepository extends JpaRepository<SubscriptionEnt
 
     List<SubscriptionEntity> findAllByCreatorId(Long creatorId);
 
+    @Query("select s from SubscriptionEntity s where s.subscriberId = :subscriberId and (:cursorId is null or s.id < :cursorId) order by s.id desc limit :size")
+    List<SubscriptionEntity> findBySubscriberIdWithCursor(@Param("subscriberId") Long subscriberId, @Param("cursorId") Long cursorId, @Param("size") int size);
+
+    @Query("select s.creatorId from SubscriptionEntity s where s.subscriberId = :subscriberId")
+    List<Long> findCreatorIdsBySubscriberId(@Param("subscriberId") Long subscriberId);
+
     void deleteBySubscriberIdAndCreatorId(Long subscriberId, Long creatorId);
 
     @Modifying(clearAutomatically = true)
