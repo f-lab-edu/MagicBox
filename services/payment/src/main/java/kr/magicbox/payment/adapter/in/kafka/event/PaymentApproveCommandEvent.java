@@ -10,7 +10,7 @@ import java.util.List;
 public record PaymentApproveCommandEvent(
         @JsonProperty("order_id") Long orderId,
         @JsonProperty("customer_id") Long customerId,
-        @JsonProperty("total_amount") long totalAmount,
+        @JsonProperty("total_amount") Long totalAmount,
         @JsonProperty("items") List<ItemPayload> items,
         @JsonProperty("occurred_at") Instant occurredAt
 ) implements InboxEvent {

@@ -9,7 +9,7 @@ import java.time.Instant;
 public record SettlementSettledEvent(
         @JsonProperty("order_id") Long orderId,
         @JsonProperty("order_line_id") Long orderLineId,
-        @JsonProperty("net_amount") long netAmount,
+        @JsonProperty("net_amount") Long netAmount,
         @JsonProperty("occurred_at") Instant occurredAt
 ) implements SettlementDomainEvent {
 

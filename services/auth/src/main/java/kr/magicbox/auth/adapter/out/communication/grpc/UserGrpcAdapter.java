@@ -1,7 +1,6 @@
 package kr.magicbox.auth.adapter.out.communication.grpc;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.Futures;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import kr.magicbox.auth.adapter.out.communication.grpc.exception.UnsupportedUserRoleException;
@@ -42,10 +41,17 @@ public class UserGrpcAdapter implements UserCredentialPort {
         UserServiceGrpc.UserServiceFutureStub stub = UserServiceGrpc.newFutureStub(
                 grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()));
         ListenableFuture<LoadUserCredentialResponse> future = stub.loadUserCredential(request);
-        LoadUserCredentialResponse response = Futures.getUnchecked(future);
 
-        return CompletableFuture.completedFuture(
-                new UserResult(UserId.of(response.getUserId()), toUserRole(response.getUserRole())));
+        CompletableFuture<UserResult> result = new CompletableFuture<>();
+        future.addListener(() -> {
+            try {
+                LoadUserCredentialResponse response = future.get();
+                result.complete(new UserResult(UserId.of(response.getUserId()), toUserRole(response.getUserRole())));
+            } catch (Exception e) {
+                result.completeExceptionally(e);
+            }
+        }, Runnable::run);
+        return result;
     }
 
     private UserRole toUserRole(GrpcUserRole grpcUserRole) {

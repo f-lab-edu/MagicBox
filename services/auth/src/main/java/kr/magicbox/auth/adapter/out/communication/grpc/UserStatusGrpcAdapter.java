@@ -1,6 +1,5 @@
 package kr.magicbox.auth.adapter.out.communication.grpc;
 
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
@@ -34,9 +33,16 @@ public class UserStatusGrpcAdapter implements UserStatusPort {
         UserServiceGrpc.UserServiceFutureStub stub = UserServiceGrpc.newFutureStub(
                 grpcChannelFactory.createChannel(ServiceHost.USER.getHostName()));
         ListenableFuture<CheckUserActiveResponse> future = stub.checkUserActive(request);
-        CheckUserActiveResponse response = Futures.getUnchecked(future);
 
-        return CompletableFuture.completedFuture(response.getActive());
+        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        future.addListener(() -> {
+            try {
+                result.complete(future.get().getActive());
+            } catch (Exception e) {
+                result.completeExceptionally(e);
+            }
+        }, Runnable::run);
+        return result;
     }
 
     @SuppressWarnings("unused")

@@ -199,6 +199,62 @@ public class HandleUserBannedService implements HandleUserBannedUseCase {
 | **단순 의존성** | Listener → UseCase → RepositoryPort 3단계로 최소 의존성 유지 |
 | **VO 직접 전달** | `UserId` 같은 Value Object를 파라미터로 전달하여 타입 안전성 확보 |
 
+#### IdempotentAspect (멱등성 AOP)
+
+`@Idempotent` 어노테이션을 Kafka Listener 메서드에 선언하면 AOP가 중복/만료 메시지를 자동으로 처리한다. 별도의 `@DltHandler`는 사용하지 않는다 — `IdempotentAspect`가 만료 메시지를 `DEAD_LETTERED`로 직접 영속화하기 때문이다.
+
+```java
+@Around("@annotation(kr.magicbox.<service>.adapter.in.kafka.annotation.Idempotent)")
+public Object around(ProceedingJoinPoint pjp) {
+    ConsumerRecord<String, ?> consumerRecord = extractRecord(pjp);
+    String key = consumerRecord.key();
+    InboxEvent event = (InboxEvent) consumerRecord.value();
+    Instant occurredAt = event.occurredAt();
+
+    // 만료 메시지 → DEAD_LETTERED 즉시 저장 후 폐기
+    if (isTooOld(occurredAt)) {
+        transactionTemplate.executeWithoutResult(status ->
+            inboxRepository.save(InboxEntity.builder()
+                    .key(key).topic(...).partition(...).offset(...)
+                    .status(InboxStatus.DEAD_LETTERED).occurredAt(occurredAt)
+                    .build()));
+        return null;
+    }
+
+    return transactionTemplate.execute(status -> {
+        // 중복 메시지 → key 기반으로 감지 후 폐기
+        if (inboxRepository.existsByKey(key)) return null;
+
+        InboxEntity inbox = inboxRepository.save(/* PENDING */);
+        try {
+            pjp.proceed();
+        } catch (Throwable e) {
+            status.setRollbackOnly();
+            throw new RuntimeException(e);
+        }
+        inbox.markProcessed();
+        return null;
+    });
+}
+
+@SuppressWarnings("unchecked")
+private ConsumerRecord<String, ?> extractRecord(ProceedingJoinPoint pjp) {
+    return Arrays.stream(pjp.getArgs())
+            .filter(ConsumerRecord.class::isInstance)
+            .map(arg -> (ConsumerRecord<String, ?>) arg)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("@Idempotent 메서드에 ConsumerRecord 파라미터가 없습니다."));
+}
+```
+
+| 규칙 | 내용 |
+|------|------|
+| **중복 감지 기준** | `consumerRecord.key()` (eventId) — topic/partition/offset 아님 |
+| **만료 기준** | `inbox.max-event-age-minutes` 설정값 |
+| **catch 블록** | `catch (Throwable e) { status.setRollbackOnly(); throw new RuntimeException(e); }` 단일 패턴 |
+| **extractRecord 예외** | `IllegalArgumentException` (프로그래밍 오류) |
+| **@DltHandler** | 사용하지 않음 |
+
 #### Outbox vs Inbox 비교
 
 | 구분 | Outbox (발행) | Inbox (수신) |

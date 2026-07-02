@@ -44,7 +44,7 @@ public class ShortFormCommandController {
             @AuthenticationPrincipal UserId userId,
             @PathVariable Long id,
             @Valid @RequestBody UpdateShortFormRequest request
-    ) {
+    ) throws Exception {
         updateShortFormUseCase.updateShortForm(request.toCommand(id, userId));
         return ResponseEntity.noContent().build();
     }
@@ -53,7 +53,7 @@ public class ShortFormCommandController {
     public ResponseEntity<Void> delete(
             @AuthenticationPrincipal UserId userId,
             @PathVariable Long id
-    ) {
+    ) throws Exception {
         deleteShortFormUseCase.deleteShortForm(DeleteShortFormCommand.of(ShortFormId.of(id), userId));
         return ResponseEntity.noContent().build();
     }

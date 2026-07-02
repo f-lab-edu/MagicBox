@@ -46,7 +46,9 @@ spring:
           delivery-completed:kr.magicbox.notification.adapter.in.kafka.event.DeliveryCompletedEvent,
           general-goods-created:kr.magicbox.notification.adapter.in.kafka.event.GeneralGoodsCreatedEvent,
           general-goods-updated:kr.magicbox.notification.adapter.in.kafka.event.GeneralGoodsUpdatedEvent
-    retry:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       topic:
         backoff:
           multiplier: 2

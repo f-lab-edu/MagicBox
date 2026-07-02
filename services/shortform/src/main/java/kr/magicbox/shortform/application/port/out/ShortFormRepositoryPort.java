@@ -15,6 +15,8 @@ public interface ShortFormRepositoryPort {
     List<ShortForm> findByCreatorIdByCursor(CreatorId creatorId, Long cursorId, int size);
     List<ShortForm> findByCreatorIdInByCursor(List<Long> creatorIds, Long cursorId, int size);
     List<ShortForm> findAllByCreatorId(CreatorId creatorId);
+
+    List<ShortForm> findByCreatorIdInByCursor(List<Long> creatorIds, Long cursorId, int size);
     void softDeleteByCreatorId(CreatorId creatorId);
     void incrementLikeCount(ShortFormId id);
     void decrementLikeCount(ShortFormId id);

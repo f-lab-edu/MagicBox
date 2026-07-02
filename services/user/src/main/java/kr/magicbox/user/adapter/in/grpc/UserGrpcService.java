@@ -4,13 +4,23 @@ import kr.magicbox.user.adapter.in.grpc.exception.UnsupportedOAuth2ProviderExcep
 import kr.magicbox.user.application.dto.query.CheckUserActiveQuery;
 import kr.magicbox.user.application.dto.command.LoadUserCredentialCommand;
 import kr.magicbox.user.application.dto.result.LoadUserCredentialResult;
+import kr.magicbox.user.application.dto.command.LoginWithEmailCommand;
+import kr.magicbox.user.application.dto.command.SignupWithEmailCommand;
+import kr.magicbox.user.application.dto.result.EmailCredentialResult;
 import kr.magicbox.user.application.port.in.CheckUserActiveUseCase;
 import kr.magicbox.user.application.port.in.GetUserNicknameUseCase;
+import kr.magicbox.user.application.port.in.GetUserNicknamesBatchUseCase;
+import kr.magicbox.user.application.port.in.GetUserProfileImageUrlUseCase;
 import kr.magicbox.user.application.port.in.LoadUserCredentialUseCase;
+import kr.magicbox.user.application.port.in.LoginWithEmailUseCase;
+import kr.magicbox.user.application.port.in.SignupWithEmailUseCase;
 import kr.magicbox.user.domain.enums.OAuth2Provider;
 import kr.magicbox.user.domain.enums.UserRole;
 import kr.magicbox.user.domain.vo.UserId;
 import kr.magicbox.user.grpc.user.*;
+
+import java.util.List;
+import java.util.Map;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.grpc.server.service.GrpcService;
@@ -22,6 +32,10 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
     private final LoadUserCredentialUseCase loadUserCredentialUseCase;
     private final CheckUserActiveUseCase checkUserActiveUseCase;
     private final GetUserNicknameUseCase getUserNicknameUseCase;
+    private final GetUserNicknamesBatchUseCase getUserNicknamesBatchUseCase;
+    private final GetUserProfileImageUrlUseCase getUserProfileImageUrlUseCase;
+    private final SignupWithEmailUseCase signupWithEmailUseCase;
+    private final LoginWithEmailUseCase loginWithEmailUseCase;
 
     @Override
     public void loadUserCredential(LoadUserCredentialRequest request,
@@ -60,6 +74,57 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
 
         responseObserver.onNext(GetUserNicknameResponse.newBuilder()
                 .setNickname(nickname)
+                .build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getUserNicknamesBatch(GetUserNicknamesBatchRequest request,
+                                      StreamObserver<GetUserNicknamesBatchResponse> responseObserver) {
+        List<UserId> userIds = request.getUserIdsList().stream()
+                .map(UserId::of)
+                .toList();
+        Map<Long, String> nicknames = getUserNicknamesBatchUseCase.getUserNicknamesBatch(userIds);
+
+        responseObserver.onNext(GetUserNicknamesBatchResponse.newBuilder()
+                .putAllNicknames(nicknames)
+                .build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getUserProfileImageUrl(GetUserProfileImageUrlRequest request,
+                                       StreamObserver<GetUserProfileImageUrlResponse> responseObserver) {
+        String profileImageUrl = getUserProfileImageUrlUseCase.getUserProfileImageUrl(UserId.of(request.getUserId()));
+
+        responseObserver.onNext(GetUserProfileImageUrlResponse.newBuilder()
+                .setProfileImageUrl(profileImageUrl != null ? profileImageUrl : "")
+                .build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void signupWithEmail(SignupWithEmailRequest request,
+                                StreamObserver<SignupWithEmailResponse> responseObserver) {
+        EmailCredentialResult result = signupWithEmailUseCase.signupWithEmail(
+                SignupWithEmailCommand.of(request.getEmail(), request.getPasswordHash(), request.getNickname())
+        );
+        responseObserver.onNext(SignupWithEmailResponse.newBuilder()
+                .setUserId(result.userId().value())
+                .setUserRole(toGrpcUserRole(result.userRole()))
+                .build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void loginWithEmail(LoginWithEmailRequest request,
+                               StreamObserver<LoginWithEmailResponse> responseObserver) {
+        EmailCredentialResult result = loginWithEmailUseCase.loginWithEmail(
+                LoginWithEmailCommand.of(request.getEmail(), request.getRawPassword())
+        );
+        responseObserver.onNext(LoginWithEmailResponse.newBuilder()
+                .setUserId(result.userId().value())
+                .setUserRole(toGrpcUserRole(result.userRole()))
                 .build());
         responseObserver.onCompleted();
     }

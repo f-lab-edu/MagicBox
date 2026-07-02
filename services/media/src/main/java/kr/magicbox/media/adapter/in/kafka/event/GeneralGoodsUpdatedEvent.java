@@ -15,8 +15,8 @@ public record GeneralGoodsUpdatedEvent(
 
     public record GoodsSnapshot(
             @JsonProperty("name") String name,
-            @JsonProperty("price") long price,
-            @JsonProperty("stock") int stock,
+            @JsonProperty("price") Long price,
+            @JsonProperty("stock") Integer stock,
             @JsonProperty("media_urls") List<String> mediaUrls
     ) {}
 }

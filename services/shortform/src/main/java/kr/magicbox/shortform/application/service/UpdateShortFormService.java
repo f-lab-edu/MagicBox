@@ -2,12 +2,14 @@ package kr.magicbox.shortform.application.service;
 
 import kr.magicbox.shortform.application.dto.command.UpdateShortFormCommand;
 import kr.magicbox.shortform.application.port.in.UpdateShortFormUseCase;
+import kr.magicbox.shortform.application.port.out.CreatorIdQueryPort;
 import kr.magicbox.shortform.application.port.out.ShortFormOutboxPort;
 import kr.magicbox.shortform.application.port.out.ShortFormRepositoryPort;
 import kr.magicbox.shortform.domain.aggregate.ShortForm;
 import kr.magicbox.shortform.domain.event.ShortFormUpdatedEvent;
 import kr.magicbox.shortform.domain.exception.ShortFormNotFoundException;
 import kr.magicbox.shortform.domain.exception.ShortFormUnauthorizedException;
+import kr.magicbox.shortform.domain.vo.CreatorId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +22,17 @@ import java.util.List;
 public class UpdateShortFormService implements UpdateShortFormUseCase {
 
     private final ShortFormRepositoryPort shortFormRepositoryPort;
+    private final CreatorIdQueryPort creatorIdQueryPort;
     private final ShortFormOutboxPort shortFormOutboxPort;
 
     @Transactional
     @Override
-    public void updateShortForm(UpdateShortFormCommand command) {
+    public void updateShortForm(UpdateShortFormCommand command) throws Exception {
         ShortForm shortForm = shortFormRepositoryPort.findById(command.shortFormId())
                 .orElseThrow(ShortFormNotFoundException::new);
 
-        if (!shortForm.getCreatorId().value().equals(command.userId().value())) {
+        CreatorId creatorId = creatorIdQueryPort.getCreatorId(command.userId()).get();
+        if (!shortForm.getCreatorId().equals(creatorId)) {
             throw new ShortFormUnauthorizedException();
         }
 
@@ -36,7 +40,7 @@ public class UpdateShortFormService implements UpdateShortFormUseCase {
         String beforeTitle = shortForm.getTitle();
 
         shortForm.update(command.title(), command.description(), command.videoUuid(),
-                command.thumbnailUuid(), command.genre(), command.visibility());
+                command.thumbnailUuid(), command.genre());
 
         shortFormRepositoryPort.update(shortForm);
 
