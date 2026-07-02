@@ -5,5 +5,5 @@ import kr.magicbox.payment.adapter.in.kafka.event.PaymentApproveCommandEvent;
 import java.util.List;
 
 public interface HandlePaymentApproveCommandUseCase {
-    void handlePaymentApproveCommand(Long orderId, Long customerId, long totalAmount, List<PaymentApproveCommandEvent.ItemPayload> items);
+    void handlePaymentApproveCommand(Long orderId, Long customerId, Long totalAmount, List<PaymentApproveCommandEvent.ItemPayload> items);
 }

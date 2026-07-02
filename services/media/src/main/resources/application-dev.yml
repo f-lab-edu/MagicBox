@@ -25,7 +25,9 @@ spring:
           general-goods-deleted:kr.magicbox.media.adapter.in.kafka.event.GeneralGoodsDeletedEvent,
           creator-profile-updated:kr.magicbox.media.adapter.in.kafka.event.CreatorProfileUpdatedEvent,
           user-profile-updated:kr.magicbox.media.adapter.in.kafka.event.UserProfileUpdatedEvent
-    retry:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       topic:
         attempts: 3
         backoff:

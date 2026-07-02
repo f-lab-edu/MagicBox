@@ -1,4 +1,7 @@
 plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.3'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'com.google.protobuf' version '0.9.6'
 }
 
@@ -6,21 +9,48 @@ ext {
     springGrpcVersion = "1.0.2"
     springCloudVersion = "2025.1.0"
 }
+
+group = 'kr.magicbox'
 version = '0.0.1'
 description = 'order'
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://jitpack.io' }
+}
+
 dependencies {
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.github.lian2945:sonyflake:v0.0.8'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework:spring-aspects'
     implementation 'org.aspectj:aspectjweaver'
     implementation 'org.springframework.boot:spring-boot-starter-kafka'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.grpc:spring-grpc-client-spring-boot-starter'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+    implementation 'io.grpc:grpc-netty:1.79.0'
+    implementation 'io.grpc:grpc-protobuf:1.79.0'
+    implementation 'io.grpc:grpc-stub:1.79.0'
+    implementation 'io.grpc:grpc-core:1.79.0'
+    implementation 'io.grpc:grpc-api:1.79.0'
+    implementation 'com.google.protobuf:protobuf-java:4.34.0'
+    implementation 'org.redisson:redisson-spring-data-35:3.50.0'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 dependencyManagement {
@@ -44,4 +74,8 @@ protobuf {
             grpc {}
         }
     }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

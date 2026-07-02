@@ -22,7 +22,7 @@ public class User {
     private Nickname nickname;
     private final String email;
     private UserStatus status;
-    private final UserRole role;
+    private UserRole role;
     private Instant lastLoginAt;
     private String profile;
     private Duration totalUsageTime;
@@ -30,6 +30,7 @@ public class User {
     private Boolean isActive;
     private final String oauth2Id;
     private final OAuth2Provider oauth2Provider;
+    private String passwordHash;
 
     @Builder(builderMethodName = "createBuilder", builderClassName = "CreateBuilder")
     public User(Nickname nickname, String email, UserStatus status,
@@ -51,15 +52,36 @@ public class User {
         this.isReviewVisible = true;
     }
 
+    @Builder(builderMethodName = "createEmailBuilder", builderClassName = "CreateEmailBuilder")
+    public User(Nickname nickname, String email, UserStatus status,
+                UserRole role, String profile, String passwordHash) {
+        if (email == null || email.trim().isEmpty()) throw new InvalidFieldException("이메일은 필수 값입니다.");
+        if (status == null) throw new InvalidFieldException("상태는 필수 값입니다.");
+        this.id = null;
+        this.nickname = nickname;
+        this.email = email;
+        this.status = status;
+        this.role = role;
+        this.profile = profile;
+        this.oauth2Id = email;
+        this.oauth2Provider = OAuth2Provider.LOCAL;
+        this.passwordHash = passwordHash;
+        this.isActive = false;
+        this.lastLoginAt = Instant.now();
+        this.totalUsageTime = Duration.ZERO;
+        this.isReviewVisible = true;
+    }
+
     @Builder(builderMethodName = "reconstructBuilder", builderClassName = "ReconstructBuilder")
     public User(UserId id, Nickname nickname, String email, UserStatus status,
                 UserRole role, String profile, String oauth2Id,
                 OAuth2Provider oauth2Provider, Boolean isReviewVisible, Boolean isActive,
-                Instant lastLoginAt, Duration totalUsageTime) {
+                Instant lastLoginAt, Duration totalUsageTime, String passwordHash) {
         validateFields(email, status, oauth2Id, oauth2Provider);
 
         this.id = id;
         this.nickname = nickname;
+        this.passwordHash = passwordHash;
         this.email = email;
         this.status = status;
         this.role = role;
@@ -158,5 +180,9 @@ public class User {
         if (!UserStatus.ACTIVE.equals(this.status)) throw new UserNotActiveForDeletionException();
         this.isActive = false;
         this.status = UserStatus.DELETED;
+    }
+
+    public void promoteToCreator() {
+        this.role = UserRole.CREATOR;
     }
 }

@@ -18,6 +18,7 @@ public class UserMapper {
                 .profile(user.getProfile())
                 .oauth2Id(user.getOauth2Id())
                 .oauth2Provider(user.getOauth2Provider())
+                .passwordHash(user.getPasswordHash())
                 .build();
     }
 
@@ -35,6 +36,7 @@ public class UserMapper {
                 .isActive(entity.getIsActive())
                 .lastLoginAt(entity.getLastLoginAt())
                 .totalUsageTime(entity.getTotalUsageTime())
+                .passwordHash(entity.getPasswordHash())
                 .build();
     }
 

@@ -30,7 +30,7 @@ public class CommentQueryController {
             @PathVariable Long id,
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size
-    ) {
+    ) throws Exception {
         List<CommentResponse> contents = getCommentsByShortFormUseCase.getCommentsByShortForm(
                         GetCommentsByShortFormQuery.of(ShortFormId.of(id), cursor, size))
                 .stream()

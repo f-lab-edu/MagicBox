@@ -6,5 +6,5 @@ import kr.magicbox.shortform.application.dto.result.CommentResult;
 import java.util.List;
 
 public interface GetCommentsByShortFormUseCase {
-    List<CommentResult> getCommentsByShortForm(GetCommentsByShortFormQuery query);
+    List<CommentResult> getCommentsByShortForm(GetCommentsByShortFormQuery query) throws Exception;
 }

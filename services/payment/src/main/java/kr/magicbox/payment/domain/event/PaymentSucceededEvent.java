@@ -10,7 +10,7 @@ public record PaymentSucceededEvent(
         @JsonProperty("order_id") Long orderId,
         @JsonProperty("customer_id") Long customerId,
         @JsonProperty("payment_id") Long paymentId,
-        @JsonProperty("total_amount") long totalAmount,
+        @JsonProperty("total_amount") Long totalAmount,
         @JsonProperty("approved_at") Instant approvedAt,
         @JsonProperty("occurred_at") Instant occurredAt
 ) implements PaymentDomainEvent {

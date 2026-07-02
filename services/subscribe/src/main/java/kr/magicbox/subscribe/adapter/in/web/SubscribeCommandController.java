@@ -25,7 +25,7 @@ public class SubscribeCommandController {
 
     @PostMapping("/{creatorId}")
     public ResponseEntity<Void> subscribe(@AuthenticationPrincipal UserId userId,
-                                          @PathVariable Long creatorId) {
+                                          @PathVariable Long creatorId) throws Exception {
         subscribeUseCase.subscribe(SubscribeCommand.of(SubscriberId.of(userId.value()), CreatorId.of(creatorId)));
         return ResponseEntity.noContent().build();
     }

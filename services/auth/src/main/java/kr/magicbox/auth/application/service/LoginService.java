@@ -60,7 +60,7 @@ public class LoginService implements LoginUseCase {
 
     private void saveLoginEvent(UserId userId) {
         Instant now = Instant.now();
-        boolean isDuplicate = userStatusPort.isActive(userId.value());
+        boolean isDuplicate = userStatusPort.isActive(userId.value()).join();
 
         AuthDomainEvent event = isDuplicate
                 ? DuplicateLoginEvent.builder().userId(userId).occurredAt(now).build()

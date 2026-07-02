@@ -17,7 +17,9 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
         spring.json.trusted.packages: "kr.magicbox.payment.adapter.in.kafka.event"
         spring.json.type.mapping: payment-approve:kr.magicbox.payment.adapter.in.kafka.event.PaymentApproveCommandEvent,payment-cancel:kr.magicbox.payment.adapter.in.kafka.event.PaymentCancelCommandEvent
-    retry:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       topic:
         attempts: 5
         backoff:

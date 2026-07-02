@@ -31,11 +31,11 @@ public class GetMyCreatorProfileService implements GetMyCreatorProfileUseCase {
         return CreatorMyProfileResult.builder()
                 .nickname(creator.getNickname())
                 .tagline(creator.getTagline())
-                .subscriberCount(subscribeQueryPort.getSubscriberCount(creatorId))
-                .releaseCount(releaseQueryPort.getReleaseCount(creatorId))
-                .reviewRating(reviewRatingQueryPort.getReviewRating(creatorId))
-                .releases(releaseQueryPort.getReleases(creatorId))
-                .shortForms(shortformQueryPort.getShortforms(creatorId))
+                .subscriberCount(subscribeQueryPort.getSubscriberCount(creatorId).join())
+                .releaseCount(releaseQueryPort.getReleaseCount(creatorId).join())
+                .reviewRating(reviewRatingQueryPort.getReviewRating(creatorId).join())
+                .releases(releaseQueryPort.getReleases(creatorId).join())
+                .shortForms(shortformQueryPort.getShortforms(creatorId).join())
                 .introduction(creator.getIntroduction())
                 .build();
     }

@@ -20,7 +20,7 @@ public class HandlePaymentApproveCommandService implements HandlePaymentApproveC
 
     @Override
     @Transactional
-    public void handlePaymentApproveCommand(Long orderId, Long customerId, long totalAmount, List<PaymentApproveCommandEvent.ItemPayload> items) {
+    public void handlePaymentApproveCommand(Long orderId, Long customerId, Long totalAmount, List<PaymentApproveCommandEvent.ItemPayload> items) {
         if (paymentRepositoryPort.findByOrderId(orderId).isPresent()) {
             throw new PaymentAlreadyExistsException();
         }

@@ -40,7 +40,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 userInfo.providerType().getProvider(),
                 userInfo.email(),
                 userInfo.profileImage()
-        );
+        ).join();
 
         // 2. 일회용 Code 생성 및 Redis 저장
         String codeValue = UUID.randomUUID().toString();

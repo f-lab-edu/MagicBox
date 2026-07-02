@@ -9,6 +9,7 @@ import kr.magicbox.creator.adapter.in.web.dto.response.CursorResponse;
 import kr.magicbox.creator.adapter.in.web.dto.response.ReleaseResponse;
 import kr.magicbox.creator.adapter.in.web.dto.response.ShortformResponse;
 import kr.magicbox.creator.adapter.in.web.validation.CursorSize;
+import kr.magicbox.creator.application.dto.result.CreatorMyProfileResult;
 import kr.magicbox.creator.application.dto.result.CreatorPublicProfileResult;
 import kr.magicbox.creator.application.dto.query.GetAllCreatorsQuery;
 import kr.magicbox.creator.application.dto.query.GetCreatorProfileQuery;
@@ -68,7 +69,7 @@ public class CreatorQueryController {
     public ResponseEntity<CreatorMyProfileResponse> getMyProfile(
             @AuthenticationPrincipal UserId userId
     ) {
-        var result = getMyCreatorProfileUseCase.getMyCreatorProfile(GetMyCreatorProfileQuery.of(userId));
+        CreatorMyProfileResult result = getMyCreatorProfileUseCase.getMyCreatorProfile(GetMyCreatorProfileQuery.of(userId));
         return ResponseEntity.ok(CreatorMyProfileResponse.builder()
                 .nickname(result.nickname().value())
                 .tagline(result.tagline())

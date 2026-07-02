@@ -61,6 +61,19 @@ public class SubscriptionJpaAdapter implements SubscriptionRepositoryPort {
     }
 
     @Override
+    public List<Subscription> findBySubscriberIdWithCursor(SubscriberId subscriberId, Long cursorId, int size) {
+        return subscriptionJpaRepository.findBySubscriberIdWithCursor(subscriberId.value(), cursorId, size)
+                .stream()
+                .map(subscriptionMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Long> findCreatorIdsBySubscriberId(SubscriberId subscriberId) {
+        return subscriptionJpaRepository.findCreatorIdsBySubscriberId(subscriberId.value());
+    }
+
+    @Override
     public boolean existsBySubscriberIdAndCreatorId(SubscriberId subscriberId, CreatorId creatorId) {
         return subscriptionJpaRepository.existsBySubscriberIdAndCreatorId(subscriberId.value(), creatorId.value());
     }

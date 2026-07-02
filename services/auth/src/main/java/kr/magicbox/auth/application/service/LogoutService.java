@@ -24,7 +24,7 @@ public class LogoutService implements LogoutUseCase {
     public void logout(LogoutCommand command) {
         UserId userId = command.userId();
 
-        if (!userStatusPort.isActive(userId.value())) {
+        if (!userStatusPort.isActive(userId.value()).join()) {
             throw new UserInactiveException();
         }
         refreshTokenRepositoryPort.deleteRefreshToken(userId);

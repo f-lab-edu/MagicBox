@@ -9,6 +9,8 @@ option java_multiple_files = true;
 service UserService {
   rpc LoadUserCredential(LoadUserCredentialRequest) returns (LoadUserCredentialResponse);
   rpc CheckUserActive(CheckUserActiveRequest) returns (CheckUserActiveResponse);
+  rpc SignupWithEmail(SignupWithEmailRequest) returns (SignupWithEmailResponse);
+  rpc LoginWithEmail(LoginWithEmailRequest) returns (LoginWithEmailResponse);
 }
 
 message LoadUserCredentialRequest {
@@ -43,4 +45,26 @@ enum GrpcOAuth2Provider {
   GOOGLE = 1;
   NAVER = 2;
   KAKAO = 3;
+  LOCAL = 4;
+}
+
+message SignupWithEmailRequest {
+  string email = 1;
+  string password_hash = 2;
+  string nickname = 3;
+}
+
+message SignupWithEmailResponse {
+  int64 user_id = 1;
+  GrpcUserRole user_role = 2;
+}
+
+message LoginWithEmailRequest {
+  string email = 1;
+  string raw_password = 2;
+}
+
+message LoginWithEmailResponse {
+  int64 user_id = 1;
+  GrpcUserRole user_role = 2;
 }
